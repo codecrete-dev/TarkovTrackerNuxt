@@ -1,13 +1,9 @@
-import { ref, computed, watch, onMounted, type ComputedRef } from "vue";
+import { ref, computed, onMounted, type ComputedRef } from "vue";
 import {
   useSafeLocale,
   extractLanguageCode,
 } from "@/composables/utils/i18nHelpers";
-import type {
-  TarkovDataQueryResult,
-  TarkovHideoutQueryResult,
-  StaticMapData,
-} from "@/types/tarkov";
+import type { StaticMapData } from "@/types/tarkov";
 import mapsData from "./maps.json";
 import {
   API_GAME_MODES,
@@ -15,6 +11,14 @@ import {
   API_SUPPORTED_LANGUAGES,
   LOCALE_TO_API_MAPPING,
 } from "@/utils/constants";
+
+// Re-export the shared query composables for convenience
+// These use IndexedDB caching for client-side persistence
+export {
+  useSharedTarkovDataQuery,
+  useSharedTarkovHideoutQuery,
+} from "./useSharedTarkovQuery";
+
 // Singleton state
 const availableLanguages = ref<string[]>([...API_SUPPORTED_LANGUAGES]);
 const staticMapData = ref<StaticMapData | null>(null);
@@ -30,7 +34,7 @@ async function loadStaticMaps(): Promise<StaticMapData> {
   }
   return mapPromise;
 }
-// Language extraction moved to @/composables/utils/i18nHelpers.ts
+
 /**
  * Composable for managing Tarkov API queries and language detection
  */
@@ -53,6 +57,7 @@ export function useTarkovApi() {
       staticMapData.value = await loadStaticMaps();
     }
   });
+
   return {
     availableLanguages: availableLanguages,
     languageCode,
@@ -60,100 +65,43 @@ export function useTarkovApi() {
     loadStaticMaps,
   };
 }
+
 /**
- * Composable for Tarkov main data queries (tasks, maps, traders, player levels)
- * Uses server-side endpoint with Cloudflare Cache API for efficient edge caching
+ * @deprecated Use useSharedTarkovDataQuery() from useSharedTarkovQuery.ts instead
+ * This composable uses IndexedDB caching for client-side persistence
+ *
+ * Legacy composable for Tarkov main data queries (tasks, maps, traders, player levels)
  */
 export function useTarkovDataQuery(
   gameMode: ComputedRef<string> = computed(() => GAME_MODES.PVP)
 ) {
-  // Get language code from the API composable to ensure consistency
-  const { languageCode: apiLanguageCode } = useTarkovApi();
-  const apiGameMode = computed(() => {
-    const mode = gameMode.value as keyof typeof API_GAME_MODES;
-    return API_GAME_MODES[mode] || API_GAME_MODES[GAME_MODES.PVP];
-  });
-
-  const cacheKey = computed(
-    () => `tarkov-data-${apiLanguageCode.value}-${apiGameMode.value}`
+  console.warn(
+    "[useTarkovDataQuery] This composable is deprecated. " +
+      "Use useSharedTarkovDataQuery() from useSharedTarkovQuery.ts instead, " +
+      "which provides IndexedDB caching for faster page loads."
   );
 
-  const { data, error, status, refresh } = useFetch<{
-    data: TarkovDataQueryResult;
-  }>("/api/tarkov/data", {
-    query: computed(() => ({
-      lang: apiLanguageCode.value,
-      gameMode: apiGameMode.value,
-    })),
-    key: cacheKey,
-    immediate: false,
-  });
-
-  const result = computed(() => data.value?.data);
-
-  const loading = computed(() => status.value === "pending");
-
-  // Watch for key changes (language/gamemode) and fetch
-  watch(
-    cacheKey,
-    () => {
-      refresh();
-    },
-    { immediate: true }
-  );
-
-  return {
-    result,
-    error,
-    loading,
-    refetch: refresh,
-    languageCode: apiLanguageCode,
-    gameMode,
-  };
+  // Import and return the shared query
+  const { useSharedTarkovDataQuery } = require("./useSharedTarkovQuery");
+  return useSharedTarkovDataQuery();
 }
+
 /**
- * Composable for Tarkov hideout data queries
- * Now uses server-side endpoint with Cloudflare Cache API for better efficiency
+ * @deprecated Use useSharedTarkovHideoutQuery() from useSharedTarkovQuery.ts instead
+ * This composable uses IndexedDB caching for client-side persistence
+ *
+ * Legacy composable for Tarkov hideout data queries
  */
 export function useTarkovHideoutQuery(
   gameMode: ComputedRef<string> = computed(() => GAME_MODES.PVP)
 ) {
-  // Map internal game modes to API game modes
-  const apiGameMode = computed(() => {
-    const mode = gameMode.value as keyof typeof API_GAME_MODES;
-    return API_GAME_MODES[mode] || API_GAME_MODES[GAME_MODES.PVP];
-  });
-
-  const cacheKey = computed(() => `tarkov-hideout-${apiGameMode.value}`);
-
-  const { data, error, status, refresh } = useFetch<{
-    data: TarkovHideoutQueryResult;
-  }>("/api/tarkov/hideout", {
-    query: computed(() => ({
-      gameMode: apiGameMode.value,
-    })),
-    key: cacheKey,
-    immediate: false,
-  });
-
-  const result = computed(() => data.value?.data);
-
-  const loading = computed(() => status.value === "pending");
-
-  // Watch for gameMode changes
-  watch(
-    cacheKey,
-    () => {
-      refresh();
-    },
-    { immediate: true }
+  console.warn(
+    "[useTarkovHideoutQuery] This composable is deprecated. " +
+      "Use useSharedTarkovHideoutQuery() from useSharedTarkovQuery.ts instead, " +
+      "which provides IndexedDB caching for faster page loads."
   );
 
-  return {
-    result,
-    error,
-    loading,
-    refetch: refresh,
-    gameMode,
-  };
+  // Import and return the shared query
+  const { useSharedTarkovHideoutQuery } = require("./useSharedTarkovQuery");
+  return useSharedTarkovHideoutQuery();
 }

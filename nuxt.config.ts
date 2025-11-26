@@ -15,6 +15,7 @@ export default defineNuxtConfig({
       enabled: true,
     },
   },
+  serverDir: resolve(__dirname, "app/server"),
   nitro: {
     preset: "cloudflare-pages",
   },
@@ -36,28 +37,34 @@ export default defineNuxtConfig({
       ],
     },
   },
-  css: [
-    "~/assets/css/tailwind.css",
-  ],
+  css: ["~/assets/css/tailwind.css"],
   alias: {
     "@": appDir,
     "~": appDir,
   },
-  modules: (
-    [
-      "@nuxt/eslint",
-      // Only load test utils during local dev/test so production builds don't try to resolve devDependency
-      process.env.NODE_ENV === "development"
-        ? "@nuxt/test-utils/module"
-        : undefined,
-      "@pinia/nuxt",
-      "@nuxt/ui",
-      "@nuxt/image",
-    ].filter(Boolean) as string[]
-  ),
+  modules: [
+    "@nuxt/eslint",
+    // Only load test utils during local dev/test so production builds don't try to resolve devDependency
+    process.env.NODE_ENV === "development"
+      ? "@nuxt/test-utils/module"
+      : undefined,
+    "@pinia/nuxt",
+    "@nuxt/ui",
+    "@nuxt/image",
+  ].filter(Boolean) as string[],
   ui: {
     theme: {
-      colors: ["primary", "secondary", "neutral", "pvp", "pve", "info", "success", "warning", "error"],
+      colors: [
+        "primary",
+        "secondary",
+        "neutral",
+        "pvp",
+        "pve",
+        "info",
+        "success",
+        "warning",
+        "error",
+      ],
     },
   },
   components: [

@@ -1,5 +1,3 @@
-import { GAME_MODES } from "~/utils/constants";
-
 const TARKOV_HIDEOUT_QUERY = `
   query TarkovDataHideout($gameMode: GameMode) {
     hideoutStations(gameMode: $gameMode) {
@@ -93,78 +91,110 @@ const TARKOV_HIDEOUT_QUERY = `
   }
 `;
 
+// Valid game modes
+const VALID_GAME_MODES = ["regular", "pve"] as const;
+
+// Cache TTL: 12 hours in seconds
+const CACHE_TTL = 43200;
+
 export default defineEventHandler(async (event) => {
   const query = getQuery(event);
-  const gameMode = (query.gameMode as string) || GAME_MODES.PVE;
 
-  // Check if Cloudflare Cache API is available (only in Workers/Pages, not in dev)
+  // Validate and sanitize inputs
+  let gameMode = (query.gameMode as string)?.toLowerCase() || "regular";
+
+  // Ensure valid game mode
+  if (
+    !VALID_GAME_MODES.includes(gameMode as (typeof VALID_GAME_MODES)[number])
+  ) {
+    gameMode = "regular";
+  }
+
+  // Cloudflare Workers have a special caches.default property not in standard types
+  // In Node.js dev mode, caches is not defined at all
   const isCacheAvailable =
-    typeof caches !== "undefined" && (caches as any).default;
+    typeof globalThis.caches !== "undefined" &&
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (globalThis.caches as any).default;
 
   try {
     // Only use Cloudflare Cache API in production (Cloudflare Pages/Workers)
     if (isCacheAvailable) {
-      const cache = (caches as any).default as Cache;
-      const url = getRequestURL(event);
-      const cacheKey = new Request(url.toString());
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const cache = (globalThis.caches as any).default as Cache;
+
+      // Create a normalized cache key URL to ensure consistent caching
+      const cacheUrl = new URL(
+        `https://cache.tarkovtracker.io/api/tarkov/hideout`
+      );
+      cacheUrl.searchParams.set("gameMode", gameMode);
+      const cacheKey = new Request(cacheUrl.toString());
 
       // Check cache first
       const cachedResponse = await cache.match(cacheKey);
 
       if (cachedResponse) {
-        // CACHE HIT - Return immediately (no function invocation in prod)
+        // CACHE HIT - Return immediately
         const data = await cachedResponse.json();
 
         setResponseHeaders(event, {
           "X-Cache-Status": "HIT",
-          "Cache-Control": "public, max-age=43200, s-maxage=43200",
+          "X-Cache-Key": `hideout-${gameMode}`,
+          "Cache-Control": `public, max-age=${CACHE_TTL}, s-maxage=${CACHE_TTL}`,
         });
 
         return data;
       }
 
-      // CACHE MISS - Fetch from API
-      console.log(`[PROD] Hideout cache miss for: ${gameMode}`);
+      // CACHE MISS - Fetch from tarkov.dev API
+      console.log(`[EDGE] Cache miss for hideout: ${gameMode}`);
 
       const response = await $fetch("https://api.tarkov.dev/graphql", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: {
           query: TARKOV_HIDEOUT_QUERY,
           variables: { gameMode },
         },
       });
 
-      // Store in edge cache
+      // Store in edge cache with TTL
       const cacheResponse = new Response(JSON.stringify(response), {
         headers: {
           "Content-Type": "application/json",
-          "Cache-Control": "public, max-age=43200, s-maxage=43200",
+          "Cache-Control": `public, max-age=${CACHE_TTL}, s-maxage=${CACHE_TTL}`,
           "X-Cache-Status": "MISS",
+          "X-Cache-Key": `hideout-${gameMode}`,
         },
       });
 
       // Non-blocking cache write if waitUntil available
-      // @ts-ignore
-      if (event.context.cloudflare?.context?.waitUntil) {
-        event.context.cloudflare.context.waitUntil(
-          cache.put(cacheKey, cacheResponse.clone())
-        );
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const cfContext = (event.context as any).cloudflare?.context;
+      if (cfContext?.waitUntil) {
+        cfContext.waitUntil(cache.put(cacheKey, cacheResponse.clone()));
       } else {
         await cache.put(cacheKey, cacheResponse.clone());
       }
 
       setResponseHeaders(event, {
         "X-Cache-Status": "MISS",
-        "Cache-Control": "public, max-age=43200, s-maxage=43200",
+        "X-Cache-Key": `hideout-${gameMode}`,
+        "Cache-Control": `public, max-age=${CACHE_TTL}, s-maxage=${CACHE_TTL}`,
       });
 
       return response;
     } else {
-      // DEV MODE - No caching, direct fetch
+      // DEV MODE - No edge caching, direct fetch
       console.log(`[DEV] Fetching hideout data for: ${gameMode}`);
 
       const response = await $fetch("https://api.tarkov.dev/graphql", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: {
           query: TARKOV_HIDEOUT_QUERY,
           variables: { gameMode },
@@ -172,7 +202,8 @@ export default defineEventHandler(async (event) => {
       });
 
       setResponseHeaders(event, {
-        "X-Cache-Status": "BYPASS",
+        "X-Cache-Status": "DEV",
+        "X-Cache-Key": `hideout-${gameMode}`,
         "Cache-Control": "no-cache",
       });
 
@@ -181,8 +212,8 @@ export default defineEventHandler(async (event) => {
   } catch (error) {
     console.error("Error fetching hideout data from tarkov.dev:", error);
     throw createError({
-      statusCode: 500,
-      statusMessage: "Failed to fetch hideout data from tarkov.dev",
+      statusCode: 502,
+      statusMessage: "Failed to fetch hideout data from tarkov.dev API",
     });
   }
 });
