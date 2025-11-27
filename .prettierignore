@@ -1,0 +1,14 @@
+# Generated / build output
+.nuxt
+dist
+.output
+node_modules
+
+# Assets / caches
+public/_nuxt
+public/_fonts
+
+# Tooling
+package-lock.json
+.wrangler
+.data
