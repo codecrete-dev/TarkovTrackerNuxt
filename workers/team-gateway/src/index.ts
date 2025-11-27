@@ -116,13 +116,16 @@ async function handleAction(request: Request, env: Env, action: TeamAction) {
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
-    if (url.pathname === "/health") {
+    // Normalize trailing slash to avoid route misses (e.g., /team/create/ -> /team/create)
+    const path = url.pathname.replace(/\/+$/, "") || "/";
+
+    if (path === "/health") {
       return new Response("ok", { status: 200, headers: corsHeaders(env.ALLOWED_ORIGIN) });
     }
-    if (url.pathname === "/team/create") return handleAction(request, env, "create");
-    if (url.pathname === "/team/join") return handleAction(request, env, "join");
-    if (url.pathname === "/team/leave") return handleAction(request, env, "leave");
-    if (url.pathname === "/team/kick") return handleAction(request, env, "kick");
+    if (path === "/team/create") return handleAction(request, env, "create");
+    if (path === "/team/join") return handleAction(request, env, "join");
+    if (path === "/team/leave") return handleAction(request, env, "leave");
+    if (path === "/team/kick") return handleAction(request, env, "kick");
     return new Response("Not Found", { status: 404, headers: corsHeaders(env.ALLOWED_ORIGIN) });
   },
 };

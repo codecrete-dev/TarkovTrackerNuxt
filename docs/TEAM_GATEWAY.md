@@ -24,7 +24,7 @@ Goal: front-door the team mutations (create/join/leave/kick) to rate-limit abuse
    ```
 
 ## Routes
-- `POST /team/create|join|leave|kick`
+- `POST /team/create|join|leave|kick` (trailing slashes are accepted)
   - Headers: `Authorization: Bearer <supabase access token>`
   - Body: forwarded to Supabase Edge Function unchanged.
 - `GET /health` for uptime checks.
