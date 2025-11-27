@@ -8,7 +8,7 @@
   ></div>
   <div v-if="tooltipVisible" :style="tooltipStyle">
     <div
-      class="m-0 shadow-md rounded px-1 pt-2 bg-[#1e293b] border border-gray-700"
+      class="m-0 shadow-md rounded px-1 pt-2 bg-accent-800 border border-surface-700"
     >
       <task-link :task="relatedTask" show-wiki-link />
       <task-objective
@@ -70,10 +70,10 @@ const relatedObjective = computed(() => {
 const relatedTask = computed(() => {
   return tasks.value.find((task) => task.id == relatedObjective.value?.taskId);
 });
-const zoneColor = computed(() => {
-  if (tooltipVisible.value) return "text-green-500";
-  return props.mark.users.includes("self") ? "text-red-500" : "text-orange-500";
-});
+  const zoneColor = computed(() => {
+    if (tooltipVisible.value) return "text-success-500";
+    return props.mark.users.includes("self") ? "text-error-500" : "text-warning-500";
+  });
 const relativeLocation = computed(() => {
   // Determine the leftmost x position in the array of zone positions
   // Take the bounds of the map and figure out the initial relative position

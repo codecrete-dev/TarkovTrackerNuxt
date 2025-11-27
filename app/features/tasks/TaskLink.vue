@@ -4,20 +4,20 @@
       :href="props.task?.wikiLink"
       target="_blank"
       rel="noopener noreferrer"
-      class="flex items-center text-blue-400 hover:text-blue-300 no-underline"
+      class="flex items-center text-primary-400 hover:text-primary-300 no-underline"
     >
-      <div class="w-6 h-6 rounded-full overflow-hidden mr-2">
+      <div class="w-12 h-12 rounded-full overflow-hidden mr-2">
         <img :src="traderAvatar" class="w-full h-full object-cover" />
       </div>
       <template v-if="isFactionTask">
-        <div class="w-6 h-6 rounded-none ml-2">
+        <div class="w-12 h-12 rounded-none ml-2">
           <img
             :src="factionImage"
             class="w-full h-full object-contain invert"
           />
         </div>
       </template>
-      <span class="ml-2 font-bold">
+      <span class="ml-2 font-bold text-xl">
         {{ props.task?.name }}
       </span>
     </a>
@@ -25,7 +25,7 @@
       v-if="props.showWikiLink"
       :href="props.task.wikiLink"
       target="_blank"
-      class="text-xs whitespace-nowrap text-blue-400 hover:text-blue-300 flex items-center"
+      class="text-xs whitespace-nowrap text-primary-400 hover:text-primary-300 flex items-center"
     >
       <UIcon name="i-mdi-information-outline" class="w-6 h-6 mr-1" />
       <span>{{ t("page.tasks.questcard.wiki") }}</span>

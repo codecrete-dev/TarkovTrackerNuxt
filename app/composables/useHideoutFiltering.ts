@@ -25,10 +25,9 @@ export function useHideoutFiltering() {
         return true;
       }
       // Check if progress store team data is ready
-      if (
-        !progressStore.visibleTeamStores ||
-        Object.keys(progressStore.visibleTeamStores).length === 0
-      ) {
+      // We don't block on visibleTeamStores being empty anymore, as it might be intentional
+      // if the user has hidden all teams (including self, though that should be prevented)
+      if (!progressStore.visibleTeamStores) {
         return true;
       }
       // Remove the hideoutLevels check as it creates a circular dependency

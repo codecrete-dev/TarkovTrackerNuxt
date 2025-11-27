@@ -1,15 +1,17 @@
 <template>
-  <div
-    id="app"
-    class="min-h-screen flex flex-col bg-background text-surface-200 font-sans"
-  >
-    <NuxtRouteAnnouncer />
-    <NuxtLayout>
-      <NuxtPage />
-    </NuxtLayout>
-    <!-- Portal target for modals -->
-    <div id="modals"></div>
-  </div>
+  <UApp>
+    <div
+      id="app"
+      class="min-h-screen flex flex-col bg-background text-surface-200 font-sans"
+    >
+      <NuxtRouteAnnouncer />
+      <NuxtLayout>
+        <NuxtPage />
+      </NuxtLayout>
+      <!-- Portal target for modals -->
+      <div id="modals"></div>
+    </div>
+  </UApp>
 </template>
 <script setup lang="ts">
 import { onMounted } from "vue";

@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-[#0c1014] flex items-center justify-center px-4">
+<div class="min-h-screen bg-surface-900 flex items-center justify-center px-4">
     <UCard
       class="w-full max-w-md bg-surface-900 border border-white/10 shadow-2xl"
       :ui="{ body: 'p-8' }"

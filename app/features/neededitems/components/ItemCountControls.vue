@@ -3,17 +3,17 @@
     <UButton
       variant="ghost"
       color="neutral"
-      class="p-0 m-0 min-w-0"
-      size="xs"
+      class="p-0 m-0 min-w-0 cursor-pointer"
+      size="sm"
       @click="$emit('decrease')"
     >
-      <UIcon name="i-mdi-minus-thick" class="w-4 h-4" />
+      <UIcon name="i-mdi-minus-thick" class="w-5 h-5" />
     </UButton>
     <UButton
       variant="ghost"
       color="neutral"
-      class="px-1 mx-1 min-w-0"
-      size="xs"
+      class="px-2 mx-1 min-w-0 text-sm font-semibold cursor-pointer"
+      size="sm"
       @click="$emit('toggle')"
     >
       {{ currentCount.toLocaleString() }}/{{ neededCount.toLocaleString() }}
@@ -21,11 +21,11 @@
     <UButton
       variant="ghost"
       color="neutral"
-      class="p-0 m-0 min-w-0"
-      size="xs"
+      class="p-0 m-0 min-w-0 cursor-pointer"
+      size="sm"
       @click="$emit('increase')"
     >
-      <UIcon name="i-mdi-plus-thick" class="w-4 h-4" />
+      <UIcon name="i-mdi-plus-thick" class="w-5 h-5" />
     </UButton>
   </div>
 </template>

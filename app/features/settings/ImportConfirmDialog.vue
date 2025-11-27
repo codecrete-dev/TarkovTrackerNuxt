@@ -7,7 +7,6 @@
       <template #header>
         <div class="text-xl font-medium px-4 py-3">Confirm Data Import</div>
       </template>
-
       <div class="px-4 pb-4">
         <p class="mb-3">
           This will import your progress data into your PvP profile:

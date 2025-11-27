@@ -104,7 +104,6 @@ const props = defineProps({
   },
 });
 defineEmits(["increaseCount", "decreaseCount", "toggleCount"]);
-
 const tarkovStore = useTarkovStore();
 const {
   selfCompletedNeed,
@@ -118,7 +117,6 @@ const {
   teamNeeds,
   imageItem,
 } = inject("neededitem");
-
 const itemCardClasses = computed(() => {
   return {
     "bg-gradient-to-t from-complete to-surface":

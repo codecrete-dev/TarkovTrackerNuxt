@@ -1,8 +1,8 @@
 <template>
   <router-link to="/" class="no-underline text-blue-400 hover:text-blue-300">
     <div class="flex items-center">
-      <img :src="stationIcon" class="max-h-6 max-w-6 align-middle" />
-      <span class="ml-2 font-bold">
+      <img :src="stationIcon" class="max-h-8 max-w-8 align-middle" />
+      <span class="ml-2 font-bold text-sm">
         {{ props.station?.name }}
       </span>
     </div>

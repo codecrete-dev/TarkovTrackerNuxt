@@ -228,17 +228,22 @@ export const useMetadataStore = defineStore("metadata", {
 
     /**
      * Update language code and game mode based on current state
+     * @param localeOverride - Optional locale override to use instead of useSafeLocale()
      */
-    updateLanguageAndGameMode() {
+    updateLanguageAndGameMode(localeOverride?: string) {
       const store = useTarkovStore();
-      const locale = useSafeLocale();
+      const effectiveLocale = localeOverride || useSafeLocale().value;
 
+      console.log(
+        "[MetadataStore] updateLanguageAndGameMode - raw locale:",
+        effectiveLocale
+      );
       // Update language code
-      const mappedCode = LOCALE_TO_API_MAPPING[locale.value];
+      const mappedCode = LOCALE_TO_API_MAPPING[effectiveLocale];
       if (mappedCode) {
         this.languageCode = mappedCode;
       } else {
-        this.languageCode = extractLanguageCode(locale.value, [
+        this.languageCode = extractLanguageCode(effectiveLocale, [
           ...API_SUPPORTED_LANGUAGES,
         ]);
       }
@@ -424,7 +429,13 @@ export const useMetadataStore = defineStore("metadata", {
      * Process tasks data and build derived structures using the graph builder composable
      */
     processTasksData(data: TarkovDataQueryResult) {
-      this.tasks = data.tasks || [];
+      // Filter out scav karma tasks at the source
+      // These tasks require Scav Karma validation which isn't yet implemented
+      const allTasks = data.tasks || [];
+      this.tasks = allTasks.filter(
+        (task) => !EXCLUDED_SCAV_KARMA_TASKS.includes(task.id)
+      );
+
       this.maps = data.maps || [];
       this.traders = data.traders || [];
       this.playerLevels = data.playerLevels || [];
@@ -453,7 +464,9 @@ export const useMetadataStore = defineStore("metadata", {
 
       if (this.hideoutStations.length > 0) {
         const graphBuilder = useGraphBuilder();
-        const processedData = graphBuilder.processHideoutData(this.hideoutStations);
+        const processedData = graphBuilder.processHideoutData(
+          this.hideoutStations
+        );
 
         this.hideoutModules = processedData.hideoutModules;
         this.hideoutGraph = processedData.hideoutGraph;

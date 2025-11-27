@@ -1,5 +1,5 @@
 <template>
-  <div class="text-center">
+  <div class="text-center text-sm">
     <i18n-t keypath="page.neededitems.neededby" scope="global">
       <template #users>
         <div
@@ -7,7 +7,7 @@
           :key="userIndex"
           class="flex items-center justify-center"
         >
-          <UIcon name="i-mdi-account-child-circle" class="mr-1 w-4 h-4" />
+          <UIcon name="i-mdi-account-child-circle" class="mr-1 w-5 h-5" />
           {{ getDisplayName(userNeed.user) }}
           {{ userNeed.count.toLocaleString() }}/{{
             neededCount.toLocaleString()

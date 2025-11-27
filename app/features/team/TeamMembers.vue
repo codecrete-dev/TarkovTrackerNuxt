@@ -44,7 +44,6 @@ import TeammemberCard from "@/features/team/TeammemberCard.vue";
 const { $supabase } = useNuxtApp();
 const { teamStore } = useTeamStoreWithSupabase();
 const teamMembers = ref([]);
-
 teamStore.$subscribe((mutation, state) => {
   if (state.members) {
     teamMembers.value = state.members;
@@ -52,11 +51,9 @@ teamStore.$subscribe((mutation, state) => {
     teamMembers.value = [];
   }
 });
-
 const isCurrentUserTeamOwner = computed(() => {
   const currentTeamOwner = teamStore.owner;
   const currentSupabaseUID = $supabase.user.id;
   return currentTeamOwner === currentSupabaseUID;
 });
 </script>
-<style scoped></style>

@@ -1,71 +1,106 @@
 <template>
-  <div class="container mx-auto px-4 py-6 max-w-6xl">
-    <UCard class="bg-surface-900 border border-white/10" :ui="{ body: 'p-0' }">
-      <div class="flex items-center gap-3 px-4 py-3 border-b border-white/10">
-        <UIcon
-          name="i-mdi-format-list-checks"
-          class="w-6 h-6 text-primary-400"
-        />
-        <h1 class="text-lg font-semibold text-surface-50">
-          {{ $t("page.neededitems.title") }}
-        </h1>
-        <div class="ml-auto flex items-center gap-2">
-          <UBadge color="neutral" variant="soft" size="xs">
+  <div class="px-4 py-6">
+    <UCard class="bg-contentbackground border border-white/5">
+      <!-- Filter Tabs & Controls -->
+      <div class="flex items-center justify-between px-4 py-3 border-b border-white/10">
+        <!-- Filter Tabs -->
+        <div class="flex gap-2">
+          <UButton
+            v-for="tab in filterTabs"
+            :key="tab.value"
+            :label="tab.label"
+            :variant="activeFilter === tab.value ? 'solid' : 'soft'"
+            :color="activeFilter === tab.value ? 'primary' : 'neutral'"
+            size="lg"
+            @click="activeFilter = tab.value"
+          />
+        </div>
+
+        <!-- Search Bar -->
+        <div class="flex-1 max-w-md mx-4">
+          <UInput
+            v-model="search"
+            :placeholder="$t('page.neededitems.searchplaceholder')"
+            icon="i-mdi-magnify"
+            clearable
+            :ui="inputUi"
+          />
+        </div>
+
+        <!-- Item Count & View Mode -->
+        <div class="flex items-center gap-3">
+          <UBadge color="neutral" variant="soft" size="md" class="text-sm px-3 py-1">
             {{ filteredItems.length }} items
           </UBadge>
-          <USwitch
-            v-model="isSmallView"
-            :ui="{
-              base: 'bg-surface-800 border border-white/10',
-              icon: 'text-white',
-            }"
-            class="shrink-0"
-          >
-            <template #on>
-              <UIcon name="i-mdi-view-list" class="w-4 h-4" />
-            </template>
-            <template #off>
-              <UIcon name="i-mdi-view-module" class="w-4 h-4" />
-            </template>
-          </USwitch>
+          <!-- View Mode Selector -->
+          <div class="flex gap-1">
+            <UButton
+              :icon="'i-mdi-view-list'"
+              :color="viewMode === 'list' ? 'primary' : 'neutral'"
+              :variant="viewMode === 'list' ? 'soft' : 'ghost'"
+              size="md"
+              @click="viewMode = 'list'"
+            />
+            <UButton
+              :icon="'i-mdi-view-module'"
+              :color="viewMode === 'bigGrid' ? 'primary' : 'neutral'"
+              :variant="viewMode === 'bigGrid' ? 'soft' : 'ghost'"
+              size="md"
+              @click="viewMode = 'bigGrid'"
+            />
+            <UButton
+              :icon="'i-mdi-view-grid'"
+              :color="viewMode === 'smallGrid' ? 'primary' : 'neutral'"
+              :variant="viewMode === 'smallGrid' ? 'soft' : 'ghost'"
+              size="md"
+              @click="viewMode = 'smallGrid'"
+            />
+          </div>
         </div>
       </div>
-      <div class="px-4 py-3 border-b border-white/10">
-        <UInput
-          v-model="search"
-          :placeholder="$t('page.neededitems.searchplaceholder')"
-          icon="i-mdi-magnify"
-          clearable
-          :ui="inputUi"
+
+      <!-- Items Container -->
+      <div
+        v-if="filteredItems.length === 0"
+        class="p-8 text-center text-surface-400"
+      >
+        {{ $t("page.neededitems.empty", "No items match your search.") }}
+      </div>
+
+      <!-- List View -->
+      <div v-else-if="viewMode === 'list'" class="divide-y divide-white/5">
+        <NeededItem
+          v-for="(item, index) in visibleItems"
+          :key="`${String(item.needType)}-${String(item.id)}`"
+          :need="item"
+          item-style="row"
+          :data-index="index"
         />
-      </div>
-      <div class="divide-y divide-white/5">
+        <!-- Sentinel for infinite scroll -->
         <div
-          v-if="filteredItems.length === 0"
-          class="p-4 text-sm text-surface-300"
-        >
-          {{ $t("page.neededitems.empty", "No items match your search.") }}
-        </div>
-        <div v-else class="divide-y divide-white/5">
+          v-if="visibleCount < filteredItems.length"
+          ref="listSentinel"
+          class="h-1"
+        ></div>
+      </div>
+
+      <!-- Grid Views -->
+      <div v-else class="p-2">
+        <div class="flex flex-wrap -m-1">
           <NeededItem
             v-for="(item, index) in visibleItems"
             :key="`${String(item.needType)}-${String(item.id)}`"
             :need="item"
-            :item-style="viewMode === 'small' ? 'smallCard' : 'mediumCard'"
+            :item-style="viewMode === 'bigGrid' ? 'mediumCard' : 'smallCard'"
             :data-index="index"
           />
-          <div
-            v-if="visibleCount < filteredItems.length"
-            class="p-4 flex justify-center"
-          >
-            <UButton
-              color="primary"
-              variant="soft"
-              label="Load More"
-              @click="loadMore"
-            />
-          </div>
         </div>
+        <!-- Sentinel for infinite scroll -->
+        <div
+          v-if="visibleCount < filteredItems.length"
+          ref="gridSentinel"
+          class="h-1 w-full"
+        ></div>
       </div>
     </UCard>
   </div>
@@ -74,55 +109,38 @@
 import { ref, computed, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useMetadataStore } from "@/stores/metadata";
-import { useBreakpoints } from "@vueuse/core";
+import { useProgressStore } from "@/stores/progress";
 import NeededItem from "@/features/neededitems/NeededItem.vue";
+import { useInfiniteScroll } from "@/composables/useInfiniteScroll";
 import type {
   NeededItemTaskObjective,
   NeededItemHideoutModule,
 } from "@/types/tarkov";
+
 const inputUi = {
   base: "w-full",
   input:
     "h-11 bg-surface-900 border border-white/15 text-surface-50 placeholder:text-surface-500 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-white/20",
   leadingIcon: "text-surface-300",
 };
-// Breakpoints aligned to Vuetify legacy values
-const breakpoints = useBreakpoints({
-  xs: 0,
-  sm: 600,
-  md: 960,
-});
-const name = computed(() => {
-  if (breakpoints.smaller("sm").value) return "xs";
-  if (breakpoints.smaller("md").value) return "sm";
-  return "md";
-});
+
 const metadataStore = useMetadataStore();
+const progressStore = useProgressStore();
 const { neededItemTaskObjectives, neededItemHideoutModules } =
   storeToRefs(metadataStore);
-// Initialize view mode based on screen size
-const initialViewMode = computed(() => {
-  // Use medium view on mobile and small screens
-  return ["xs", "sm"].includes(name.value) ? "medium" : "small";
-});
-// Use ref for view mode to allow reactive updates
-const viewMode = ref(initialViewMode.value);
-// Writable computed for the toggle
-const isSmallView = computed({
-  get: () => viewMode.value === "small",
-  set: (val) => {
-    viewMode.value = val ? "small" : "medium";
-  },
-});
-// Watch for screen size changes to update view mode automatically if user hasn't manually toggled?
-// Actually, let's just make viewMode reactive to the computed initialViewMode if we want it to auto-switch,
-// or just initialize it. The previous code had a manual listener.
-// Let's keep it simple: initialize it, and if we want it to be responsive, we can watch `name`.
-// But for now, let's just fix the crash. The user can toggle it manually.
-// If we want to mimic the previous behavior of updating on resize:
-watch(name, (newName) => {
-  viewMode.value = ["xs", "sm"].includes(newName) ? "medium" : "small";
-});
+
+// View mode state: 'list', 'bigGrid', or 'smallGrid'
+const viewMode = ref<"list" | "bigGrid" | "smallGrid">("list");
+
+// Filter state
+type FilterType = "all" | "tasks" | "hideout";
+const activeFilter = ref<FilterType>("all");
+const filterTabs: { label: string; value: FilterType }[] = [
+  { label: "All", value: "all" },
+  { label: "Tasks", value: "tasks" },
+  { label: "Hideout", value: "hideout" },
+];
+
 const allItems = computed(() => {
   const combined = [
     ...(neededItemTaskObjectives.value || []),
@@ -135,8 +153,6 @@ const allItems = computed(() => {
     string,
     NeededItemTaskObjective | NeededItemHideoutModule
   >();
-
-  let aggregationCount = 0;
 
   for (const need of combined) {
     let key: string;
@@ -177,38 +193,113 @@ const allItems = computed(() => {
     if (existing) {
       // Item already exists for this task/module, sum the counts
       existing.count += need.count;
-      aggregationCount++;
     } else {
       // First occurrence, clone the object to avoid mutating original
       aggregated.set(key, { ...need });
     }
   }
 
-  return Array.from(aggregated.values());
-});
-const search = ref("");
-const filteredItems = computed(() => {
-  if (!search.value) {
-    return allItems.value;
-  }
-  return allItems.value.filter((item) => {
-    // Some task objectives use markerItem instead of item; guard against missing objects
-    const itemName =
-      item.item?.name || (item as NeededItemTaskObjective).markerItem?.name;
-    return itemName?.toLowerCase().includes(search.value.toLowerCase());
+  // Filter out items that nobody needs anymore
+  const aggregatedArray = Array.from(aggregated.values());
+  return aggregatedArray.filter((need) => {
+    if (need.needType === "taskObjective") {
+      // Check if anyone still needs this objective
+      const objectiveCompletions = progressStore.objectiveCompletions?.[need.id];
+      const taskCompletions = progressStore.tasksCompletions?.[need.taskId];
+
+      if (!objectiveCompletions || !taskCompletions) return true;
+
+      // Return true if at least one team member hasn't completed the objective and task
+      return Object.keys(objectiveCompletions).some(
+        (user) => !objectiveCompletions[user] && !taskCompletions[user]
+      );
+    } else if (need.needType === "hideoutModule") {
+      // Check if anyone still needs this hideout module part
+      const partCompletions = progressStore.modulePartCompletions?.[need.id];
+
+      if (!partCompletions) return true;
+
+      // Return true if at least one team member hasn't completed the part
+      return Object.keys(partCompletions).some(
+        (user) => !partCompletions[user]
+      );
+    }
+    return true;
   });
 });
+
+const search = ref("");
+
+const filteredItems = computed(() => {
+  let items = allItems.value;
+
+  // Filter by type (All, Tasks, Hideout)
+  if (activeFilter.value === "tasks") {
+    items = items.filter((item) => item.needType === "taskObjective");
+  } else if (activeFilter.value === "hideout") {
+    items = items.filter((item) => item.needType === "hideoutModule");
+  }
+
+  // Filter by search
+  if (search.value) {
+    items = items.filter((item) => {
+      // Some task objectives use markerItem instead of item; guard against missing objects
+      const itemName =
+        item.item?.name || (item as NeededItemTaskObjective).markerItem?.name;
+      return itemName?.toLowerCase().includes(search.value.toLowerCase());
+    });
+  }
+
+  return items;
+});
+
 const visibleCount = ref(20);
 const visibleItems = computed(() => {
   return filteredItems.value.slice(0, visibleCount.value);
 });
+
 const loadMore = () => {
   if (visibleCount.value < filteredItems.value.length) {
     visibleCount.value += 20;
   }
 };
+
+// Sentinel refs for infinite scroll
+const listSentinel = ref<HTMLElement | null>(null);
+const gridSentinel = ref<HTMLElement | null>(null);
+
+// Determine which sentinel to use based on view mode
+const currentSentinel = computed(() => {
+  return viewMode.value === 'list' ? listSentinel.value : gridSentinel.value;
+});
+
+// Enable infinite scroll
+const infiniteScrollEnabled = computed(() => {
+  return visibleCount.value < filteredItems.value.length;
+});
+
+// Set up infinite scroll
+const { stop, start } = useInfiniteScroll(
+  currentSentinel,
+  loadMore,
+  {
+    rootMargin: '100px',
+    threshold: 0.1,
+    enabled: infiniteScrollEnabled.value,
+  }
+);
+
 // Reset visible count when search or filter changes
-watch([search, name], () => {
+watch([search, activeFilter], () => {
   visibleCount.value = 20;
+});
+
+// Watch for enabled state changes to restart observer
+watch(infiniteScrollEnabled, (newEnabled) => {
+  if (newEnabled) {
+    start();
+  } else {
+    stop();
+  }
 });
 </script>

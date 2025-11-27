@@ -13,6 +13,7 @@ export function markI18nReady() {
  */
 export function useSafeLocale() {
   const instance = getCurrentInstance();
+  console.log("[useSafeLocale] instance:", !!instance, "i18nReady:", i18nReady);
   if (instance && i18nReady) {
     try {
       // Use useI18n with explicit global scope to avoid parent scope warnings

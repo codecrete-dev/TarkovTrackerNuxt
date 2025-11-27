@@ -45,16 +45,13 @@
     </UAccordion>
   </div>
 </template>
-
 <script setup lang="ts">
 import { defineAsyncComponent, computed } from "vue";
 import { useTarkovTime } from "~/composables/useTarkovTime";
 import type { TarkovMap } from "~/types/tarkov";
-
 const TarkovMap = defineAsyncComponent(
   () => import("~/features/maps/TarkovMap.vue")
 );
-
 // Use structural types compatible with TarkovMap's expectations
 interface Props {
   show: boolean;
@@ -65,10 +62,8 @@ interface Props {
   }>;
   activeMapView: string;
 }
-
 const props = defineProps<Props>();
 const { tarkovTime } = useTarkovTime();
-
 // Alias for better readability in template
 const visibleMarks = computed(() => props.visibleMarkers);
 </script>

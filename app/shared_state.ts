@@ -20,6 +20,10 @@ interface HideoutModule {
   complete?: boolean;
   timestamp?: number;
 }
+export interface TraderProgress {
+  level: number;
+  reputation: number;
+}
 export interface UserProgressData {
   level: number;
   pmcFaction: "USEC" | "BEAR";
@@ -28,6 +32,7 @@ export interface UserProgressData {
   taskCompletions: { [taskId: string]: TaskCompletion };
   hideoutParts: { [objectiveId: string]: HideoutPart };
   hideoutModules: { [hideoutId: string]: HideoutModule };
+  traders: { [traderId: string]: TraderProgress };
 }
 export interface UserState {
   currentGameMode: GameMode;
@@ -43,6 +48,7 @@ const defaultProgressData: UserProgressData = {
   taskCompletions: {},
   hideoutParts: {},
   hideoutModules: {},
+  traders: {},
 };
 export const defaultState: UserState = {
   currentGameMode: GAME_MODES.PVP,
@@ -101,6 +107,7 @@ export function migrateToGameModeStructure(legacyData: unknown): UserState {
         (data.hideoutParts as UserProgressData["hideoutParts"]) || {},
       hideoutModules:
         (data.hideoutModules as UserProgressData["hideoutModules"]) || {},
+      traders: (data.traders as UserProgressData["traders"]) || {},
     };
     return {
       currentGameMode: data.currentGameMode as GameMode,
@@ -124,6 +131,7 @@ export function migrateToGameModeStructure(legacyData: unknown): UserState {
     hideoutParts: (data.hideoutParts as UserProgressData["hideoutParts"]) || {},
     hideoutModules:
       (data.hideoutModules as UserProgressData["hideoutModules"]) || {},
+    traders: (data.traders as UserProgressData["traders"]) || {},
   };
   return {
     currentGameMode: GAME_MODES.PVP, // Default to PvP for existing users
@@ -154,6 +162,7 @@ const getCurrentData = (state: UserState): UserProgressData => {
       taskObjectives: {},
       hideoutParts: {},
       hideoutModules: {},
+      traders: {},
     };
   }
   return state[state.currentGameMode];
@@ -189,6 +198,10 @@ export const getters = {
   getCurrentProgressData: (state: UserState) => () => getCurrentData(state),
   getPvPProgressData: (state: UserState) => () => state.pvp,
   getPvEProgressData: (state: UserState) => () => state.pve,
+  getTraderLevel: (state: UserState) => (traderId: string) =>
+    getCurrentData(state)?.traders?.[traderId]?.level ?? 1,
+  getTraderReputation: (state: UserState) => (traderId: string) =>
+    getCurrentData(state)?.traders?.[traderId]?.reputation ?? 0,
 } as const satisfies _GettersTree<UserState>;
 // Helper functions for common operations
 const createCompletion = (complete: boolean, failed = false) => ({
@@ -326,6 +339,12 @@ export const actions = {
     } else {
       actions.setHideoutModuleComplete.call(this, hideoutId);
     }
+  },
+  setTraderLevel(this: UserState, traderId: string, level: number) {
+    updateObjective(this, "traders", traderId, { level: Math.max(1, level) });
+  },
+  setTraderReputation(this: UserState, traderId: string, reputation: number) {
+    updateObjective(this, "traders", traderId, { reputation: reputation });
   },
 } as const;
 export type UserActions = typeof actions;

@@ -15,7 +15,7 @@
   </div>
   <div v-if="tooltipVisible" :style="tooltipStyle">
     <div
-      class="m-0 shadow-md rounded px-1 pt-2 bg-[#1e293b] border border-gray-700"
+      class="m-0 shadow-md rounded px-1 pt-2 bg-accent-800 border border-surface-700"
     >
       <task-link :task="relatedTask" show-wiki-link />
       <task-objective
@@ -119,7 +119,6 @@ const relativeLocation = computed(() => {
     Math.max(bounds[0][0], bounds[1][0]) - Math.min(bounds[0][0], bounds[1][0]);
   const mapHeight =
     Math.max(bounds[0][1], bounds[1][1]) - Math.min(bounds[0][1], bounds[1][1]);
-
   // Prevent division by zero if width or height is 0
   if (mapWidth === 0 || mapHeight === 0) {
     console.warn(

@@ -4,57 +4,68 @@ export const GAME_EDITIONS = [
     value: 1,
     traderRep: 0.0,
     defaultStashLevel: 1,
+    defaultCultistCircleLevel: 0,
   },
   {
     title: "Left Behind Edition",
     value: 2,
     traderRep: 0.0,
     defaultStashLevel: 2,
+    defaultCultistCircleLevel: 0,
   },
   {
     title: "Prepare for Escape Edition",
     value: 3,
     traderRep: 0.2,
     defaultStashLevel: 3,
+    defaultCultistCircleLevel: 0,
   },
   {
     title: "Edge of Darkness (Limited Edition)",
     value: 4,
     traderRep: 0.2,
     defaultStashLevel: 4,
+    defaultCultistCircleLevel: 0,
   },
   {
     title: "Unheard Edition",
     value: 5,
     traderRep: 0.2,
     defaultStashLevel: 5,
+    defaultCultistCircleLevel: 1,
   },
   {
     title: "Unheard + Edge Of Darkness (EOD) Edition",
     value: 6,
     traderRep: 0.2,
     defaultStashLevel: 5,
+    defaultCultistCircleLevel: 1,
   },
 ];
+// Special hideout stations with edition-based default levels
+// Uses normalizedName for language-independent, stable identification
+export const SPECIAL_STATIONS = {
+  STASH: "stash",
+  CULTIST_CIRCLE: "cultist-circle",
+} as const;
 
-export const STASH_STATION_ID = "5d484fc0654e76006657e0ab";
-export const CULTIST_CIRCLE_STATION_ID = "667298e75ea6b4493c08f266";
-
-export const PMC_FACTIONS = [
-  { title: "USEC", value: "USEC" },
-  { title: "BEAR", value: "BEAR" },
-];
+// PMC faction values
+export const PMC_FACTIONS = ["USEC", "BEAR"] as const;
+export const DEFAULT_PMC_FACTION = "USEC" as const;
+export type PMCFaction = (typeof PMC_FACTIONS)[number]; // "USEC" | "BEAR"
+// Helper to normalize and validate PMC faction input
+export function normalizePMCFaction(
+  input: string | undefined | null
+): PMCFaction {
+  if (!input) return DEFAULT_PMC_FACTION;
+  const upper = input.toUpperCase();
+  return PMC_FACTIONS.includes(upper as PMCFaction)
+    ? (upper as PMCFaction)
+    : DEFAULT_PMC_FACTION;
+}
 
 // Default values for game setup
-export const DEFAULT_PMC_FACTION = "USEC" as const;
 export const DEFAULT_GAME_EDITION = 1; // Standard Edition
-
-// PMC faction values for validation
-export const PMC_FACTION_VALUES = ["USEC", "BEAR"] as const;
-export const PMC_FACTION_VALUES_LOWERCASE = ["usec", "bear"] as const;
-
-// Edition IDs that unlock Cultist Circle (Unheard editions)
-export const UNHEARD_EDITION_IDS = [5, 6] as const;
 
 // Game edition string values for legacy data validation
 export const GAME_EDITION_STRING_VALUES = [
@@ -140,7 +151,6 @@ export const API_SUPPORTED_LANGUAGES = [
   "tr", // Turkish
   "zh", // Chinese
 ] as const;
-
 // Mapping from frontend locale to API language code
 // Used when the API doesn't support the specific locale
 export const LOCALE_TO_API_MAPPING: Record<string, string> = {

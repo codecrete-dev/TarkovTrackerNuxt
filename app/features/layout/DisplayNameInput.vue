@@ -20,11 +20,9 @@
     </UInput>
   </UFormGroup>
 </template>
-
 <script setup lang="ts">
 import { computed } from "vue";
 import { useTarkovStore } from "@/stores/tarkov";
-
 const tarkovStore = useTarkovStore();
 const displayName = computed({
   get: () => tarkovStore.getDisplayName() || "",
@@ -36,7 +34,6 @@ const displayName = computed({
     }
   },
 });
-
 const clearDisplayName = () => {
   tarkovStore.setDisplayName(null);
 };

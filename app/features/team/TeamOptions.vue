@@ -11,21 +11,17 @@
       <div class="p-4 space-y-4">
         <div class="flex items-center justify-between">
           <div class="text-sm font-medium">{{ $t(taskHideAllLabel) }}</div>
-          <UToggle
-            v-model="taskHideAll"
-            on-icon="i-mdi-eye-off"
-            off-icon="i-mdi-eye"
-            color="red"
-          />
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" v-model="taskHideAll" class="sr-only peer">
+            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
+          </label>
         </div>
         <div class="flex items-center justify-between">
           <div class="text-sm font-medium">{{ $t(itemsHideAllLabel) }}</div>
-          <UToggle
-            v-model="itemsHideAll"
-            on-icon="i-mdi-eye-off"
-            off-icon="i-mdi-eye"
-            color="red"
-          />
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" v-model="itemsHideAll" class="sr-only peer">
+            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
+          </label>
         </div>
         <div class="flex items-center justify-between">
           <div
@@ -34,13 +30,10 @@
           >
             {{ $t(itemsHideNonFIRLabel) }}
           </div>
-          <UToggle
-            v-model="itemsHideNonFIR"
-            :disabled="itemsHideAll"
-            on-icon="i-mdi-eye-off"
-            off-icon="i-mdi-eye"
-            color="red"
-          />
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" v-model="itemsHideNonFIR" :disabled="itemsHideAll" class="sr-only peer">
+            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed"></div>
+          </label>
         </div>
         <div class="flex items-center justify-between">
           <div
@@ -49,22 +42,17 @@
           >
             {{ $t(itemsHideHideoutLabel) }}
           </div>
-          <UToggle
-            v-model="itemsHideHideout"
-            :disabled="itemsHideAll"
-            on-icon="i-mdi-eye-off"
-            off-icon="i-mdi-eye"
-            color="red"
-          />
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" v-model="itemsHideHideout" :disabled="itemsHideAll" class="sr-only peer">
+            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed"></div>
+          </label>
         </div>
         <div class="flex items-center justify-between">
           <div class="text-sm font-medium">{{ $t(mapHideAllLabel) }}</div>
-          <UToggle
-            v-model="mapHideAll"
-            on-icon="i-mdi-eye-off"
-            off-icon="i-mdi-eye"
-            color="red"
-          />
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" v-model="mapHideAll" class="sr-only peer">
+            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
+          </label>
         </div>
       </div>
     </template>
@@ -121,4 +109,3 @@ const mapHideAllLabel = computed(() =>
     : "page.team.card.teamoptions.map_show_all"
 );
 </script>
-<style scoped></style>

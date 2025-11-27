@@ -66,8 +66,7 @@ const AlternativesList = defineAsyncComponent(() =>
   import("./AlternativesList")
 );
 const completeButtonUi = {
-  base:
-    "bg-[#2BA86A] hover:bg-[#25965f] active:bg-[#1f8250] text-white border border-[#1f8250]",
+  base: "bg-success-500 hover:bg-success-600 active:bg-success-700 text-white border border-success-700",
 };
 defineProps({
   task: { type: Object, required: true },

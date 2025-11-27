@@ -5,6 +5,7 @@
     @mouseenter="linkHover = true"
     @mouseleave="linkHover = false"
     @click="handleClick"
+    @contextmenu="handleContextMenu"
   >
     <!-- Simple image display mode (for ItemImage compatibility) -->
     <div v-if="simpleMode" :class="imageContainerClasses" class="relative overflow-hidden">
@@ -26,8 +27,8 @@
     </div>
 
     <!-- Full item display mode (for TarkovItem compatibility) -->
-    <div v-else class="flex items-center justify-center transition-all duration-200 w-full h-full"
-      :class="{ 'blur-[1px] opacity-50': linkHover && showActions }"
+    <div v-else class="flex items-center justify-start transition-all duration-200 w-full h-full"
+      :class="{ 'opacity-50': linkHover && showActions }"
     >
       <div class="flex items-center justify-center mr-2">
         <img
@@ -40,9 +41,27 @@
           @error="handleImgError"
         />
       </div>
-      <div v-if="props.count" class="mr-2 text-sm font-medium text-gray-300">
+
+      <!-- Counter controls for multi-item objectives -->
+      <div
+        v-if="showCounter"
+        class="mr-2"
+        @click.stop
+      >
+        <ItemCountControls
+          :current-count="currentCount"
+          :needed-count="neededCount"
+          @decrease="emit('decrease')"
+          @increase="emit('increase')"
+          @toggle="emit('toggle')"
+        />
+      </div>
+
+      <!-- Simple count display for single items -->
+      <div v-else-if="props.count" class="mr-2 text-sm font-medium text-gray-300">
         {{ props.count.toLocaleString() }}
       </div>
+
       <div
         v-if="props.itemName"
         class="flex items-center justify-center text-sm font-bold text-white text-center leading-tight"
@@ -52,72 +71,88 @@
     </div>
 
     <!-- Hover actions (only in full mode) -->
-    <div
-      v-if="!simpleMode && showActions && linkHover"
-      class="absolute inset-0 flex items-center justify-center z-10 gap-2"
-    >
-      <UButton
-        v-if="props.wikiLink"
-        color="primary"
-        variant="solid"
-        size="xs"
-        class="rounded-full p-1"
-        title="Show item on EFT Wiki"
-        @click.stop="openWikiLink()"
-      >
-        <img
-          src="/img/logos/wikilogo.png"
-          class="w-5 h-5 object-contain"
-          alt="Wiki"
+    <!-- Removed hover overlay as per request -->
+
+    <!-- Context Menu -->
+    <ContextMenu ref="contextMenu">
+      <template #default="{ close }">
+        <!-- Task Options -->
+        <template v-if="props.taskWikiLink">
+          <ContextMenuItem
+            icon="i-mdi-wikipedia"
+            :label="`View Task on Wiki`"
+            @click="openTaskWiki(); close()"
+          />
+          <div v-if="props.wikiLink || props.devLink || props.itemName" class="border-t border-gray-700 my-1" />
+        </template>
+
+        <!-- Item Options -->
+        <ContextMenuItem
+          v-if="props.itemName && props.wikiLink"
+          icon="i-mdi-wikipedia"
+          :label="`View ${props.itemName} on Wiki`"
+          @click="openWikiLink(); close()"
         />
-      </UButton>
-      <UButton
-        v-if="props.devLink"
-        color="primary"
-        variant="solid"
-        size="xs"
-        class="rounded-full p-1"
-        title="Show item on Tarkov.dev"
-        @click.stop="openTarkovDevLink()"
-      >
-        <img
-          src="/img/logos/tarkovdevlogo.png"
-          class="w-5 h-5 object-contain"
-          alt="Tarkov.dev"
+        <ContextMenuItem
+          v-if="props.itemName && props.devLink"
+          icon="i-mdi-web"
+          :label="`View ${props.itemName} on Tarkov.dev`"
+          @click="openTarkovDevLink(); close()"
         />
-      </UButton>
-      <UButton
-        v-if="props.itemName"
-        color="primary"
-        variant="solid"
-        size="xs"
-        class="rounded-full p-1"
-        title="Copy Item Name"
-        @click.stop="copyItemName()"
-      >
-        <UIcon name="i-mdi-content-copy" class="w-4 h-4 text-white" />
-      </UButton>
-    </div>
+        <template v-if="!props.itemName">
+          <ContextMenuItem
+            v-if="props.wikiLink"
+            icon="i-mdi-wikipedia"
+            label="View on Wiki"
+            @click="openWikiLink(); close()"
+          />
+          <ContextMenuItem
+            v-if="props.devLink"
+            icon="i-mdi-web"
+            label="View on Tarkov.dev"
+            @click="openTarkovDevLink(); close()"
+          />
+        </template>
+        <div v-if="props.itemName && (props.wikiLink || props.devLink)" class="border-t border-gray-700 my-1" />
+        <ContextMenuItem
+          v-if="props.itemName"
+          icon="i-mdi-content-copy"
+          label="Copy Item Name"
+          @click="copyItemName(); close()"
+        />
+      </template>
+    </ContextMenu>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, defineAsyncComponent } from 'vue'
+import ContextMenu from './ContextMenu.vue'
+import ContextMenuItem from './ContextMenuItem.vue'
+
+const ItemCountControls = defineAsyncComponent(() =>
+  import('@/features/neededitems/components/ItemCountControls.vue')
+)
 
 interface Props {
   // Basic item identification
   itemId?: string
   itemName?: string | null
-  
+
   // Image sources (multiple options for flexibility)
   src?: string
   iconLink?: string
   image512pxLink?: string
-  
+
   // External links
   devLink?: string | null
   wikiLink?: string | null
-  
+
+  // Task context (for showing task options in context menu)
+  taskId?: string | null
+  taskName?: string | null
+  taskWikiLink?: string | null
+
   // Display options
   count?: number | null
   size?: 'small' | 'medium' | 'large'
@@ -125,10 +160,15 @@ interface Props {
   showActions?: boolean
   isVisible?: boolean
   backgroundColor?: string
-  
+
   // Click handling
   clickable?: boolean
-  
+
+  // Counter controls
+  showCounter?: boolean
+  currentCount?: number
+  neededCount?: number
+
   // Legacy compatibility
   imageItem?: {
     iconLink?: string
@@ -145,6 +185,9 @@ const props = withDefaults(defineProps<Props>(), {
   image512pxLink: '',
   devLink: null,
   wikiLink: null,
+  taskId: null,
+  taskName: null,
+  taskWikiLink: null,
   count: null,
   size: 'medium',
   simpleMode: false,
@@ -152,14 +195,21 @@ const props = withDefaults(defineProps<Props>(), {
   isVisible: true,
   backgroundColor: '',
   clickable: false,
+  showCounter: false,
+  currentCount: 0,
+  neededCount: 1,
   imageItem: undefined
 })
 
 const emit = defineEmits<{
   click: [event: MouseEvent]
+  increase: []
+  decrease: []
+  toggle: []
 }>()
 
 const linkHover = ref(false)
+const contextMenu = ref<InstanceType<typeof ContextMenu>>()
 
 // Compute image source based on available props
 const computedImageSrc = computed(() => {
@@ -168,7 +218,7 @@ const computedImageSrc = computed(() => {
   if (props.iconLink) return props.iconLink
   if (props.imageItem?.iconLink) return props.imageItem.iconLink
   if (props.imageItem?.image512pxLink && props.size === 'large') return props.imageItem.image512pxLink
-  if (props.itemId) return `https://assets.tarkov.dev/${props.itemId}-icon.jpg`
+  if (props.itemId) return `https://assets.tarkov.dev/${props.itemId}-icon.webp`
   return ''
 })
 
@@ -219,27 +269,9 @@ const imageClasses = computed(() => {
 
 // Image error handling
 const handleImgError = () => {
-  if (props.itemId) {
-    // If .jpg fails, try .webp
-    const currentSrc = computedImageSrc.value
-    if (currentSrc?.endsWith('.jpg')) {
-      // This will trigger a re-computation of the image source
-      const newSrc = `https://assets.tarkov.dev/${props.itemId}-icon.webp`
-      // Update the source by temporarily modifying the itemId to force reactivity
-      const originalId = props.itemId
-      // Force reactivity by triggering a watch
-      // The component will re-render with the webp version
-    }
-  }
+  // Log error for debugging if needed
+  console.warn(`Failed to load image for item: ${props.itemId || 'unknown'}`)
 }
-
-// Watch for itemId changes to reset image source
-watch(
-  () => props.itemId,
-  () => {
-    // This ensures the image source recomputes when itemId changes
-  }
-)
 
 // Action methods
 const openTarkovDevLink = () => {
@@ -265,6 +297,19 @@ const handleClick = (event: MouseEvent) => {
     emit('click', event)
   }
 }
+
+const handleContextMenu = (event: MouseEvent) => {
+  // Only show context menu if there are links available
+  if (props.devLink || props.wikiLink || props.itemName || props.taskWikiLink) {
+    contextMenu.value?.open(event)
+  }
+}
+
+const openTaskWiki = () => {
+  if (props.taskWikiLink) {
+    window.open(props.taskWikiLink, '_blank')
+  }
+}
 </script>
 
 <style scoped>
@@ -283,6 +328,6 @@ const handleClick = (event: MouseEvent) => {
 }
 
 .image-placeholder {
-  background-color: #374151;
+  background-color: var(--color-surface-800);
 }
 </style>

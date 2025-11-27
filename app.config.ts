@@ -3,9 +3,9 @@ export default defineAppConfig({
   ui: {
     // ✅ Nuxt UI v4: Map semantic color names to palette names defined in @theme (tailwind.css)
     colors: {
-      primary: "brand", // gold accent (#9a8866)
-      secondary: "accent", // slate/steel (#242f35)
-      neutral: "surface", // ✅ THIS FIXES THE BUTTON ISSUE - dark grays for neutral UI elements
+      primary: "primary", // brand tan
+      secondary: "secondary", // brand dark
+      neutral: "surface", // dark grays for neutral UI elements
 
       // Game mode colors - map to in-game color palettes
       pvp: "pvp", // in-game PvP tan (#DBD5C1)
@@ -14,8 +14,8 @@ export default defineAppConfig({
       // Semantic colors - map to Tailwind's default palettes or custom ones
       info: "accent",
       success: "success",
-      warning: "yellow",
-      error: "red",
+      warning: "warning",
+      error: "error",
     },
 
     header: {
@@ -104,13 +104,13 @@ export default defineAppConfig({
             link: "text-pve-400 hover:text-pve-300 underline-offset-4 hover:underline",
           },
           success: {
-            solid: "bg-[#2BA86A] hover:bg-[#25965f] active:bg-[#1f8250] text-white",
+            solid: "bg-success-500 hover:bg-success-600 active:bg-success-700 text-white",
             outline:
-              "ring ring-inset ring-[#2BA86A] text-[#2BA86A] hover:bg-[#0f2419] hover:text-white",
-            soft: "bg-[#103222] hover:bg-[#12422b] text-[#9fe8c0]",
-            ghost: "text-[#2BA86A] hover:bg-[#0f2419]",
+              "ring ring-inset ring-success-500 text-success-500 hover:bg-success-950 hover:text-white",
+            soft: "bg-success-950 hover:bg-success-900 text-success-200",
+            ghost: "text-success-500 hover:bg-success-950",
             link:
-              "text-[#2BA86A] hover:text-[#55d091] underline-offset-4 hover:underline",
+              "text-success-500 hover:text-success-400 underline-offset-4 hover:underline",
           },
         },
       },

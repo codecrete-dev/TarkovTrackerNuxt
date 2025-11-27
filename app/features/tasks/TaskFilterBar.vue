@@ -1,113 +1,180 @@
 <template>
-  <div class="space-y-3 mb-4">
-    <!-- Primary View Filter: ALL / MAPS / TRADERS -->
-    <div class="flex flex-wrap items-center gap-2">
+  <div class="space-y-3 mb-6">
+    <!-- Primary View Filter: ALL / MAPS / TRADERS (Centered) -->
+    <div class="flex justify-center items-center gap-2 bg-[hsl(240,5%,5%)] rounded-lg py-3 px-4">
       <UButton
-        :variant="primaryView === 'all' ? 'solid' : 'outline'"
-        :color="primaryView === 'all' ? 'primary' : 'neutral'"
-        size="sm"
+        :variant="'ghost'"
+        :color="'neutral'"
+        size="md"
+        :class="{ 'border-b-2 border-primary-500 rounded-none': primaryView === 'all' }"
         @click="setPrimaryView('all')"
       >
-        <UIcon name="i-mdi-checkbox-multiple-marked" class="w-4 h-4 mr-1" />
-        {{ t("page.tasks.primaryviews.all") }}
+        <UIcon name="i-mdi-checkbox-multiple-marked" class="w-5 h-5 mr-2" />
+        {{ t("page.tasks.primaryviews.all").toUpperCase() }}
       </UButton>
 
       <UButton
-        :variant="primaryView === 'maps' ? 'solid' : 'outline'"
-        :color="primaryView === 'maps' ? 'primary' : 'neutral'"
-        size="sm"
+        :variant="'ghost'"
+        :color="'neutral'"
+        size="md"
+        :class="{ 'border-b-2 border-primary-500 rounded-none': primaryView === 'maps' }"
         @click="setPrimaryView('maps')"
       >
-        <UIcon name="i-mdi-map" class="w-4 h-4 mr-1" />
-        {{ t("page.tasks.primaryviews.maps") }}
+        <UIcon name="i-mdi-map" class="w-5 h-5 mr-2" />
+        {{ t("page.tasks.primaryviews.maps").toUpperCase() }}
       </UButton>
 
       <UButton
-        :variant="primaryView === 'traders' ? 'solid' : 'outline'"
-        :color="primaryView === 'traders' ? 'primary' : 'neutral'"
-        size="sm"
+        :variant="'ghost'"
+        :color="'neutral'"
+        size="md"
+        :class="{ 'border-b-2 border-primary-500 rounded-none': primaryView === 'traders' }"
         @click="setPrimaryView('traders')"
       >
-        <UIcon name="i-mdi-account-group" class="w-4 h-4 mr-1" />
-        {{ t("page.tasks.primaryviews.traders") }}
+        <UIcon name="i-mdi-account-group" class="w-5 h-5 mr-2" />
+        {{ t("page.tasks.primaryviews.traders").toUpperCase() }}
       </UButton>
+    </div>
 
-      <!-- Map selector (shown when MAPS is selected) -->
+    <!-- Secondary filters container - responsive stacking -->
+    <div class="flex flex-wrap gap-3 w-full">
+      <!-- Section 1: Status filters (AVAILABLE / LOCKED / COMPLETED) - minimal width -->
+      <div class="flex items-center gap-2 bg-[hsl(240,5%,5%)] rounded-lg py-3 px-4 w-auto">
+        <UButton
+          :variant="'ghost'"
+          :color="'neutral'"
+          size="sm"
+          :class="{ 'border-b-2 border-primary-500 rounded-none': secondaryView === 'available' }"
+          @click="setSecondaryView('available')"
+        >
+          <UIcon name="i-mdi-clipboard-text" class="w-4 h-4 mr-1" />
+          {{ t("page.tasks.secondaryviews.available").toUpperCase() }}
+          <span class="ml-2 inline-flex items-center justify-center min-w-7 h-7 px-1.5 text-sm font-bold text-white bg-primary-500 rounded-full">
+            {{ statusCounts.available }}
+          </span>
+        </UButton>
+
+        <UButton
+          :variant="'ghost'"
+          :color="'neutral'"
+          size="sm"
+          :class="{ 'border-b-2 border-primary-500 rounded-none': secondaryView === 'locked' }"
+          @click="setSecondaryView('locked')"
+        >
+          <UIcon name="i-mdi-lock" class="w-4 h-4 mr-1" />
+          {{ t("page.tasks.secondaryviews.locked").toUpperCase() }}
+          <span
+            class="ml-2 inline-flex items-center justify-center min-w-7 h-7 px-1.5 text-sm font-bold text-white bg-gray-600 rounded-full"
+          >
+            {{ statusCounts.locked }}
+          </span>
+        </UButton>
+
+        <UButton
+          :variant="'ghost'"
+          :color="'neutral'"
+          size="sm"
+          :class="{ 'border-b-2 border-primary-500 rounded-none': secondaryView === 'completed' }"
+          @click="setSecondaryView('completed')"
+        >
+          <UIcon name="i-mdi-check-circle" class="w-4 h-4 mr-1" />
+          {{ t("page.tasks.secondaryviews.completed").toUpperCase() }}
+          <span
+            class="ml-2 inline-flex items-center justify-center min-w-7 h-7 px-1.5 text-sm font-bold text-white bg-green-600 rounded-full"
+          >
+            {{ statusCounts.completed }}
+          </span>
+        </UButton>
+      </div>
+
+      <!-- Section 2: Player/Team view buttons - grows to fill space -->
+      <div class="flex items-center justify-center gap-2 bg-[hsl(240,5%,5%)] rounded-lg py-3 px-4 flex-1">
+        <UButton
+          :variant="'ghost'"
+          :color="'neutral'"
+          size="sm"
+          :class="{ 'border-b-2 border-primary-500 rounded-none': preferencesStore.getTaskUserView === 'self' }"
+          @click="onUserViewSelect({ label: t('page.tasks.userviews.yourself'), value: 'self' })"
+        >
+          <UIcon name="i-mdi-account-outline" class="w-4 h-4 mr-1" />
+          {{ t("page.tasks.userviews.yourself").toUpperCase() }}
+        </UButton>
+
+        <UButton
+          :variant="'ghost'"
+          :color="'neutral'"
+          size="sm"
+          :class="{ 'border-b-2 border-primary-500 rounded-none': preferencesStore.getTaskUserView === 'all' }"
+          @click="onUserViewSelect({ label: t('page.tasks.userviews.all'), value: 'all' })"
+        >
+          <UIcon name="i-mdi-account-multiple" class="w-4 h-4 mr-1" />
+          {{ t("page.tasks.userviews.all").toUpperCase() }}
+        </UButton>
+      </div>
+
+      <!-- Section 3: Settings button - fixed width -->
+      <div class="flex items-center bg-[hsl(240,5%,5%)] rounded-lg py-3 px-4 w-auto">
+        <UButton
+          :variant="'ghost'"
+          :color="'neutral'"
+          size="sm"
+        >
+          <UIcon name="i-mdi-tune" class="w-4 h-4 mr-1" />
+          TASK SETTINGS
+        </UButton>
+      </div>
+    </div>
+
+    <!-- Map selector (shown when MAPS is selected) -->
+    <div v-if="primaryView === 'maps' && maps.length > 0" class="flex justify-center">
       <USelectMenu
-        v-if="primaryView === 'maps' && maps.length > 0"
         :model-value="selectedMapObject"
         :items="mapOptions"
-        class="min-w-[180px]"
-        size="sm"
+        class="min-w-[200px]"
+        size="md"
         @update:model-value="onMapSelect"
       >
         <template #leading>
-          <UIcon name="i-mdi-map-marker" class="w-4 h-4" />
-        </template>
-      </USelectMenu>
-
-      <!-- Trader selector (shown when TRADERS is selected) -->
-      <USelectMenu
-        v-if="primaryView === 'traders' && traders.length > 0"
-        :model-value="selectedTraderObject"
-        :items="traderOptions"
-        class="min-w-[180px]"
-        size="sm"
-        @update:model-value="onTraderSelect"
-      >
-        <template #leading>
-          <UIcon name="i-mdi-account" class="w-4 h-4" />
+          <UIcon name="i-mdi-map-marker" class="w-5 h-5" />
         </template>
       </USelectMenu>
     </div>
 
-    <!-- Secondary View Filter: AVAILABLE / LOCKED / COMPLETED -->
-    <div class="flex flex-wrap items-center gap-2">
-      <UButton
-        :variant="secondaryView === 'available' ? 'solid' : 'outline'"
-        :color="secondaryView === 'available' ? 'primary' : 'neutral'"
-        size="sm"
-        @click="setSecondaryView('available')"
-      >
-        <UIcon name="i-mdi-checkbox-blank-circle" class="w-4 h-4 mr-1" />
-        {{ t("page.tasks.secondaryviews.available") }}
-      </UButton>
-
-      <UButton
-        :variant="secondaryView === 'locked' ? 'solid' : 'outline'"
-        :color="secondaryView === 'locked' ? 'primary' : 'neutral'"
-        :disabled="preferencesStore.getTaskUserView === 'all'"
-        size="sm"
-        @click="setSecondaryView('locked')"
-      >
-        <UIcon name="i-mdi-lock" class="w-4 h-4 mr-1" />
-        {{ t("page.tasks.secondaryviews.locked") }}
-      </UButton>
-
-      <UButton
-        :variant="secondaryView === 'completed' ? 'solid' : 'outline'"
-        :color="secondaryView === 'completed' ? 'primary' : 'neutral'"
-        :disabled="preferencesStore.getTaskUserView === 'all'"
-        size="sm"
-        @click="setSecondaryView('completed')"
-      >
-        <UIcon name="i-mdi-check-circle" class="w-4 h-4 mr-1" />
-        {{ t("page.tasks.secondaryviews.completed") }}
-      </UButton>
-
-      <!-- User View Selector (Yourself / All) -->
-      <div class="ml-auto flex items-center gap-2">
-        <USelectMenu
-          :model-value="userViewObject"
-          :items="userViewOptions"
-          class="min-w-[140px]"
-          size="sm"
-          @update:model-value="onUserViewSelect"
+    <!-- Trader selector (shown when TRADERS is selected) - Horizontal scrollable -->
+    <div v-if="primaryView === 'traders' && traders.length > 0" class="w-full overflow-x-auto">
+      <div class="flex gap-3 px-2 py-2 bg-[hsl(240,5%,5%)] rounded-lg justify-center">
+        <button
+          v-for="trader in traders"
+          :key="trader.id"
+          @click="onTraderSelect({ label: trader.name, value: trader.id })"
+          :class="[
+            'flex flex-col items-center justify-center gap-2 px-3 py-3 rounded-lg transition-all',
+            'w-28 relative',
+            'hover:bg-white/5',
+            preferencesStore.getTaskTraderView === trader.id
+              ? 'bg-white/10 border-b-2 border-primary-500'
+              : 'border-b-2 border-transparent'
+          ]"
         >
-          <template #leading>
-            <UIcon name="i-mdi-account-outline" class="w-4 h-4" />
-          </template>
-        </USelectMenu>
+          <div class="relative">
+            <img
+              v-if="trader.imageLink"
+              :src="trader.imageLink"
+              :alt="trader.name"
+              class="w-12 h-12 rounded-full object-cover bg-gray-800"
+            />
+            <UIcon v-else name="i-mdi-account-circle" class="w-12 h-12 text-gray-400" />
+            <span
+              :class="[
+                'absolute -top-1 -right-1 inline-flex items-center justify-center min-w-6 h-6 px-1 text-sm font-bold text-white rounded-full border-2 border-[hsl(240,5%,5%)]',
+                (traderCounts[trader.id] ?? 0) > 0 ? 'bg-primary-500' : 'bg-gray-600'
+              ]"
+            >
+              {{ traderCounts[trader.id] ?? 0 }}
+            </span>
+          </div>
+          <span class="text-xs font-medium text-gray-300 whitespace-nowrap">{{ trader.name }}</span>
+        </button>
       </div>
     </div>
   </div>
@@ -118,12 +185,26 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePreferencesStore } from "@/stores/preferences";
 import { useMetadataStore } from "@/stores/metadata";
+import { useTaskFiltering } from "@/composables/useTaskFiltering";
 
 const { t } = useI18n({ useScope: "global" });
 const preferencesStore = usePreferencesStore();
 const metadataStore = useMetadataStore();
+const { calculateStatusCounts, calculateTraderCounts } = useTaskFiltering();
+
 const maps = computed(() => metadataStore.maps);
 const traders = computed(() => metadataStore.traders);
+
+// Calculate task counts for badges
+const statusCounts = computed(() => {
+  const userView = preferencesStore.getTaskUserView;
+  return calculateStatusCounts(userView);
+});
+
+const traderCounts = computed(() => {
+  const userView = preferencesStore.getTaskUserView;
+  return calculateTraderCounts(userView);
+});
 
 // Primary view (all / maps / traders)
 const primaryView = computed(() => preferencesStore.getTaskPrimaryView);
@@ -186,21 +267,6 @@ const onMapSelect = (selected: { label: string; value: string }) => {
 };
 
 // Trader selection
-const traderOptions = computed(() => {
-  return traders.value.map((trader) => ({
-    label: trader.name,
-    value: trader.id,
-  }));
-});
-
-const selectedTraderObject = computed(() => {
-  const currentTraderId = preferencesStore.getTaskTraderView;
-  return (
-    traderOptions.value.find((option) => option.value === currentTraderId) ||
-    traderOptions.value[0]
-  );
-});
-
 const onTraderSelect = (selected: { label: string; value: string }) => {
   if (selected?.value) {
     preferencesStore.setTaskTraderView(selected.value);
@@ -208,37 +274,9 @@ const onTraderSelect = (selected: { label: string; value: string }) => {
 };
 
 // User view selection (yourself / all team members)
-const userViewOptions = computed(() => [
-  {
-    label: t("page.tasks.userviews.yourself"),
-    value: "self",
-  },
-  {
-    label: t("page.tasks.userviews.all"),
-    value: "all",
-  },
-]);
-
-const userViewObject = computed(() => {
-  const currentUserView = preferencesStore.getTaskUserView;
-  return (
-    userViewOptions.value.find((option) => option.value === currentUserView) ||
-    userViewOptions.value[0]
-  );
-});
-
 const onUserViewSelect = (selected: { label: string; value: string }) => {
   if (selected?.value) {
     preferencesStore.setTaskUserView(selected.value);
-
-    // When switching to "all" users view, force secondary view to "available"
-    // since the filtering logic only supports "available" for team view
-    if (
-      selected.value === "all" &&
-      preferencesStore.getTaskSecondaryView !== "available"
-    ) {
-      preferencesStore.setTaskSecondaryView("available");
-    }
   }
 };
 </script>

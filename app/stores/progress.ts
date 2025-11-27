@@ -10,9 +10,7 @@ import type { UserState, UserProgressData } from "~/shared_state";
 import {
   GAME_MODES,
   GAME_EDITIONS,
-  STASH_STATION_ID,
-  CULTIST_CIRCLE_STATION_ID,
-  UNHEARD_EDITION_IDS,
+  SPECIAL_STATIONS,
 } from "@/utils/constants";
 function getGameModeData(
   store: Store<string, UserState> | undefined
@@ -233,7 +231,7 @@ export const useProgressStore = defineStore("progress", () => {
           }
         }
         let currentStationDisplayLevel;
-        if (station.id === STASH_STATION_ID) {
+        if (station.normalizedName === SPECIAL_STATIONS.STASH) {
           const gameEditionVersion = store?.$state.gameEdition ?? 0;
           const edition = gameEditionData.value.find(
             (e) => e.value === gameEditionVersion
@@ -252,16 +250,24 @@ export const useProgressStore = defineStore("progress", () => {
               maxManuallyCompletedLevel
             );
           }
-        } else if (station.id === CULTIST_CIRCLE_STATION_ID) {
+        } else if (station.normalizedName === SPECIAL_STATIONS.CULTIST_CIRCLE) {
           const gameEditionVersion = store?.$state.gameEdition ?? 0;
-          if (
-            (UNHEARD_EDITION_IDS as readonly number[]).includes(gameEditionVersion) &&
-            station.levels &&
-            station.levels.length > 0
-          ) {
-            currentStationDisplayLevel = station.levels.length;
+          const edition = gameEditionData.value.find(
+            (e) => e.value === gameEditionVersion
+          );
+          const defaultCultistCircleFromEdition = edition?.defaultCultistCircleLevel ?? 0;
+          const maxLevel = station.levels?.length || 0;
+          const effectiveCultistCircleLevel = Math.min(
+            defaultCultistCircleFromEdition,
+            maxLevel
+          );
+          if (effectiveCultistCircleLevel === maxLevel) {
+            currentStationDisplayLevel = maxLevel;
           } else {
-            currentStationDisplayLevel = maxManuallyCompletedLevel;
+            currentStationDisplayLevel = Math.max(
+              effectiveCultistCircleLevel,
+              maxManuallyCompletedLevel
+            );
           }
         } else {
           currentStationDisplayLevel = maxManuallyCompletedLevel;

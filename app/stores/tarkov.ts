@@ -19,22 +19,7 @@ type TarkovStoreInstance = UserState & {
 // Create typed getters object with the additional store-specific getters
 const tarkovGetters = {
   ...getters,
-  isTaskComplete: function (state: UserState) {
-    return (taskId: string) => {
-      (
-        this as unknown as { migrateDataIfNeeded: () => void }
-      ).migrateDataIfNeeded();
-      return getters.isTaskComplete(state)(taskId);
-    };
-  },
-  isTaskFailed: function (state: UserState) {
-    return (taskId: string) => {
-      (
-        this as unknown as { migrateDataIfNeeded: () => void }
-      ).migrateDataIfNeeded();
-      return getters.isTaskFailed(state)(taskId);
-    };
-  },
+  // Removed side-effect causing getters. Migration should be handled in actions or initialization.
 } satisfies _GettersTree<UserState>;
 
 // Create typed actions object with the additional store-specific actions
@@ -234,6 +219,7 @@ const tarkovActions = {
           game_edition: freshDefaultState.gameEdition,
           pvp_data: freshDefaultState.pvp,
           pve_data: freshDefaultState.pve,
+          // Ensure we don't lose the ID
         });
       }
 
@@ -290,8 +276,16 @@ export const useTarkovStore = defineStore("swapTarkov", {
           const nuxtApp = useNuxtApp();
           currentUserId = nuxtApp.$supabase?.user?.id || null;
         } catch {
-          // Nuxt app not available during SSR or initial load
+          // console.warn("[TarkovStore] Nuxt app not available during serialize");
         }
+
+        // const userState = state as UserState;
+        // console.log("[TarkovStore] Serializing state", {
+        //   userId: currentUserId,
+        //   level: userState.pvp?.level,
+        //   tasksCompleted: Object.keys(userState.pvp?.taskCompletions || {})
+        //     .length,
+        // });
 
         // Wrap state with userId for validation on restore
         const wrappedState = {
@@ -302,6 +296,7 @@ export const useTarkovStore = defineStore("swapTarkov", {
         return JSON.stringify(wrappedState);
       },
       deserialize: (value: string) => {
+        // console.log("[TarkovStore] Deserializing from localStorage");
         try {
           const parsed = JSON.parse(value);
 
@@ -332,7 +327,7 @@ export const useTarkovStore = defineStore("swapTarkov", {
                 `Stored: ${storedUserId}, Current: ${currentUserId}. ` +
                 `Backing up and clearing localStorage to prevent data corruption.`
             );
-            
+
             // Backup the corrupted/mismatching localStorage
             if (typeof window !== "undefined") {
               try {
@@ -341,7 +336,10 @@ export const useTarkovStore = defineStore("swapTarkov", {
                 console.log(`[TarkovStore] Data backed up to ${backupKey}`);
                 localStorage.removeItem("progress");
               } catch (e) {
-                console.error("[TarkovStore] Error backing up/clearing localStorage:", e);
+                console.error(
+                  "[TarkovStore] Error backing up/clearing localStorage:",
+                  e
+                );
               }
             }
             return JSON.parse(JSON.stringify(defaultState)) as UserState;
@@ -357,6 +355,12 @@ export const useTarkovStore = defineStore("swapTarkov", {
     },
   },
 });
+
+// console.log("[TarkovStore] Store defined with persist config:", {
+//   storeId: "swapTarkov",
+//   persistKey: "progress",
+//   hasCustomSerializer: true,
+// });
 
 // Export type for future typing
 export type TarkovStore = ReturnType<typeof useTarkovStore>;
@@ -378,16 +382,16 @@ export async function initializeTarkovSync() {
     const hasProgress = (data: unknown) => {
       const state = data as UserState;
       if (!state) return false;
-      const pvpHasData = state.pvp && (
-        state.pvp.level > 1 ||
-        Object.keys(state.pvp.taskCompletions || {}).length > 0 ||
-        Object.keys(state.pvp.hideoutModules || {}).length > 0
-      );
-      const pveHasData = state.pve && (
-        state.pve.level > 1 ||
-        Object.keys(state.pve.taskCompletions || {}).length > 0 ||
-        Object.keys(state.pve.hideoutModules || {}).length > 0
-      );
+      const pvpHasData =
+        state.pvp &&
+        (state.pvp.level > 1 ||
+          Object.keys(state.pvp.taskCompletions || {}).length > 0 ||
+          Object.keys(state.pvp.hideoutModules || {}).length > 0);
+      const pveHasData =
+        state.pve &&
+        (state.pve.level > 1 ||
+          Object.keys(state.pve.taskCompletions || {}).length > 0 ||
+          Object.keys(state.pve.hideoutModules || {}).length > 0);
       return pvpHasData || pveHasData;
     };
 
@@ -423,7 +427,9 @@ export async function initializeTarkovSync() {
       // If Supabase has ANY data (even if "empty"), use it as source of truth
       // This prevents overwriting existing Supabase data
       if (data) {
-        console.log("[TarkovStore] Loading data from Supabase (user exists in DB)");
+        console.log(
+          "[TarkovStore] Loading data from Supabase (user exists in DB)"
+        );
         tarkovStore.$patch({
           currentGameMode: data.current_game_mode || GAME_MODES.PVP,
           gameEdition: data.game_edition || 1,
@@ -460,7 +466,7 @@ export async function initializeTarkovSync() {
       debounceMs: 250,
       transform: (state: unknown) => {
         const userState = state as UserState;
-        console.log("[TarkovStore] Transform called - preparing data for sync");
+        // console.log("[TarkovStore] Transform called - preparing data for sync");
 
         return {
           user_id: $supabase.user.id,

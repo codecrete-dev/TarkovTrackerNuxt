@@ -176,7 +176,6 @@
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { GAME_MODES } from "@/utils/constants";
-
 const { t } = useI18n();
 const toast = useToast();
 // Dialog states
@@ -190,7 +189,6 @@ const newToken = ref("");
 const isValid = computed(() => {
   return selectedGameMode.value && selectedPermissions.value.length > 0;
 });
-
 // Game modes
 const gameModes = [
   { text: t("page.api.tokens.form.gamemode_standard"), value: GAME_MODES.PVP },

@@ -12,8 +12,12 @@ export function installPiniaPlugins(target: Pinia): void {
 export default defineNuxtPlugin((nuxtApp) => {
   // Get pinia instance from @pinia/nuxt module
   pinia = nuxtApp.$pinia as Pinia | undefined;
-  if (pinia) {
-    installPiniaPlugins(pinia);
+
+  if (!pinia) {
+    console.error("[PiniaPlugin] $pinia is undefined – persist plugin not installed");
+    return;
   }
+
+  installPiniaPlugins(pinia);
   // Don't provide $pinia again - it's already provided by @pinia/nuxt
 });

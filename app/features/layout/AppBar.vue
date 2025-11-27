@@ -1,6 +1,6 @@
 <template>
   <header
-    class="fixed top-0 inset-x-0 z-50 h-16 backdrop-blur-sm bg-linear-to-tr from-surface-800/95 to-surface-950/95 border-b border-surface-700/70"
+    class="fixed top-0 inset-x-0 z-50 h-16 backdrop-blur-sm bg-linear-to-tr from-surface-800/95 to-surface-950/95 border-b border-primary-800/60 shadow-[0_1px_0_rgba(0,0,0,0.4)]"
   >
     <div class="h-full px-3 flex items-center gap-3">
       <!-- Left: Toggle Button -->
@@ -13,16 +13,14 @@
         title="Toggle Menu Drawer"
         @click.stop="changeNavigationDrawer"
       />
-
       <!-- Center: Page Title -->
       <span class="text-xl font-bold truncate text-white flex-1 min-w-0">
         {{ pageTitle }}
       </span>
-
       <!-- Right: Status Icons & Settings -->
       <div class="ml-auto flex items-center gap-2">
         <span v-if="dataError" title="Error Loading Tarkov Data">
-          <UIcon name="i-mdi-database-alert" class="text-red-500 w-6 h-6" />
+          <UIcon name="i-mdi-database-alert" class="text-error-500 w-6 h-6" />
         </span>
         <span v-if="dataLoading || hideoutLoading" title="Loading Tarkov Data">
           <UIcon
@@ -56,54 +54,32 @@
             PvE
           </button>
         </div>
-        <UPopover
-          mode="click"
-          :popper="{ placement: 'bottom-end' }"
-          @open="handlePopoverOpen"
-          @close="handlePopoverClose"
-        >
-          <UButton
-            ref="popoverTrigger"
-            icon="i-mdi-cog"
-            variant="ghost"
-            color="neutral"
-            size="xl"
-            class="relative"
-            :loading="overflowMenuLoading"
-            @click="handlePopoverToggle"
-          />
-          <template #content>
-            <OverflowMenu v-if="!overflowMenuLoading" />
-            <div
-              v-else
-              class="w-80 max-w-[90vw] bg-surface-900 rounded-lg p-4 flex items-center justify-center"
-            >
-              <UIcon
-                name="i-heroicons-arrow-path"
-                class="animate-spin text-primary-500 w-6 h-6 mr-2"
-              />
-              <span class="text-surface-300">Loading...</span>
-            </div>
-          </template>
-        </UPopover>
+        <div class="hidden sm:flex items-center gap-2">
+          <USelectMenu
+            v-model="selectedLocale"
+            :items="localeItems"
+            value-key="value"
+            :popper="{ placement: 'bottom-end', strategy: 'fixed' }"
+            :ui="selectUi"
+            :ui-menu="selectMenuUi"
+            class="h-10 px-2 w-auto min-w-0 whitespace-nowrap"
+          >
+            <template #leading>
+              <UIcon name="i-mdi-translate" class="w-4 h-4 text-surface-300" />
+            </template>
+          </USelectMenu>
+        </div>
       </div>
     </div>
   </header>
 </template>
 <script setup lang="ts">
-import {
-  computed,
-  defineAsyncComponent,
-  ref,
-  onErrorCaptured,
-  onMounted,
-  onUnmounted,
-} from "vue";
-import type { ComponentPublicInstance } from "vue";
+import { computed, ref, onMounted, onUnmounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useAppStore } from "@/stores/app";
 import { useTarkovStore } from "@/stores/tarkov";
 import { useMetadataStore } from "@/stores/metadata";
+import { usePreferencesStore } from "@/stores/preferences";
 import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { GAME_MODES, type GameMode } from "@/utils/constants";
@@ -112,6 +88,7 @@ const { t } = useI18n({ useScope: "global" });
 const appStore = useAppStore();
 const tarkovStore = useTarkovStore();
 const metadataStore = useMetadataStore();
+const preferencesStore = usePreferencesStore();
 const route = useRoute();
 const { width } = useWindowSize();
 const mdAndDown = computed(() => width.value < 960); // Vuetify md breakpoint is 960px
@@ -140,46 +117,15 @@ async function switchMode(mode: GameMode) {
     await metadataStore.fetchAllData();
   }
 }
-// Async component with error handling
-const overflowMenuLoading = ref(false);
-const OverflowMenu = defineAsyncComponent({
-  loader: async () => {
-    overflowMenuLoading.value = true;
-    try {
-      return await import("@/features/layout/OverflowMenu.vue");
-    } finally {
-      overflowMenuLoading.value = false;
-    }
-  },
-  loadingComponent: {
-    template:
-      '<div class="w-80 max-w-[90vw] bg-surface-900 rounded-lg p-4 flex items-center justify-center"><UIcon name="i-heroicons-arrow-path" class="animate-spin text-primary-500 w-6 h-6 mr-2" /><span class="text-surface-300">Loading...</span></div>',
-  },
-  errorComponent: {
-    template:
-      '<div class="w-80 max-w-[90vw] bg-surface-900 rounded-lg p-4 flex items-center justify-center"><UIcon name="i-mdi-alert" class="text-red-500 w-6 h-6 mr-2" /><span class="text-red-400">Error loading menu</span></div>',
-  },
-  delay: 200,
-  timeout: 3000,
-});
 const { loading: dataLoading, hideoutLoading } = storeToRefs(metadataStore);
 const dataError = ref(false); // Placeholder - TODO: implement error handling
 const pageTitle = computed(() =>
   t(`page.${String(route.name || "index").replace("-", "_")}.title`)
 );
-// Ref for popover trigger button
-const popoverTrigger = ref<HTMLElement | ComponentPublicInstance | null>(null);
-const popoverOpen = ref(false);
-// Handle async component errors
-onErrorCaptured((err) => {
-  console.error("[AppBar] Async component error:", err);
-  return false; // Prevent error from propagating
-});
-// Prevent focus issues by intercepting keydown events when popover is open
 function handleKeydown(event: KeyboardEvent) {
-  if (popoverOpen.value && event.key === "Escape") {
+  if (event.key === "Escape" && appStore.drawerShow && mdAndDown.value) {
     event.preventDefault();
-    closePopover();
+    appStore.toggleDrawerShow();
   }
 }
 onMounted(() => {
@@ -195,33 +141,43 @@ function changeNavigationDrawer() {
     appStore.toggleDrawerRail();
   }
 }
-function closePopover() {
-  // Move focus immediately and synchronously to prevent aria-hidden conflicts
-  if (popoverTrigger.value) {
-    // Access the underlying DOM element from the component ref
-    const el =
-      popoverTrigger.value && "$el" in popoverTrigger.value
-        ? (popoverTrigger.value.$el as HTMLElement | null)
-        : popoverTrigger.value;
-    if (el && typeof el.focus === "function") {
-      el.focus();
-    }
-  }
-  // Mark as closed to prevent focus management conflicts
-  popoverOpen.value = false;
-}
-function handlePopoverOpen() {
-  popoverOpen.value = true;
-}
-function handlePopoverClose() {
-  // Use closePopover for consistent focus management
-  closePopover();
-}
-function handlePopoverToggle() {
-  if (popoverOpen.value) {
-    handlePopoverClose();
-  } else {
-    handlePopoverOpen();
-  }
-}
+const { locale, availableLocales } = useI18n({ useScope: "global" });
+const localeItems = computed(() => {
+  const languageNames = new Intl.DisplayNames(["en"], { type: "language" });
+  return availableLocales.map((localeCode) => ({
+    label: languageNames.of(localeCode) || localeCode.toUpperCase(),
+    value: localeCode,
+  }));
+});
+const selectedLocale = computed({
+  get() {
+    return locale.value;
+  },
+  set(newValue) {
+    if (!newValue) return;
+    locale.value = newValue;
+    // persist in preferences
+    preferencesStore.localeOverride = newValue;
+    console.log("[AppBar] Setting locale to:", newValue);
+    metadataStore.updateLanguageAndGameMode(newValue);
+    metadataStore.fetchAllData(true).catch(console.error);
+  },
+});
+// UI configs (shared look with settings page)
+const selectUi = {};
+const selectMenuUi = {
+  container: "z-[9999]",
+  width: "w-auto min-w-0",
+  background: "bg-surface-900",
+  shadow: "shadow-xl",
+  rounded: "rounded-lg",
+  ring: "ring-1 ring-white/10",
+  padding: "p-1",
+  option: {
+    base: "px-3 py-2 text-sm cursor-pointer transition-colors rounded",
+    inactive: "text-surface-200 hover:bg-surface-800 hover:text-white",
+    active: "bg-surface-800 text-white",
+    selected: "bg-primary-500/10 text-primary-100 ring-1 ring-primary-500",
+  },
+};
 </script>

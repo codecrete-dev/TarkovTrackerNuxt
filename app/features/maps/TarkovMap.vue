@@ -189,7 +189,6 @@ const draw = async () => {
     await drawStandardMap(mapContainer);
   }
 };
-
 const drawFactoryFloors = async (mapContainer: HTMLElement) => {
   const svg = props.map?.svg;
   if (!isSvgObject(svg) || !svg.floors || !selectedFloor.value) {
@@ -208,7 +207,6 @@ const drawFactoryFloors = async (mapContainer: HTMLElement) => {
     if (!floor) continue;
     try {
       let floorSvg;
-
       // Check cache first
       if (factoryFloorsCache.value.has(floor)) {
         floorSvg = factoryFloorsCache.value.get(floor);
@@ -217,7 +215,6 @@ const drawFactoryFloors = async (mapContainer: HTMLElement) => {
         floorSvg = await d3.xml(`/img/maps/Factory-${floor}.svg`);
         factoryFloorsCache.value.set(floor, floorSvg);
       }
-
       if (floorSvg && floorSvg.documentElement) {
         // Set the viewBox from the first floor SVG to ensure proper scaling
         if (!viewBoxSet && floorSvg.documentElement.getAttribute("viewBox")) {

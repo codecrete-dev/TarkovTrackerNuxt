@@ -91,9 +91,7 @@
                 </div>
               </div>
             </div>
-
             <div class="my-3 border-t border-gray-700"></div>
-
             <div class="flex items-center">
               <UIcon
                 name="i-mdi-identifier"

@@ -1,7 +1,7 @@
 <template>
   <KeepAlive>
     <div ref="cardRef" class="rounded mb-1" :class="itemRowClasses">
-      <div class="p-0">
+      <div class="py-2 px-3">
         <div class="flex flex-wrap mx-0">
           <div
             class="flex items-center p-0 w-9/12 md:w-1/2"
@@ -13,12 +13,12 @@
                 :image-item="imageItem"
                 :src="imageItem?.iconLink"
                 :is-visible="true"
-                size="small"
+                size="medium"
                 simple-mode
               />
             </span>
             <span
-              class="ml-2 flex flex-col"
+              class="ml-3 flex flex-col"
               style="
                 -webkit-mask-image: linear-gradient(
                   90deg,
@@ -28,15 +28,15 @@
                 mask-image: linear-gradient(90deg, #000 100%, transparent);
               "
             >
-              <span style="font-size: 1.1em" class="flex items-center">
+              <span class="text-base font-semibold flex items-center">
                 {{ item.name }}
                 <UIcon
                   v-if="props.need.foundInRaid"
                   name="i-mdi-checkbox-marked-circle-outline"
-                  class="ml-1 w-4 h-4"
+                  class="ml-1 w-5 h-5"
                 />
               </span>
-              <span>
+              <span class="mt-1">
                 <template v-if="props.need.needType == 'taskObjective'">
                   <TaskLink :task="relatedTask" />
                 </template>

@@ -38,16 +38,21 @@
       <div v-if="result" class="space-y-4">
         <h3 class="text-sm font-semibold text-surface-100">Query Results</h3>
 
-        <UAccordion multiple variant="ghost" color="neutral">
-          <UAccordionItem :label="`Traders (${result.traders?.length || 0})`">
+        <UAccordion
+          multiple
+          variant="ghost"
+          color="neutral"
+          :items="accordionItems"
+        >
+          <template #traders>
             <ul class="space-y-1 text-sm text-surface-200">
               <li v-for="trader in result.traders" :key="trader.id">
                 {{ trader.name }}
               </li>
             </ul>
-          </UAccordionItem>
+          </template>
 
-          <UAccordionItem :label="`Tasks (${result.tasks?.length || 0})`">
+          <template #tasks>
             <ul class="space-y-1 text-sm text-surface-200">
               <li v-for="task in result.tasks?.slice(0, 10)" :key="task.id">
                 {{ task.name }} - {{ task.trader?.name }}
@@ -56,19 +61,17 @@
                 ... and {{ result.tasks.length - 10 }} more
               </li>
             </ul>
-          </UAccordionItem>
+          </template>
 
-          <UAccordionItem :label="`Maps (${result.maps?.length || 0})`">
+          <template #maps>
             <ul class="space-y-1 text-sm text-surface-200">
               <li v-for="map in result.maps" :key="map.id">
                 {{ map.name }}
               </li>
             </ul>
-          </UAccordionItem>
+          </template>
 
-          <UAccordionItem
-            :label="`Player Levels (${result.playerLevels?.length || 0})`"
-          >
+          <template #player-levels>
             <div class="text-sm text-surface-200">
               First 5:
               {{
@@ -78,7 +81,7 @@
                   .join(", ")
               }}
             </div>
-          </UAccordionItem>
+          </template>
         </UAccordion>
 
         <div class="h-px bg-white/10"></div>
@@ -121,4 +124,26 @@ const { result, error, loading, refetch, languageCode: apiLanguageCode } =
 
 // Alias for template consistency
 const languageCode = computed(() => apiLanguageCode.value);
+
+const accordionItems = computed(() => {
+  if (!result.value) return [];
+  return [
+    {
+      label: `Traders (${result.value.traders?.length || 0})`,
+      slot: "traders",
+    },
+    {
+      label: `Tasks (${result.value.tasks?.length || 0})`,
+      slot: "tasks",
+    },
+    {
+      label: `Maps (${result.value.maps?.length || 0})`,
+      slot: "maps",
+    },
+    {
+      label: `Player Levels (${result.value.playerLevels?.length || 0})`,
+      slot: "player-levels",
+    },
+  ];
+});
 </script>

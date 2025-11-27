@@ -7,18 +7,18 @@
     :ui="{ width: 'max-w-xs' }"
   >
     <div
-      class="flex grow flex-col gap-y-5 overflow-y-auto bg-background px-6 pb-4 ring-1 ring-white/10 h-full relative"
+      class="flex grow flex-col gap-y-5 overflow-y-auto nav-shell backdrop-blur-sm px-6 pb-4 ring-1 ring-white/10 h-full relative border-r border-surface-800/70"
     >
       <div class="relative z-10 flex flex-col h-full">
         <TrackerLogo :is-collapsed="false" />
-        <div class="h-px bg-white/10 my-1" />
+        <div class="h-px bg-primary-800/40 my-1" />
         <DrawerAccount :is-collapsed="false" />
-        <div class="h-px bg-white/10 my-1" />
+        <div class="h-px bg-primary-800/40 my-1" />
         <DrawerLevel :is-collapsed="false" />
         <DrawerCharacter :is-collapsed="false" />
-        <div class="h-px bg-white/10 my-1" />
+        <div class="h-px bg-primary-800/40 my-1" />
         <DrawerLinks :is-collapsed="false" />
-        <div class="h-px bg-white/10 my-1" />
+        <div class="h-px bg-primary-800/40 my-1" />
         <DrawerExternalLinks :is-collapsed="false" />
       </div>
     </div>
@@ -26,21 +26,21 @@
   <!-- Desktop Sidebar -->
   <aside
     v-show="!mdAndDown"
-    class="flex flex-col fixed inset-y-0 left-0 z-30 bg-background border-r border-white/10 transition-all duration-300"
+    class="flex flex-col fixed inset-y-0 left-0 z-30 nav-shell backdrop-blur-sm border-r border-primary-800/60 transition-all duration-300"
     :class="[isRailActive ? 'w-14' : 'w-56']"
   >
     <div
       class="relative z-10 flex flex-col h-full overflow-y-auto overflow-x-hidden"
     >
       <TrackerLogo :is-collapsed="isRailActive" />
-      <div class="h-px bg-white/10 mx-3 my-1" />
+      <div class="h-px bg-primary-800/40 mx-3 my-1" />
       <DrawerAccount :is-collapsed="isRailActive" />
-      <div class="h-px bg-white/10 mx-3 my-1" />
+      <div class="h-px bg-primary-800/40 mx-3 my-1" />
       <DrawerLevel :is-collapsed="isRailActive" />
       <DrawerCharacter :is-collapsed="isRailActive" />
-      <div class="h-px bg-white/10 mx-3 my-1" />
+      <div class="h-px bg-primary-800/40 mx-3 my-1" />
       <DrawerLinks :is-collapsed="isRailActive" />
-      <div class="h-px bg-white/10 mx-3 my-1" />
+      <div class="h-px bg-primary-800/40 mx-3 my-1" />
       <DrawerExternalLinks :is-collapsed="isRailActive" />
     </div>
   </aside>
@@ -82,3 +82,32 @@ const DrawerCharacter = defineAsyncComponent(() =>
   import("@/features/drawer/DrawerCharacter.vue")
 );
 </script>
+<style scoped>
+.nav-shell {
+  background: linear-gradient(
+    180deg,
+    rgba(18, 18, 20, 0.96) 0%,
+    rgba(14, 14, 15, 0.96) 45%,
+    rgba(12, 12, 13, 0.97) 100%
+  );
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.6), 1px 0 0 rgba(0, 0, 0, 0.55);
+}
+.border-gradient {
+  background: linear-gradient(
+    to bottom,
+    rgba(82, 82, 91, 0.45) 0%,
+    rgba(39, 39, 42, 0.25) 50%,
+    transparent 100%
+  );
+  border-right-width: 1px;
+  border-right-style: solid;
+  border-image: linear-gradient(
+      to bottom,
+      rgba(82, 82, 91, 0.55) 0%,
+      rgba(39, 39, 42, 0.35) 50%,
+      transparent 100%
+    )
+    1;
+}
+</style>

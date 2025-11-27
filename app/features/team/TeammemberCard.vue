@@ -49,7 +49,8 @@
       <div class="flex gap-1">
         <UButton
           :disabled="
-            props.teammember == $supabase.user.id || preferencesStore.taskTeamAllHidden
+            props.teammember == $supabase.user.id ||
+            preferencesStore.taskTeamAllHidden
           "
           variant="outline"
           :icon="
@@ -91,7 +92,6 @@ import { useProgressStore } from "@/stores/progress";
 import { useMetadataStore } from "@/stores/metadata";
 const { $supabase } = useNuxtApp();
 const toast = useToast();
-
 // Define the props for the component
 const props = defineProps({
   teammember: {
@@ -128,7 +128,6 @@ const groupIcon = computed(() => {
   return entry?.levelBadgeImageLink ?? "";
 });
 const kickingTeammate = ref(false);
-
 const kickTeammate = async () => {
   if (!props.teammember) return;
   kickingTeammate.value = true;
@@ -165,4 +164,3 @@ const kickTeammate = async () => {
   kickingTeammate.value = false;
 };
 </script>
-<style scoped></style>

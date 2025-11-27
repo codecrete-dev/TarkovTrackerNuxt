@@ -1,13 +1,14 @@
 <template>
   <UCard
     :id="`task-${task.id}`"
-    class="relative overflow-hidden border border-white/10 bg-[#141414]"
+    class="relative overflow-hidden bg-[hsl(240,5%,5%)]!"
     :class="taskClasses"
-    :ui="{ body: 'p-4' }"
+    :ui="{ base: 'border border-primary-700/45 shadow-none', body: 'p-4' }"
+    @contextmenu="handleTaskContextMenu"
   >
     <div
       v-if="showBackgroundIcon"
-      class="absolute inset-0 z-0 flex items-center justify-start p-8 opacity-15 pointer-events-none text-[#c6afaf] transform rotate-12"
+      class="absolute inset-0 z-0 flex items-center justify-start p-8 opacity-15 pointer-events-none text-brand-200 transform rotate-12"
     >
       <UIcon
         :name="
@@ -33,7 +34,7 @@
         />
       </div>
       <!-- Quest Content Section -->
-      <div class="lg:col-span-7 flex items-center">
+      <div class="lg:col-span-7 flex items-start">
         <div class="w-full space-y-3">
           <QuestKeys
             v-if="task?.neededKeys?.length"
@@ -47,7 +48,7 @@
         </div>
       </div>
       <!-- Actions Section -->
-      <div class="lg:col-span-2 flex items-center justify-center">
+      <div class="lg:col-span-2 flex items-start justify-end">
         <TaskActions
           :task="task"
           :tasks="tasks"
@@ -61,58 +62,30 @@
         />
       </div>
     </div>
+
+    <!-- Task Context Menu -->
+    <ContextMenu ref="taskContextMenu">
+      <template #default="{ close }">
+        <ContextMenuItem
+          v-if="task.wikiLink"
+          icon="i-mdi-wikipedia"
+          label="View Task on Wiki"
+          @click="openTaskWiki(); close()"
+        />
+      </template>
+    </ContextMenu>
   </UCard>
-  <Teleport to="body">
-    <Transition
-      enter-active-class="transition ease-out duration-200"
-      enter-from-class="opacity-0 translate-y-3"
-      enter-to-class="opacity-100 translate-y-0"
-      leave-active-class="transition ease-in duration-200"
-      leave-from-class="opacity-100 translate-y-0"
-      leave-to-class="opacity-0 translate-y-3"
-    >
-      <div
-        v-if="taskStatusUpdated"
-        class="fixed inset-x-0 bottom-6 z-50 flex justify-center px-4"
-      >
-        <UCard
-          class="w-full max-w-xl bg-gray-900/95 border border-white/10 shadow-2xl"
-        >
-          <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <span class="text-sm sm:text-base">{{ taskStatus }}</span>
-            <div class="flex gap-2 justify-end flex-1">
-              <UButton
-                v-if="showUndoButton"
-                size="xs"
-                variant="soft"
-                color="primary"
-                @click="undoLastAction"
-              >
-                {{ t("page.tasks.questcard.undo") }}
-              </UButton>
-              <UButton
-                size="xs"
-                variant="ghost"
-                color="gray"
-                @click="taskStatusUpdated = false"
-              >
-                {{ t("page.tasks.filters.close") }}
-              </UButton>
-            </div>
-          </div>
-        </UCard>
-      </div>
-    </Transition>
-  </Teleport>
 </template>
 <script setup>
 import { defineAsyncComponent, computed, ref } from "vue";
-import { useI18n } from "vue-i18n";
 import { useBreakpoints } from "@vueuse/core";
 import { useTarkovStore } from "@/stores/tarkov";
 import { useProgressStore } from "@/stores/progress";
 import { usePreferencesStore } from "@/stores/preferences";
 import { useMetadataStore } from "@/stores/metadata";
+import ContextMenu from "@/components/ui/ContextMenu.vue";
+import ContextMenuItem from "@/components/ui/ContextMenuItem.vue";
+
 const TaskInfo = defineAsyncComponent(() => import("./TaskInfo.vue"));
 const QuestKeys = defineAsyncComponent(() => import("./QuestKeys.vue"));
 const QuestObjectives = defineAsyncComponent(() =>
@@ -124,7 +97,9 @@ const props = defineProps({
   activeUserView: { type: String, required: true },
   neededBy: { type: Array, default: () => [] },
 });
-const { t } = useI18n({ useScope: "global" });
+
+const emit = defineEmits(["on-task-action"]);
+
 // Define breakpoints (matching Vuetify's xs/sm breakpoint at 600px)
 const breakpoints = useBreakpoints({
   mobile: 0,
@@ -136,11 +111,10 @@ const progressStore = useProgressStore();
 const preferencesStore = usePreferencesStore();
 const metadataStore = useMetadataStore();
 const tasks = computed(() => metadataStore.tasks);
-const taskStatusUpdated = ref(false);
-const taskStatus = ref("");
-// { taskId: string, taskName: string, action: 'complete' | 'uncomplete' }
-const undoData = ref(null);
-const showUndoButton = ref(false);
+
+// Context menu ref
+const taskContextMenu = ref();
+
 // Computed properties
 const isComplete = computed(() => tarkovStore.isTaskComplete(props.task.id));
 const isFailed = computed(() => tarkovStore.isTaskFailed(props.task.id));
@@ -227,54 +201,7 @@ const uncompletedIrrelevantObjectives = computed(() =>
     .filter((o) => !tarkovStore.isTaskObjectiveComplete(o.id))
 );
 // Methods
-const updateTaskStatus = (
-  statusKey,
-  taskName = props.task.name,
-  showUndo = false
-) => {
-  taskStatus.value = t(statusKey, { name: taskName });
-  taskStatusUpdated.value = true;
-  showUndoButton.value = showUndo;
-};
-const undoLastAction = () => {
-  if (!undoData.value) return;
-  const { taskId, taskName, action } = undoData.value;
-  if (action === "complete") {
-    // Undo completion by setting task as uncompleted
-    tarkovStore.setTaskUncompleted(taskId);
-    // Find the task to handle objectives and alternatives
-    const taskToUndo = tasks.value.find((task) => task.id === taskId);
-    if (taskToUndo) {
-      handleTaskObjectives(taskToUndo.objectives, "setTaskObjectiveUncomplete");
-      handleAlternatives(
-        taskToUndo.alternatives,
-        "setTaskUncompleted",
-        "setTaskObjectiveUncomplete"
-      );
-    }
-    updateTaskStatus("page.tasks.questcard.undocomplete", taskName);
-  } else if (action === "uncomplete") {
-    // Undo uncompleting by setting task as completed
-    tarkovStore.setTaskComplete(taskId);
-    // Find the task to handle objectives and alternatives
-    const taskToUndo = tasks.value.find((task) => task.id === taskId);
-    if (taskToUndo) {
-      handleTaskObjectives(taskToUndo.objectives, "setTaskObjectiveComplete");
-      handleAlternatives(
-        taskToUndo.alternatives,
-        "setTaskFailed",
-        "setTaskObjectiveComplete"
-      );
-      // Ensure min level for completion
-      if (tarkovStore.playerLevel() < taskToUndo.minPlayerLevel) {
-        tarkovStore.setLevel(taskToUndo.minPlayerLevel);
-      }
-    }
-    updateTaskStatus("page.tasks.questcard.undouncomplete", taskName);
-  }
-  showUndoButton.value = false;
-  undoData.value = null;
-};
+
 const handleTaskObjectives = (objectives, action) => {
   objectives.forEach((o) => tarkovStore[action](o.id));
 };
@@ -295,12 +222,12 @@ const ensureMinLevel = () => {
 };
 const markTaskComplete = (isUndo = false) => {
   if (!isUndo) {
-    // Store undo data before performing the action
-    undoData.value = {
+    emit("on-task-action", {
       taskId: props.task.id,
       taskName: props.task.name,
       action: "complete",
-    };
+      statusKey: "page.tasks.questcard.statuscomplete"
+    });
   }
   tarkovStore.setTaskComplete(props.task.id);
   handleTaskObjectives(props.task.objectives, "setTaskObjectiveComplete");
@@ -311,23 +238,22 @@ const markTaskComplete = (isUndo = false) => {
   );
   ensureMinLevel();
   if (isUndo) {
-    updateTaskStatus("page.tasks.questcard.undocomplete");
-  } else {
-    updateTaskStatus(
-      "page.tasks.questcard.statuscomplete",
-      props.task.name,
-      true
-    );
+      emit("on-task-action", {
+      taskId: props.task.id,
+      taskName: props.task.name,
+      action: "complete",
+      undoKey: "page.tasks.questcard.undocomplete"
+    });
   }
 };
 const markTaskUncomplete = (isUndo = false) => {
   if (!isUndo) {
-    // Store undo data before performing the action
-    undoData.value = {
+    emit("on-task-action", {
       taskId: props.task.id,
       taskName: props.task.name,
       action: "uncomplete",
-    };
+      statusKey: "page.tasks.questcard.statusuncomplete"
+    });
   }
   tarkovStore.setTaskUncompleted(props.task.id);
   handleTaskObjectives(props.task.objectives, "setTaskObjectiveUncomplete");
@@ -337,13 +263,12 @@ const markTaskUncomplete = (isUndo = false) => {
     "setTaskObjectiveUncomplete"
   );
   if (isUndo) {
-    updateTaskStatus("page.tasks.questcard.undouncomplete");
-  } else {
-    updateTaskStatus(
-      "page.tasks.questcard.statusuncomplete",
-      props.task.name,
-      true
-    );
+      emit("on-task-action", {
+      taskId: props.task.id,
+      taskName: props.task.name,
+      action: "uncomplete",
+      undoKey: "page.tasks.questcard.undouncomplete"
+    });
   }
 };
 const markTaskAvailable = () => {
@@ -358,6 +283,24 @@ const markTaskAvailable = () => {
     }
   });
   ensureMinLevel();
-  updateTaskStatus("page.tasks.questcard.statusavailable");
+    emit("on-task-action", {
+      taskId: props.task.id,
+      taskName: props.task.name,
+      action: "available",
+      undoKey: "page.tasks.questcard.statusavailable"
+    });
+};
+
+// Context menu handlers
+const handleTaskContextMenu = (event) => {
+  if (props.task.wikiLink) {
+    taskContextMenu.value?.open(event);
+  }
+};
+
+const openTaskWiki = () => {
+  if (props.task.wikiLink) {
+    window.open(props.task.wikiLink, '_blank');
+  }
 };
 </script>

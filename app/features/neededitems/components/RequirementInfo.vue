@@ -1,15 +1,15 @@
 <template>
-  <div class="flex items-center">
+  <div class="flex items-center text-sm">
     <!-- Level Requirement -->
     <div v-if="showLevelRequirement" class="flex items-center mr-2">
-      <UIcon name="i-mdi-menu-right" class="w-6 h-6" />
+      <UIcon name="i-mdi-menu-right" class="w-5 h-5" />
       <i18n-t keypath="page.tasks.questcard.level" scope="global">
         <template #count>{{ levelRequired }}</template>
       </i18n-t>
     </div>
     <!-- Locked Before -->
     <div v-if="lockedBefore > 0" class="flex items-center mr-2">
-      <UIcon name="i-mdi-lock-open-outline" class="w-6 h-6" />
+      <UIcon name="i-mdi-lock-open-outline" class="w-5 h-5" />
       <i18n-t keypath="page.tasks.questcard.lockedbefore" scope="global">
         <template #count>{{ lockedBefore }}</template>
       </i18n-t>
@@ -24,7 +24,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import StationLink from "~/features/hideout/StationLink.vue";
-
 const props = defineProps<{
   needType: string;
   levelRequired: number;

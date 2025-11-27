@@ -1,6 +1,6 @@
 <template>
   <div
-    class="rounded shadow-md bg-[#212121] overflow-hidden"
+    class="rounded shadow-md bg-surface-800 overflow-hidden"
     :class="{ 'h-full': props.fillHeight, [props.cardClass]: true }"
   >
     <div class="h-full m-0 p-0">
@@ -12,9 +12,10 @@
             <!-- Default header with icon and title -->
             <div
               v-if="props.title || props.icon"
-              class="text-xl flex items-center gap-3 pb-2"
+              class="text-xl flex items-center justify-between pb-2"
               :class="headerClasses"
             >
+              <!-- Left side content (icon and title) -->
               <div class="flex items-center gap-3">
                 <!-- Icon or Image -->
                 <span
@@ -49,10 +50,10 @@
               <!-- Right side content -->
               <div
                 v-if="$slots['title-right'] || props.subtitle"
-                class="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 flex items-center gap-2 text-center"
+                class="flex items-center gap-2 text-right"
               >
                 <slot name="title-right">
-                  <span v-if="props.subtitle" class="text-xs text-gray-400">
+                  <span v-if="props.subtitle" class="text-xs text-surface-400">
                     {{ props.subtitle }}
                   </span>
                 </slot>
@@ -62,7 +63,7 @@
           <!-- Divider (only if there's content below) -->
           <div 
             v-if="showDivider && (hasContent || hasFooter)" 
-            class="mx-4 border-b border-gray-700"
+            class="mx-4 border-b border-surface-700"
           ></div>
         </header>
 
@@ -161,11 +162,11 @@ const highlightClasses = computed(() => {
       classes['bg-gradient-to-r from-[rgba(36,0,36,0.15)] via-[rgba(121,0,121,0.15)] to-[rgba(83,0,83,0.15)]'] = true
       break
     case 'secondary':
-      classes['bg-gradient-to-br from-[#7d6f55] via-[#ac9d80] to-[#9a8866]'] = true
+      classes['bg-gradient-to-br from-brand-700 via-brand-300 to-brand-500'] = true
       break
     case 'accent':
     default:
-      classes['bg-gradient-to-br from-[#1d2426] via-[#202e36] to-[#233138]'] = true
+      classes['bg-gradient-to-br from-accent-800 via-accent-700 to-accent-600'] = true
       break
   }
   

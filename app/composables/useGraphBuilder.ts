@@ -18,7 +18,6 @@ import type {
   NeededItemHideoutModule,
 } from "@/types/tarkov";
 import type { AbstractGraph } from "graphology-types";
-
 /**
  * Composable for building task and hideout dependency graphs
  * Extracts complex graph algorithms from the metadata store
@@ -29,8 +28,8 @@ export function useGraphBuilder() {
    */
   function buildTaskGraph(taskList: Task[]): AbstractGraph {
     const newGraph = createGraph();
-    const activeRequirements: { task: Task; requirement: TaskRequirement }[] = [];
-
+    const activeRequirements: { task: Task; requirement: TaskRequirement }[] =
+      [];
     // Add all tasks as nodes and process non-active requirements
     taskList.forEach((task) => {
       safeAddNode(newGraph, task.id);
@@ -48,7 +47,6 @@ export function useGraphBuilder() {
         }
       });
     });
-
     // Handle active requirements by linking predecessors
     activeRequirements.forEach(({ task, requirement }) => {
       const requiredTaskNodeId = requirement.task.id;
@@ -59,10 +57,8 @@ export function useGraphBuilder() {
         });
       }
     });
-
     return newGraph;
   }
-
   /**
    * Processes tasks to extract map, GPS, and item information
    */
@@ -72,7 +68,6 @@ export function useGraphBuilder() {
     const tempObjectiveGPS: { [taskId: string]: ObjectiveGPSInfo[] } = {};
     const tempAlternativeTasks: { [taskId: string]: string[] } = {};
     const tempNeededObjectives: NeededItemTaskObjective[] = [];
-
     taskList.forEach((task) => {
       // Process finish rewards for alternative tasks
       if (Array.isArray(task.finishRewards)) {
@@ -89,7 +84,6 @@ export function useGraphBuilder() {
           }
         });
       }
-
       // Process objectives
       task.objectives?.forEach((objective) => {
         // Map and location data
@@ -108,7 +102,6 @@ export function useGraphBuilder() {
             objectiveID: String(objective.id),
             mapID: String(mapId),
           });
-
           // GPS coordinates
           if (objective.x !== undefined && objective.y !== undefined) {
             if (!tempObjectiveGPS[task.id]) {
@@ -121,7 +114,6 @@ export function useGraphBuilder() {
             });
           }
         }
-
         // Item requirements
         // Exclude "findItem" objectives as they are passive checks that auto-complete
         // when the player acquires the items for the corresponding "giveItem" objective
@@ -142,7 +134,6 @@ export function useGraphBuilder() {
         }
       });
     });
-
     return {
       tempMapTasks,
       tempObjectiveMaps,
@@ -151,7 +142,6 @@ export function useGraphBuilder() {
       tempNeededObjectives,
     };
   }
-
   /**
    * Enhances tasks with graph relationship data
    */
@@ -168,7 +158,6 @@ export function useGraphBuilder() {
       children: getChildren(graph, task.id),
     }));
   }
-
   /**
    * Builds the hideout dependency graph from station level requirements
    */
@@ -201,7 +190,6 @@ export function useGraphBuilder() {
     });
     return newGraph;
   }
-
   /**
    * Converts hideout levels to modules with relationship data
    */
@@ -225,7 +213,6 @@ export function useGraphBuilder() {
     });
     return modules;
   }
-
   /**
    * Extracts item requirements from hideout modules
    */
@@ -249,7 +236,6 @@ export function useGraphBuilder() {
     });
     return neededItems;
   }
-
   /**
    * Processes task data and returns enhanced tasks with graph relationships
    * and all derived data structures
@@ -266,11 +252,9 @@ export function useGraphBuilder() {
         neededItemTaskObjectives: [],
       };
     }
-
     const newGraph = buildTaskGraph(taskList);
     const processedData = processTaskRelationships(taskList);
     const enhancedTasks = enhanceTasksWithRelationships(taskList, newGraph);
-
     return {
       tasks: enhancedTasks,
       taskGraph: newGraph,
@@ -281,7 +265,6 @@ export function useGraphBuilder() {
       neededItemTaskObjectives: processedData.tempNeededObjectives,
     };
   }
-
   /**
    * Processes hideout data and returns modules with graph relationships
    * and item requirements
@@ -294,18 +277,15 @@ export function useGraphBuilder() {
         neededItemHideoutModules: [],
       };
     }
-
     const newGraph = buildHideoutGraph(stationList);
     const newModules = createHideoutModules(stationList, newGraph);
     const newNeededItems = extractItemRequirements(newModules);
-
     return {
       hideoutModules: newModules,
       hideoutGraph: newGraph,
       neededItemHideoutModules: newNeededItems,
     };
   }
-
   return {
     // Individual graph building functions
     buildTaskGraph,
@@ -314,11 +294,9 @@ export function useGraphBuilder() {
     buildHideoutGraph,
     createHideoutModules,
     extractItemRequirements,
-    
     // High-level processing functions
     processTaskData,
     processHideoutData,
   };
 }
-
 export type UseGraphBuilderReturn = ReturnType<typeof useGraphBuilder>;

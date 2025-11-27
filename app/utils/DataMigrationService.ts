@@ -1,8 +1,8 @@
 import type { UserProgressData } from "@/shared_state";
 import type { GameMode } from "@/utils/constants";
 import {
-  DEFAULT_PMC_FACTION,
   GAME_EDITION_STRING_VALUES,
+  normalizePMCFaction,
 } from "@/utils/constants";
 // import { defaultState, migrateToGameModeStructure } from "@/shared_state";
 // Define a basic interface for the progress data structure
@@ -260,8 +260,7 @@ export default class DataMigrationService {
           typeof importedData.gameEdition === "string"
             ? parseInt(importedData.gameEdition) || 1
             : importedData.gameEdition || 1,
-        pmc_faction:
-          (importedData.pmcFaction?.toUpperCase() as "USEC" | "BEAR") || "USEC",
+        pmc_faction: normalizePMCFaction(importedData.pmcFaction),
         display_name: importedData.displayName || null,
         task_completions: importedData.taskCompletions || {},
         task_objectives: this.transformTaskObjectives(
@@ -435,7 +434,7 @@ export default class DataMigrationService {
       const migrationData: ProgressData = {
         level: dataFromApi.playerLevel || dataFromApi.level || 1,
         gameEdition: dataFromApi.gameEdition || GAME_EDITION_STRING_VALUES[0],
-        pmcFaction: dataFromApi.pmcFaction || DEFAULT_PMC_FACTION.toLowerCase(),
+        pmcFaction: normalizePMCFaction(dataFromApi.pmcFaction).toLowerCase(),
         displayName: dataFromApi.displayName || "",
         taskCompletions: taskCompletions,
         taskObjectives: taskObjectives,

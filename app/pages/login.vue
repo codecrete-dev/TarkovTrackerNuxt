@@ -1,7 +1,7 @@
 <template>
-  <div class="min-h-screen flex justify-center items-center bg-[#0c0c0c] p-4">
+<div class="min-h-screen flex justify-center items-center bg-surface-950 p-4">
     <UCard
-      class="w-full max-w-xl shadow-2xl ring-1 ring-white/10 bg-[#12191e]"
+    class="w-full max-w-xl shadow-2xl ring-1 ring-white/10 bg-surface-900"
       :ui="{
         body: 'p-0',
         header: 'p-0',
@@ -10,7 +10,7 @@
     >
       <!-- Header Section -->
       <div class="flex flex-col items-center text-center pt-12 px-10 pb-8">
-        <tracker-logo class="mb-8 scale-150" />
+        <tracker-logo class="mb-8 scale-150" :is-collapsed="false" />
         <h1 class="text-4xl font-bold mb-4 text-white tracking-tight">
           {{ $t("page.login.title") }}
         </h1>

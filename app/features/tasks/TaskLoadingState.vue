@@ -10,10 +10,8 @@
     <refresh-button />
   </div>
 </template>
-
 <script setup lang="ts">
 import RefreshButton from "@/components/ui/RefreshButton.vue";
 import { useI18n } from "vue-i18n";
-
 const { t } = useI18n({ useScope: "global" });
 </script>

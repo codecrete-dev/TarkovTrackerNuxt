@@ -26,7 +26,7 @@ const props = defineProps({
 });
 const logo = computed(() => {
   return props.isCollapsed
-    ? "/img/logos/tarkovtrackerlogo-mini.png"
-    : "/img/logos/tarkovtrackerlogo-light.png";
+    ? "/img/logos/tarkovtrackerlogo-mini.webp"
+    : "/img/logos/tarkovtrackerlogo-light.webp";
 });
 </script>

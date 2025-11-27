@@ -5,32 +5,37 @@
   >
     <!-- Edition Button -->
     <button
-      class="text-xs font-medium text-gray-300 border border-gray-700 rounded px-2 py-1 hover:border-gray-500 hover:text-white transition-colors w-full text-center"
+      class="text-xs font-medium text-white/80 border border-primary-800/50 rounded px-2 py-1 hover:border-primary-600 hover:text-white transition-colors w-full text-center"
       @click="navigateToSettings"
     >
       {{ getEditionName(tarkovStore.gameEdition) }}
     </button>
 
-    <!-- Faction Button -->
-    <button
-      class="text-xs font-medium border border-gray-700 rounded px-2 py-1 hover:text-white transition-colors w-full text-center uppercase"
-      :class="
-        tarkovStore.getPMCFaction() === 'USEC'
-          ? 'text-blue-400 hover:border-blue-400'
-          : 'text-red-400 hover:border-red-400'
-      "
-      @click="navigateToSettings"
-    >
-      {{ tarkovStore.getPMCFaction() }}
-    </button>
+    <!-- Faction Toggle -->
+    <div class="flex w-full rounded-md border border-primary-800/50 overflow-hidden">
+      <button
+        v-for="faction in factions"
+        :key="faction"
+        class="flex-1 px-2 py-1 text-xs font-semibold uppercase transition-colors"
+        :class="
+          faction === currentFaction
+            ? 'bg-primary-700 text-white'
+            : 'bg-transparent text-white/65 hover:text-white hover:bg-white/5'
+        "
+        @click="setFaction(faction)"
+      >
+        {{ faction }}
+      </button>
+    </div>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useTarkovStore } from "@/stores/tarkov";
-import { getEditionName } from "@/utils/constants";
+import { getEditionName, PMC_FACTIONS } from "@/utils/constants";
 import { useBreakpoints } from "@vueuse/core";
 import { useRouter } from "vue-router";
+import { computed } from "vue";
 
 defineProps({
   isCollapsed: {
@@ -40,6 +45,7 @@ defineProps({
 });
 
 const tarkovStore = useTarkovStore();
+const factions = PMC_FACTIONS;
 const router = useRouter();
 const breakpoints = useBreakpoints({
   mobile: 0,
@@ -49,5 +55,12 @@ const mdAndDown = breakpoints.smaller("md");
 
 function navigateToSettings() {
   router.push("/settings");
+}
+
+const currentFaction = computed(() => tarkovStore.getPMCFaction());
+function setFaction(faction: "USEC" | "BEAR") {
+  if (faction !== currentFaction.value) {
+    tarkovStore.setPMCFaction(faction);
+  }
 }
 </script>

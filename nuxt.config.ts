@@ -8,6 +8,11 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   ssr: false,
   srcDir: "app",
+  runtimeConfig: {
+    public: {
+      appUrl: process.env.NUXT_PUBLIC_APP_URL || "http://localhost:3000",
+    },
+  },
   devtools: {
     enabled: process.env.NODE_ENV === "development",
 
@@ -58,6 +63,8 @@ export default defineNuxtConfig({
         "primary",
         "secondary",
         "neutral",
+        "brand",
+        "accent",
         "pvp",
         "pve",
         "info",

@@ -119,9 +119,7 @@ const props = defineProps({
     required: true,
   },
 });
-
 const tarkovStore = useTarkovStore();
-
 const {
   selfCompletedNeed,
   relatedTask,
@@ -134,7 +132,6 @@ const {
   teamNeeds,
   imageItem,
 } = inject("neededitem");
-
 const itemCardClasses = computed(() => {
   return {
     "bg-gradient-to-t from-complete to-surface":
@@ -144,7 +141,6 @@ const itemCardClasses = computed(() => {
     ),
   };
 });
-
 const itemCountTagClasses = computed(() => {
   return {
     "bg-clip-padding rounded-tl-[5px] rounded-br-[10px]": true,

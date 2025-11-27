@@ -35,7 +35,49 @@
     },
     dashboard: {
       title: "Dashboard",
+      hero: {
+        overall: "Overall",
+        welcome: "Welcome Back, Operator",
+        subtitle: "Track your progress through the streets of Tarkov",
+        tasksComplete: "Tasks Complete",
+        available: "Available",
+        failed: "Failed",
+        level: "Level",
+      },
+      progress: {
+        title: "Progress Breakdown",
+        tasks: "Tasks",
+        objectives: "Objectives",
+        items: "Task Items",
+        kappa: "Kappa Tasks",
+        lightkeeper: "Lightkeeper",
+      },
+      milestones: {
+        title: "Milestones",
+        starter: "Getting Started",
+        halfway: "Halfway There",
+        veteran: "Almost Done",
+        kappa: {
+          title: "Kappa",
+          subtitle: "Container Earned",
+        },
+        lightkeeper: {
+          title: "Lightkeeper",
+          subtitle: "Trader Unlocked",
+        },
+      },
+      traders: {
+        title: "Trader Progress",
+      },
       stats: {
+        available: {
+          stat: "Available",
+          details: "Tasks ready to start.",
+        },
+        failed: {
+          stat: "Failed",
+          details: "Tasks failed.",
+        },
         allTasks: {
           stat: "Tasks Completed",
           details: "The number of tasks you have completed.",
@@ -105,7 +147,7 @@
       showing_all_sources: "Showing all sources",
       loading: "Loading tasks",
       questcard: {
-        level: "Level Required: {count}",
+        level: "Level: {count}",
         wiki: "Wiki page",
         lockedbefore: "Tasks Before: {count}",
         lockedbehind: "Tasks Locked Behind: {count}",
@@ -139,9 +181,11 @@
       },
       stationcard: {
         level: "Available to build | Level {count} | Level {count}",
+        levelnotready: "Not ready to build",
         nextlevel: "Requirements for next level",
         maxlevel: "Max station level reached",
         upgradeunavailable: "Upgrade unavailable",
+        prerequisites: "Prerequisites",
         requirements: {
           station: "Requires {stationname} level {level}",
           skill: "Requires {skillname} level {level}",
@@ -345,6 +389,7 @@
     tasks: "Tasks",
     hideout: "Hideout",
     neededitems: "Needed Items",
+    traders: "Traders",
     tarkovdev: "Tarkov.dev",
     ratscanner: "Rat Scanner",
     tarkovguru: "Tarkov Guru",

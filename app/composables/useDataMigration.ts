@@ -35,17 +35,21 @@ export function useDataMigration() {
       const hasRemoteData = await DataMigrationService.hasUserData(userId);
       if (hasRemoteData) {
         migrationStatus.value = "success";
-        migrationMessage.value = "User already has data in the cloud. Skipping migration.";
+        migrationMessage.value =
+          "User already has data in the cloud. Skipping migration.";
         // Mark as migrated locally to prevent repeated checks
         markDataMigrated();
         return true;
       }
       // Proceed with migration
       migrationMessage.value = "Migrating your progress data...";
-      const migrationSuccess = await DataMigrationService.migrateDataToUser(userId);
+      const migrationSuccess = await DataMigrationService.migrateDataToUser(
+        userId
+      );
       if (migrationSuccess) {
         migrationStatus.value = "success";
-        migrationMessage.value = "Your local progress has been successfully saved to the cloud!";
+        migrationMessage.value =
+          "Your local progress has been successfully saved to the cloud!";
         // Mark as migrated to prevent repeated migrations
         markDataMigrated();
         return true;
@@ -76,7 +80,9 @@ export function useDataMigration() {
     targetGameMode?: GameMode
   ): Promise<boolean> => {
     if (!apiToken || !userId) {
-      console.warn("[useDataMigration] Missing API token or user ID for import");
+      console.warn(
+        "[useDataMigration] Missing API token or user ID for import"
+      );
       return false;
     }
     try {
@@ -84,7 +90,9 @@ export function useDataMigration() {
       migrationMessage.value = "Fetching data from API token...";
       migrationError.value = null;
       // Fetch data using the API token
-      const importedData = await DataMigrationService.fetchDataWithApiToken(apiToken);
+      const importedData = await DataMigrationService.fetchDataWithApiToken(
+        apiToken
+      );
       if (!importedData) {
         throw new Error("Failed to fetch data using the provided API token");
       }

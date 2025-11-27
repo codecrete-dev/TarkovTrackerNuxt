@@ -65,22 +65,49 @@ const alternativeTasks = computed(() => metadataStore.alternativeTasks);
 const decreaseCount = () => {
   if (props.need.needType == "taskObjective") {
     if (currentCount.value > 0) {
-      tarkovStore.setObjectiveCount(props.need.id, currentCount.value - 1);
+      const newCount = currentCount.value - 1;
+      tarkovStore.setObjectiveCount(props.need.id, newCount);
+      
+      // If we drop below needed count and objective was complete, uncomplete it
+      if (newCount < neededCount.value && tarkovStore.isTaskObjectiveComplete(props.need.id)) {
+        tarkovStore.setTaskObjectiveUncomplete(props.need.id);
+      }
     }
   } else if (props.need.needType == "hideoutModule") {
     if (currentCount.value > 0) {
-      tarkovStore.setHideoutPartCount(props.need.id, currentCount.value - 1);
+      const newCount = currentCount.value - 1;
+      tarkovStore.setHideoutPartCount(props.need.id, newCount);
+      
+      // If we drop below needed count and module was complete, uncomplete it
+      // Note: Hideout modules are complex, usually parts contribute to a module.
+      // If this is a part, we might want to uncomplete the part?
+      // The store has setHideoutPartUncomplete.
+      if (newCount < neededCount.value && tarkovStore.isHideoutPartComplete(props.need.id)) {
+        tarkovStore.setHideoutPartUncomplete(props.need.id);
+      }
     }
   }
 };
 const increaseCount = () => {
   if (props.need.needType == "taskObjective") {
     if (currentCount.value < neededCount.value) {
-      tarkovStore.setObjectiveCount(props.need.id, currentCount.value + 1);
+      const newCount = currentCount.value + 1;
+      tarkovStore.setObjectiveCount(props.need.id, newCount);
+      
+      // If we reach needed count, mark objective as complete
+      if (newCount >= neededCount.value && !tarkovStore.isTaskObjectiveComplete(props.need.id)) {
+        tarkovStore.setTaskObjectiveComplete(props.need.id);
+      }
     }
   } else if (props.need.needType == "hideoutModule") {
     if (currentCount.value < neededCount.value) {
-      tarkovStore.setHideoutPartCount(props.need.id, currentCount.value + 1);
+      const newCount = currentCount.value + 1;
+      tarkovStore.setHideoutPartCount(props.need.id, newCount);
+      
+      // If we reach needed count, mark part as complete
+      if (newCount >= neededCount.value && !tarkovStore.isHideoutPartComplete(props.need.id)) {
+        tarkovStore.setHideoutPartComplete(props.need.id);
+      }
     }
   }
 };
@@ -88,18 +115,30 @@ const toggleCount = () => {
   if (props.need.needType == "taskObjective") {
     if (currentCount.value === 0) {
       tarkovStore.setObjectiveCount(props.need.id, neededCount.value);
+      tarkovStore.setTaskObjectiveComplete(props.need.id);
     } else if (currentCount.value === neededCount.value) {
-      tarkovStore.setObjectiveCount(props.need.id, 0);
+      tarkovStore.setObjectiveCount(
+        props.need.id,
+        Math.max(0, neededCount.value - 1)
+      );
+      tarkovStore.setTaskObjectiveUncomplete(props.need.id);
     } else {
       tarkovStore.setObjectiveCount(props.need.id, neededCount.value);
+      tarkovStore.setTaskObjectiveComplete(props.need.id);
     }
   } else if (props.need.needType == "hideoutModule") {
     if (currentCount.value === 0) {
       tarkovStore.setHideoutPartCount(props.need.id, neededCount.value);
+      tarkovStore.setHideoutPartComplete(props.need.id);
     } else if (currentCount.value === neededCount.value) {
-      tarkovStore.setHideoutPartCount(props.need.id, 0);
+      tarkovStore.setHideoutPartCount(
+        props.need.id,
+        Math.max(0, neededCount.value - 1)
+      );
+      tarkovStore.setHideoutPartUncomplete(props.need.id);
     } else {
       tarkovStore.setHideoutPartCount(props.need.id, neededCount.value);
+      tarkovStore.setHideoutPartComplete(props.need.id);
     }
   }
 };
@@ -270,30 +309,30 @@ provide("neededitem", {
   min-height: 90px;
 }
 .item-bg-violet {
-  background-color: #2c232f;
+  background-color: var(--color-brand-900);
 }
 .item-bg-grey {
-  background-color: #1e1e1e;
+  background-color: var(--color-surface-900);
 }
 .item-bg-yellow {
-  background-color: #343421;
+  background-color: var(--color-warning-900);
 }
 .item-bg-orange {
-  background-color: #261d14;
+  background-color: var(--color-warning-950);
 }
 .item-bg-green {
-  background-color: #1a2314;
+  background-color: var(--color-success-950);
 }
 .item-bg-red {
-  background-color: #38221f;
+  background-color: var(--color-error-900);
 }
 .item-bg-default {
-  background-color: #3a3c3b;
+  background-color: var(--color-surface-800);
 }
 .item-bg-black {
-  background-color: #141614;
+  background-color: var(--color-surface-950);
 }
 .item-bg-blue {
-  background-color: #202d32;
+  background-color: var(--color-secondary-900);
 }
 </style>

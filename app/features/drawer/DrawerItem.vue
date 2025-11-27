@@ -3,11 +3,11 @@
     <NuxtLink
       v-if="props.to && !props.href"
       :to="props.to"
-      class="group flex items-center rounded-md px-3 py-2.5 text-base font-medium transition-colors duration-200 cursor-pointer"
+      class="group flex items-center rounded-md px-3 py-2.5 text-base font-medium transition-colors duration-150 cursor-pointer"
       :class="[
         isActive
-          ? 'bg-white/10 text-white border-l-4 border-white/30 font-semibold'
-          : 'text-gray-400 hover:bg-white/5 hover:text-white border-l-4 border-transparent',
+          ? 'bg-surface-700 text-white border-l-2 border-primary-500'
+          : 'text-[rgba(248,248,248,0.65)] hover:text-white hover:bg-white/5 border-l-2 border-transparent',
         props.isCollapsed ? 'justify-center' : '',
       ]"
     >
@@ -22,7 +22,11 @@
           <NuxtImg :src="props.avatar" class="h-6 w-6 rounded-full" width="24" height="24" />
         </template>
         <template v-else-if="props.icon.startsWith('i-')">
-          <UIcon :name="props.icon" class="w-6 h-6" :class="props.iconColor ? `text-${props.iconColor}` : ''" />
+          <UIcon
+            :name="props.icon"
+            class="w-6 h-6 transition-colors"
+            :class="iconClasses"
+          />
         </template>
         <template v-else>
           <span :class="['mdi', props.icon, 'text-2xl']"></span>
@@ -46,9 +50,9 @@
       :href="props.href"
       target="_blank"
       rel="noopener noreferrer"
-      class="group flex items-center rounded-md px-3 py-2.5 text-sm font-medium transition-colors duration-200 cursor-pointer"
+      class="group flex items-center rounded-md px-3 py-2.5 text-sm font-medium transition-colors duration-150 cursor-pointer"
       :class="[
-        'text-gray-400 hover:bg-white/5 hover:text-white border-l-4 border-transparent',
+        'text-[rgba(248,248,248,0.65)] hover:text-white hover:bg-white/5 border-l-2 border-transparent',
         props.isCollapsed ? 'justify-center' : '',
       ]"
       @click="visitHref()"
@@ -177,6 +181,11 @@ const isActive = computed(() => {
     return route.path === props.to;
   }
   return false;
+});
+const iconClasses = computed(() => {
+  if (isActive.value) return "text-primary-400";
+  if (props.iconColor) return [`text-${props.iconColor}`, "group-hover:text-white"].join(' ');
+  return "text-white/70 group-hover:text-white";
 });
 const visitHref = () => {
   if (props.href !== null) {

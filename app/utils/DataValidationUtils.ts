@@ -3,7 +3,7 @@ import {
   DEFAULT_GAME_EDITION,
   DEFAULT_PMC_FACTION,
   GAME_EDITION_STRING_VALUES,
-  PMC_FACTION_VALUES_LOWERCASE,
+  normalizePMCFaction,
 } from "./constants";
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
@@ -59,7 +59,7 @@ export class DataValidationUtils {
       this.hasSignificantProgress(data) ||
       (data.displayName && data.displayName.trim().length > 0) ||
       data.gameEdition !== GAME_EDITION_STRING_VALUES[0] ||
-      data.pmcFaction !== DEFAULT_PMC_FACTION.toLowerCase()
+      normalizePMCFaction(data.pmcFaction) !== DEFAULT_PMC_FACTION
     );
   }
   /**
@@ -89,11 +89,7 @@ export class DataValidationUtils {
       )
         ? data.gameEdition
         : GAME_EDITION_STRING_VALUES[DEFAULT_GAME_EDITION - 1],
-      pmcFaction: PMC_FACTION_VALUES_LOWERCASE.includes(
-        data.pmcFaction as (typeof PMC_FACTION_VALUES_LOWERCASE)[number]
-      )
-        ? data.pmcFaction
-        : DEFAULT_PMC_FACTION.toLowerCase(),
+      pmcFaction: normalizePMCFaction(data.pmcFaction).toLowerCase(),
     };
   }
 }

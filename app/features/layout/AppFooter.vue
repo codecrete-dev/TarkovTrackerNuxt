@@ -125,7 +125,11 @@ const { t } = useI18n({ useScope: "global" });
   }
 }
 .kofi-link {
-  background: linear-gradient(135deg, #ff5f5f 0%, #ff9500 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-400) 0%,
+    var(--color-warning-400) 100%
+  );
   color: white !important;
   padding: 4px 12px;
   border-radius: 16px;
@@ -133,10 +137,10 @@ const { t } = useI18n({ useScope: "global" });
   font-weight: 500;
   text-decoration: none;
   transition: all 0.2s ease;
-  box-shadow: 0 1px 4px rgba(255, 95, 95, 0.3);
+  box-shadow: 0 1px 4px color-mix(in srgb, var(--color-primary-400) 30%, transparent);
   &:hover {
     transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(255, 95, 95, 0.4);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--color-primary-400) 40%, transparent);
     color: white !important;
   }
 }

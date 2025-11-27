@@ -1,8 +1,8 @@
 <template>
   <icon-card
     icon="mdi-account-group"
-    icon-background="#242F35"
-    icon-color="#9A8866"
+    icon-background="var(--color-accent-800)"
+    icon-color="var(--color-brand-500)"
   >
     <template #stat>
       {{ $t("module.team_settings.title") }}
@@ -20,4 +20,3 @@
 <script setup>
 import IconCard from "@/components/ui/IconCard.vue";
 </script>
-<style scoped></style>

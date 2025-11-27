@@ -25,6 +25,14 @@
     >
     </DrawerItem>
     <DrawerItem
+      icon="i-heroicons-briefcase"
+      icon-color="accent-300"
+      locale-key="traders"
+      to="/traders"
+      :is-collapsed="props.isCollapsed"
+    >
+    </DrawerItem>
+    <DrawerItem
       icon="i-heroicons-home"
       icon-color="accent-300"
       locale-key="hideout"
@@ -33,7 +41,6 @@
     >
     </DrawerItem>
     <DrawerItem
-      v-show="user.loggedIn"
       icon="i-heroicons-user-group"
       icon-color="brand-400"
       locale-key="team"
@@ -51,7 +58,6 @@
     </DrawerItem>
     <DrawerItem
       icon="i-heroicons-cog-6-tooth"
-      icon-color="surface-400"
       locale-key="settings"
       to="/settings"
       :is-collapsed="props.isCollapsed"
@@ -60,7 +66,6 @@
   </ul>
 </template>
 <script setup>
-import { computed } from "vue";
 import DrawerItem from "@/features/drawer/DrawerItem.vue";
 const props = defineProps({
   isCollapsed: {
@@ -68,8 +73,4 @@ const props = defineProps({
     required: true,
   },
 });
-const { $supabase } = useNuxtApp();
-const user = computed(() => ({
-  loggedIn: $supabase.user?.loggedIn ?? false,
-}));
 </script>

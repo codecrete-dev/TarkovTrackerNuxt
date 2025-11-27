@@ -58,10 +58,13 @@ const signInWithTwitch = async () => {
   try {
     loading.value.twitch = true;
 
+    const config = useRuntimeConfig();
+    const callbackUrl = `${config.public.appUrl}/auth/callback`;
+
     // Get OAuth URL - we'll handle redirect in a popup
     const data = await $supabase.signInWithOAuth("twitch", {
       skipBrowserRedirect: true,
-      redirectTo: `${window.location.origin}/auth/callback`,
+      redirectTo: callbackUrl,
     });
 
     if (data?.url) {
@@ -120,10 +123,14 @@ const signInWithTwitch = async () => {
 const signInWithDiscord = async () => {
   try {
     loading.value.discord = true;
+
+    const config = useRuntimeConfig();
+    const callbackUrl = `${config.public.appUrl}/auth/callback`;
+
     // Get OAuth URL - we'll handle redirect in a popup
     const data = await $supabase.signInWithOAuth("discord", {
       skipBrowserRedirect: true,
-      redirectTo: `${window.location.origin}/auth/callback`,
+      redirectTo: callbackUrl,
     });
     if (data?.url) {
       // Open popup window with specific features for OAuth

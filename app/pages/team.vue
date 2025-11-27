@@ -6,11 +6,13 @@
     >
       <TeamInvite />
     </div>
-    <div v-if="user.loggedIn" class="max-w-6xl mx-auto grid gap-4">
-      <TeamMembers v-if="systemStore.$state.team" class="col-span-full" />
-      <div class="grid gap-4 md:grid-cols-2">
-        <MyTeam />
-        <TeamOptions />
+    <div class="relative max-w-6xl mx-auto">
+      <div class="grid gap-4">
+        <TeamMembers v-if="systemStore.$state.team" class="col-span-full" />
+        <div class="grid gap-4 md:grid-cols-2">
+          <MyTeam />
+          <TeamOptions />
+        </div>
       </div>
     </div>
   </div>

@@ -40,18 +40,15 @@ import { useRoute } from "vue-router";
 // import { useLiveData } from '@/composables/livedata';
 // Cloudflare functions - TODO: Implement replacement
 import { useSystemStore } from "@/stores/useSystemStore";
-
 // const router = useRouter();
 // const { useSystemStore } = useLiveData();
 const systemStore = useSystemStore();
 // const { t } = useI18n({ useScope: "global" });
 const route = useRoute();
 const toast = useToast();
-
 // const functions = getFunctions();
 // const joinTeamCallable = httpsCallable(functions, 'joinTeam');
 // const leaveTeamCallable = httpsCallable(functions, 'leaveTeam');
-
 const hasInviteInUrl = computed(() => {
   return !!(route.query.team && route.query.code);
 });
@@ -62,7 +59,6 @@ const inInviteTeam = computed(() => {
 });
 const declined = ref(false);
 const accepting = ref(false);
-
 const acceptInvite = async () => {
   // TODO: Implement Supabase team joining logic
   console.warn("Team joining not yet implemented for Supabase");
@@ -72,4 +68,3 @@ const acceptInvite = async () => {
   });
 };
 </script>
-<style scoped></style>

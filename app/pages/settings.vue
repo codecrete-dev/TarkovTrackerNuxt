@@ -1,8 +1,5 @@
 <template>
   <div class="container mx-auto px-4 py-6 space-y-4">
-    <h1 class="text-2xl font-bold text-surface-50">
-      {{ $t("page.settings.title") }}
-    </h1>
     <div class="grid gap-4 md:grid-cols-2">
       <!-- Section 1: General Settings -->
       <GenericCard
@@ -17,29 +14,29 @@
             $t("settings.general.title", "General Settings")
           }}</span>
         </template>
+        <template #title-right>
+          <UAlert
+            v-if="!user.loggedIn"
+            icon="i-mdi-lock"
+            color="warning"
+            variant="soft"
+            class="text-sm p-1 inline-flex items-center"
+          >
+            <template #description>
+              <span class="text-sm">
+                {{
+                  $t(
+                    "settings.general.login_required",
+                    "Log in to enable these settings."
+                  )
+                }}
+              </span>
+            </template>
+          </UAlert>
+        </template>
         <template #content>
           <div class="px-4 py-3 space-y-4">
             <div class="space-y-2">
-              <p class="text-sm font-semibold text-surface-200">
-                {{ $t("settings.general.language", "Language") }}
-              </p>
-              <USelectMenu
-                v-model="selectedLocale"
-                :items="localeItems"
-                value-key="value"
-                :popper="{ placement: 'bottom-start', strategy: 'fixed' }"
-                :ui="selectUi"
-                :ui-menu="selectMenuUi"
-              >
-                <template #leading>
-                  <UIcon
-                    name="i-mdi-translate"
-                    class="w-4 h-4 text-surface-300"
-                  />
-                </template>
-              </USelectMenu>
-            </div>
-            <div v-if="user.loggedIn" class="space-y-2">
               <p class="text-sm font-semibold text-surface-200">
                 {{ $t("settings.general.streamer_mode", "Streamer Mode") }}
               </p>
@@ -47,6 +44,7 @@
                 <UCheckbox
                   v-model="streamerMode"
                   :disabled="
+                    !user.loggedIn ||
                     Boolean(preferencesStore.saving && preferencesStore.saving.streamerMode)
                   "
                   label=""
@@ -104,38 +102,6 @@
                 </template>
               </USelectMenu>
             </div>
-            <div class="space-y-2">
-              <p class="text-sm font-semibold text-surface-200">
-                {{ $t("settings.game_profile.pmc_faction", "Faction") }}
-              </p>
-              <USelectMenu
-                v-model="selectedPMCFaction"
-                :items="pmcFactionOptions"
-                value-key="value"
-                :popper="{ placement: 'bottom-start', strategy: 'fixed' }"
-                :ui="selectUi"
-                :ui-menu="selectMenuUi"
-              >
-                <template #leading>
-                  <img
-                    :src="
-                      factionImage(selectedPMCFaction) ||
-                      factionImage(pmcFactionOptions[0]?.value || 'USEC')
-                    "
-                    class="w-4 h-4 invert"
-                  />
-                </template>
-                <template #item="{ item }">
-                  <div class="flex items-center gap-2 px-2 py-1">
-                    <img
-                      :src="factionImage(item.value)"
-                      class="w-4 h-4 invert"
-                    />
-                    <span>{{ item.label }}</span>
-                  </div>
-                </template>
-              </USelectMenu>
-            </div>
           </div>
         </template>
       </GenericCard>
@@ -146,12 +112,9 @@
       icon-color="warning"
       highlight-color="tan"
       :fill-height="false"
+      :title="$t('settings.data_management.title', 'Data Management')"
+      title-classes="text-lg font-semibold"
     >
-      <template #title>
-        <span class="text-lg font-semibold">{{
-          $t("settings.data_management.title", "Data Management")
-        }}</span>
-      </template>
       <template #title-right>
         <UAlert
           v-if="!user.loggedIn"
@@ -475,11 +438,10 @@
 </template>
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { usePreferencesStore } from "@/stores/preferences";
 import { useTarkovStore } from "@/stores/tarkov";
-import { GAME_EDITIONS, PMC_FACTIONS } from "@/utils/constants";
+import { GAME_EDITIONS } from "@/utils/constants";
 import GenericCard from "@/components/ui/GenericCard.vue";
 import AccountDeletionCard from "@/features/settings/AccountDeletionCard.vue";
 import DataMigrationCard from "@/features/settings/DataMigrationCard.vue";
@@ -493,7 +455,6 @@ definePageMeta({
 const { $supabase } = useNuxtApp();
 const router = useRouter();
 const toast = useToast();
-const { locale, availableLocales } = useI18n({ useScope: "global" });
 const preferencesStore = usePreferencesStore();
 const tarkovStore = useTarkovStore();
 const selectUi = {};
@@ -518,25 +479,6 @@ const resetting = ref(false);
 const user = computed(() => ({
   loggedIn: $supabase.user.loggedIn,
 }));
-// Language settings
-const localeItems = computed(() => {
-  const languageNames = new Intl.DisplayNames(["en"], { type: "language" });
-  return availableLocales.map((localeCode) => ({
-    label: languageNames.of(localeCode) || localeCode.toUpperCase(),
-    value: localeCode,
-  }));
-});
-const selectedLocale = computed({
-  get() {
-    return locale.value;
-  },
-  set(newValue) {
-    if (!newValue) return;
-    locale.value = newValue;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (preferencesStore.$state as any).localeOverride = newValue;
-  },
-});
 // Streamer mode
 const streamerMode = computed({
   get() {
@@ -561,24 +503,6 @@ const selectedGameEdition = computed({
     tarkovStore.setGameEdition(newValue);
   },
 });
-// PMC Faction
-const pmcFactionOptions = computed(() =>
-  PMC_FACTIONS.map((faction) => ({
-    label: faction.title,
-    value: faction.value,
-  }))
-);
-const selectedPMCFaction = computed({
-  get() {
-    return tarkovStore.getPMCFaction();
-  },
-  set(newValue: "USEC" | "BEAR") {
-    tarkovStore.setPMCFaction(newValue);
-  },
-});
-const factionImage = (faction: string) => {
-  return `/img/factions/${faction}.webp`;
-};
 
 // Methods
 const navigateToApiPage = () => {

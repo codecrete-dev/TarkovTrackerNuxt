@@ -1,6 +1,6 @@
 <template>
   <div v-if="show" class="w-full mb-2">
-    <div class="bg-[#1e293b] rounded-lg shadow-sm border border-gray-700">
+    <div class="bg-accent-800 rounded-lg shadow-sm border border-surface-700">
       <UTabs
         :items="tabItems"
         :model-value="selectedTabIndex"
@@ -26,35 +26,28 @@
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
 import { computed } from "vue";
-
 interface MapData {
   id: string;
   name: string;
   mergedIds?: string[];
 }
-
 interface Props {
   show: boolean;
   maps: MapData[];
   taskTotals: Record<string, number>;
   activeMapView: string;
 }
-
 interface Emits {
   (e: "update:activeMapView", value: string): void;
 }
-
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
-
 const getTaskTotal = (map: MapData): number => {
   const mapId = map.mergedIds?.[0] ?? map.id;
   return (mapId && props.taskTotals[mapId]) || 0;
 };
-
 const tabItems = computed(() => {
   return props.maps.map((map) => ({
     label: map.name,
@@ -62,11 +55,9 @@ const tabItems = computed(() => {
     count: getTaskTotal(map),
   }));
 });
-
 const selectedTabIndex = computed(() => {
   return tabItems.value.findIndex((item) => item.id === props.activeMapView);
 });
-
 const onTabChange = (val: string | number) => {
   const index = Number(val);
   const item = tabItems.value[index];
