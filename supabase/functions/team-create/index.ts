@@ -118,6 +118,20 @@ serve(async (req) => {
       return createErrorResponse("Failed to create team membership", 500)
     }
 
+    // Upsert user_system team_id for the creator
+    const { error: systemError } = await supabase
+      .from("user_system")
+      .upsert({
+        user_id: user.id,
+        team_id: team.id,
+        updated_at: new Date().toISOString()
+      })
+
+    if (systemError) {
+      console.error("user_system upsert failed:", systemError)
+      return createErrorResponse("Failed to update user system state", 500)
+    }
+
     // Log team creation event
     await supabase
       .from("team_events")

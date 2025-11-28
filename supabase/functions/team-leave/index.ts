@@ -128,6 +128,20 @@ serve(async (req) => {
         created_at: new Date().toISOString()
       })
 
+    // Clear user_system team_id for the leaver
+    const { error: systemError } = await supabase
+      .from("user_system")
+      .upsert({
+        user_id: user.id,
+        team_id: null,
+        updated_at: new Date().toISOString()
+      })
+
+    if (systemError) {
+      console.error("user_system upsert failed:", systemError)
+      return createErrorResponse("Failed to update user system state", 500)
+    }
+
     return createSuccessResponse({
       success: true,
       message: "Successfully left team"

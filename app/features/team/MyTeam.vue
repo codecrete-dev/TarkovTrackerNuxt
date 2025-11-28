@@ -77,9 +77,10 @@
       )
     ).join("");
   const localUserTeam = computed(() => systemStore.$state?.team || null);
-  const isTeamOwner = computed(
-    () => teamStore.$state.owner === $supabase.user.id && systemStore.$state?.team != null
-  );
+  const isTeamOwner = computed(() => {
+    const owner = (teamStore.$state as any).owner_id ?? (teamStore.$state as any).owner;
+    return owner === $supabase.user.id && systemStore.$state?.team != null;
+  });
   const loading = ref({ createTeam: false, leaveTeam: false });
   const validateAuth = () => {
     if (!$supabase.user.loggedIn || !$supabase.user.id) {
@@ -169,11 +170,11 @@
         (state) =>
           Boolean(
             state &&
-            typeof state === "object" &&
-            "owner" in state &&
-            "password" in state &&
-            state.owner === $supabase.user.id &&
-            state.password
+              typeof state === "object" &&
+              ((("owner" in state) && (state as any).owner === $supabase.user.id) ||
+                (("owner_id" in state) && (state as any).owner_id === $supabase.user.id)) &&
+              (("password" in state && (state as any).password) ||
+                ("join_code" in state && (state as any).join_code))
           )
       );
       await nextTick();
@@ -252,14 +253,16 @@
   };
   const teamUrl = computed(() => {
     const { team: teamId } = systemStore.$state;
-    const { password } = teamStore.$state;
-    if (!teamId || !password) return "";
+    // Support legacy password and new join_code
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const code = (teamStore.$state as any).password || (teamStore.$state as any).join_code;
+    if (!teamId || !code) return "";
 
     // Use Nuxt-safe route composables instead of window.location
     // This works during SSR and client-side
     if (import.meta.client) {
       const baseUrl = window.location.href.split("?")[0];
-      const params = new URLSearchParams({ team: teamId, code: password });
+      const params = new URLSearchParams({ team: teamId, code });
       return `${baseUrl}?${params}`;
     } else {
       // During SSR, construct URL from route path
@@ -267,7 +270,7 @@
       const config = useRuntimeConfig();
       const baseUrl = config.public.siteUrl || "";
       const currentPath = route.path;
-      const params = new URLSearchParams({ team: teamId, code: password });
+      const params = new URLSearchParams({ team: teamId, code });
       return `${baseUrl}${currentPath}?${params}`;
     }
   });

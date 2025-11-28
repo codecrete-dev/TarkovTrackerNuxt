@@ -114,6 +114,20 @@ serve(async (req) => {
         created_at: new Date().toISOString()
       })
 
+    // Update user_system team_id for the joiner
+    const { error: systemError } = await supabase
+      .from("user_system")
+      .upsert({
+        user_id: user.id,
+        team_id: teamId,
+        updated_at: new Date().toISOString()
+      })
+
+    if (systemError) {
+      console.error("user_system upsert failed:", systemError)
+      return createErrorResponse("Failed to update user system state", 500)
+    }
+
     return createSuccessResponse({
       success: true,
       message: "Successfully joined team",
