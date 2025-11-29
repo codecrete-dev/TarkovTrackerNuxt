@@ -15,9 +15,6 @@ export function debounce<T extends (...args: unknown[]) => unknown>(
   };
   return debounced as T & { cancel: () => void };
 }
-/**
- * Simple object path getter to replace lodash get
- */
 export function get(obj: Record<string, unknown>, path: string, defaultValue?: unknown): unknown {
   if (path === ".") return obj;
   const keys = path.split(".");
@@ -31,9 +28,6 @@ export function get(obj: Record<string, unknown>, path: string, defaultValue?: u
   }
   return result;
 }
-/**
- * Simple object path setter to replace lodash set
- */
 export function set(obj: Record<string, unknown>, path: string, value: unknown): void {
   if (path === ".") {
     Object.assign(obj, value as Record<string, unknown>);

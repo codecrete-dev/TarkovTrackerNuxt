@@ -14,7 +14,6 @@
         {{ $t("page.login.continue_twitch") }}
       </span>
     </UButton>
-
     <UButton
       block
       size="xl"
@@ -32,8 +31,8 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { ref, onMounted, nextTick } from "vue";
-  import DataMigrationService from "@/utils/DataMigrationService";
+  import { nextTick, onMounted, ref } from "vue";
+  import DataMigrationService from "@/utils/dataMigrationService";
   const { $supabase } = useNuxtApp();
   const loading = ref({
     google: false, // Kept for compatibility if needed, but we'll use Twitch/Discord
@@ -63,15 +62,12 @@
   const signInWithTwitch = async () => {
     try {
       loading.value.twitch = true;
-
       const callbackUrl = buildCallbackUrl();
-
       // Get OAuth URL - we'll handle redirect in a popup
       const data = await $supabase.signInWithOAuth("twitch", {
         skipBrowserRedirect: true,
         redirectTo: callbackUrl,
       });
-
       if (data?.url) {
         // Open popup window with specific features for OAuth
         const width = 600;
@@ -83,7 +79,6 @@
           "oauth-popup",
           `width=${width},height=${height},left=${left},top=${top},toolbar=no,menubar=no,location=no,status=no`
         );
-
         if (popup) {
           // Listen for messages from popup
           const messageHandler = (event: MessageEvent) => {
@@ -93,7 +88,6 @@
               cleanup();
             }
           };
-
           // Poll for popup closure
           const pollTimer = setInterval(() => {
             if (popup.closed) {
@@ -125,9 +119,7 @@
   const signInWithDiscord = async () => {
     try {
       loading.value.discord = true;
-
       const callbackUrl = buildCallbackUrl();
-
       // Get OAuth URL - we'll handle redirect in a popup
       const data = await $supabase.signInWithOAuth("discord", {
         skipBrowserRedirect: true,
@@ -153,7 +145,6 @@
               cleanup();
             }
           };
-
           // Poll for popup closure
           const pollTimer = setInterval(() => {
             if (popup.closed) {

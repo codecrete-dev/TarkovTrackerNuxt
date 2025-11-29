@@ -1,7 +1,7 @@
 import { onUnmounted, ref, watch } from "vue";
+import { clearStaleState, devLog, resetStore, safePatchStore } from "@/utils/storeHelpers";
+import type { RealtimeChannel, RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 import type { Store } from "pinia";
-import type { RealtimePostgresChangesPayload, RealtimeChannel } from "@supabase/supabase-js";
-import { clearStaleState, safePatchStore, resetStore, devLog } from "@/utils/storeHelpers";
 export interface SupabaseListenerConfig {
   store: Store;
   table: string;

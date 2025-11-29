@@ -1,5 +1,21 @@
-import type { _GettersTree } from "pinia";
+/**
+ * User Progress State Definition
+ *
+ * Defines the core state structure, getters, and actions for tracking
+ * user progress in Escape from Tarkov (tasks, hideout, levels, traders).
+ *
+ * This module is shared between:
+ * - Main tarkov store (user's own progress)
+ * - Teammate stores (dynamically created for each team member)
+ *
+ * Supports dual game mode tracking (PVP and PVE) with separate progress data.
+ * Each game mode maintains its own independent progress: level, faction, tasks,
+ * hideout modules, and trader relationships.
+ *
+ * @module stores/userProgressState
+ */
 import { GAME_MODES, type GameMode } from "@/utils/constants";
+import type { _GettersTree } from "pinia";
 // State interfaces
 interface TaskObjective {
   count?: number;
@@ -88,8 +104,7 @@ export function migrateToGameModeStructure(legacyData: unknown): UserState {
     legacyData &&
     typeof legacyData === "object" &&
     "currentGameMode" in legacyData &&
-    !("pvp" in legacyData) &&
-    !("pve" in legacyData)
+    !("pvp" in legacyData && !("pve" in legacyData))
   ) {
     const data = legacyData as Record<string, unknown>;
     // This is a partially migrated state, use the existing data as legacy format

@@ -43,7 +43,6 @@
               </div>
             </div>
           </div>
-
           <!-- Stats Overview -->
           <div class="space-y-6 lg:col-span-2">
             <div>
@@ -54,7 +53,6 @@
                 {{ $t("page.dashboard.hero.subtitle") }}
               </p>
             </div>
-
             <!-- Quick Stats Grid -->
             <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
               <div class="bg-surface-800/50 border-surface-700/50 rounded-xl border p-4">
@@ -94,7 +92,6 @@
         </div>
       </div>
     </div>
-
     <!-- Progress Breakdown Section -->
     <div class="mb-6">
       <h2 class="mb-4 flex items-center text-2xl font-bold text-white">
@@ -134,7 +131,6 @@
             ></div>
           </div>
         </div>
-
         <!-- Objectives Progress -->
         <div
           class="bg-surface-900 border-surface-700/30 hover:border-info-700/50 rounded-xl border p-6 shadow-lg transition-colors"
@@ -164,7 +160,6 @@
             ></div>
           </div>
         </div>
-
         <!-- Task Items Progress -->
         <div
           class="bg-surface-900 border-surface-700/30 hover:border-success-700/50 rounded-xl border p-6 shadow-lg transition-colors"
@@ -194,7 +189,6 @@
             ></div>
           </div>
         </div>
-
         <!-- Kappa Progress -->
         <div
           class="bg-surface-900 border-surface-700/30 hover:border-warning-700/50 rounded-xl border p-6 shadow-lg transition-colors"
@@ -224,7 +218,6 @@
             ></div>
           </div>
         </div>
-
         <!-- Lightkeeper Progress -->
         <div
           class="bg-surface-900 border-surface-700/30 rounded-xl border p-6 shadow-lg transition-colors hover:border-purple-700/50"
@@ -454,63 +447,52 @@
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
   import { computed } from "vue";
   import { useDashboardStats } from "@/composables/useDashboardStats";
-  import { useTarkovStore } from "@/stores/tarkov";
-
+  import { useTarkovStore } from "@/stores/useTarkov";
   // Dashboard statistics composable
   const dashboardStats = useDashboardStats();
   const tarkovStore = useTarkovStore();
-
   // Get current level
   const currentLevel = computed(() => {
     const currentMode = tarkovStore.currentGameMode;
     return tarkovStore[currentMode]?.level || 1;
   });
-
   // Unwrap trader stats for template usage
   const traderStats = computed(() => dashboardStats.traderStats.value || []);
-
   // Helper function to calculate percentage
   const calculatePercentage = (completed: number, total: number): string => {
     return total > 0 ? ((completed / total) * 100).toFixed(1) : "0.0";
   };
-
   // Percentage calculations
   const totalTasksPercentage = computed(() =>
     calculatePercentage(dashboardStats.completedTasks.value, dashboardStats.totalTasks.value)
   );
-
   const totalObjectivesPercentage = computed(() =>
     calculatePercentage(
       dashboardStats.completedObjectives.value,
       dashboardStats.totalObjectives.value
     )
   );
-
   const totalTaskItemsPercentage = computed(() =>
     calculatePercentage(
       dashboardStats.completedTaskItems.value,
       dashboardStats.totalTaskItems.value
     )
   );
-
   const totalKappaTasksPercentage = computed(() =>
     calculatePercentage(
       dashboardStats.completedKappaTasks.value,
       dashboardStats.totalKappaTasks.value
     )
   );
-
   const totalLightkeeperTasksPercentage = computed(() =>
     calculatePercentage(
       dashboardStats.completedLightkeeperTasks.value,
       dashboardStats.totalLightkeeperTasks.value
     )
   );
-
   // Circle progress calculation
   const circumference = 2 * Math.PI * 88; // radius = 88
   const progressOffset = computed(() => {

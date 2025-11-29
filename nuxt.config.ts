@@ -101,6 +101,10 @@ export default defineNuxtConfig({
       path: "~/features",
       pathPrefix: false,
     },
+    {
+      path: "~/shell",
+      pathPrefix: false,
+    },
   ],
   typescript: {
     tsConfig: {

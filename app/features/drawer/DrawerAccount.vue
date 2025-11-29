@@ -45,7 +45,7 @@
 <script setup>
   import { computed } from "vue";
   import { useI18n } from "vue-i18n";
-  import { usePreferencesStore } from "@/stores/preferences";
+  import { usePreferencesStore } from "@/stores/usePreferences";
   defineProps({
     isCollapsed: {
       type: Boolean,

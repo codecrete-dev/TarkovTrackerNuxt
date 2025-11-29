@@ -152,6 +152,9 @@
       title: "Документація API",
       description: "Отримуйте доступ до даних Tarkov Tracker програмно.",
       note: "Для автентифікації потрібні токени API.",
+      tokens_moved_title: "API-токени тепер у розділі Налаштування",
+      tokens_moved_description: "Створюйте та відкликайте токени у Налаштування → API Tokens. Ця сторінка залишається для документації.",
+      tokens_moved_action: "Відкрити налаштування",
       endpoints: {
         title: "Доступні ендпоінти",
         data: {
@@ -194,7 +197,31 @@
           show_tokens: "Показати мої токени",
           create_token_success: "Успішно створено новий API токен.",
           create_token_error: "Не вдалося створити новий API токен.",
+          token_created: "Токен створено",
+          token_created_description: "Скопіюйте й збережіть цей токен зараз. Пізніше ви не зможете його переглянути.",
+          token_created_close: "Готово",
+          token_copied: "Токен скопійовано до буфера обміну",
+          token_revoked: "Токен відкликано",
+          token_revoke_error: "Не вдалося відкликати токен. Спробуйте ще раз.",
           no_tokens: "У вас поки що немає API токенів TarkovTracker.",
+          not_logged_in: "Потрібно увійти, щоб створити API токен.",
+          default_note: "Токен без назви",
+          revoke_button: "Відкликати",
+          list: {
+            created: "Створено",
+            last_used: "Останнє використання",
+            never: "Ніколи",
+            usage_count: "{count} використань",
+            revoked: "Відкликано",
+          },
+          form: {
+            gamemode_title: "Режим гри",
+            permissions_title: "Дозволи",
+            note_label: "Мітка або примітка",
+            note_placeholder: "наприклад, стрим-оверлей, бот клану, особистий застосунок",
+            warning: "Токени показуються лише один раз. Зберігайте їх у безпеці.",
+            cancel: "Скасувати",
+          },
           token_column: "Токен",
           note_column: "Примітка",
           created_column: "Створені",
@@ -296,6 +323,12 @@
     not_found: {
       title: "Сторінка не знайдена",
       not_found_description: "Вибачте, ця сторінка не може бути знайдена!",
+    },
+    "terms_of-service": {
+      title: "Умови використання",
+    },
+    privacy: {
+      title: "Політика конфіденційності",
     },
   },
   footer: {

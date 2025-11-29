@@ -19,7 +19,6 @@
         simple-mode
       />
     </div>
-
     <!-- Item Name and Count -->
     <div class="min-w-0 flex-1">
       <div class="truncate text-sm font-medium text-white">
@@ -29,7 +28,6 @@
         Required: {{ requirement.count.toLocaleString() }}
       </div>
     </div>
-
     <!-- Progress Controls -->
     <div class="flex shrink-0 items-center gap-2">
       <div class="flex items-center gap-1">
@@ -78,7 +76,6 @@
           @click="incrementCount"
         />
       </div>
-
       <UIcon
         v-if="isComplete"
         name="i-mdi-check-circle"
@@ -96,12 +93,10 @@
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
-  import { computed, ref, nextTick } from "vue";
-  import { useTarkovStore } from "@/stores/tarkov";
+  import { computed, nextTick, ref } from "vue";
   import GameItem from "@/components/ui/GameItem.vue";
-
+  import { useTarkovStore } from "@/stores/useTarkov";
   interface Props {
     requirement: {
       id: string;
@@ -116,16 +111,12 @@
     stationId: string;
     level: number;
   }
-
   const props = defineProps<Props>();
-
   const tarkovStore = useTarkovStore();
-
   // Manual entry state
   const isEditing = ref(false);
   const editValue = ref(0);
   const inputRef = ref<HTMLInputElement | null>(null);
-
   // Get current count from store (synced with needed items page)
   const currentCount = computed(() => {
     const storeCount = tarkovStore.getHideoutPartCount(props.requirement.id);
@@ -135,31 +126,25 @@
     }
     return storeCount;
   });
-
   const isComplete = computed(() => {
     return currentCount.value >= props.requirement.count;
   });
-
   const incrementCount = () => {
     const newCount = Math.min(currentCount.value + 1, props.requirement.count);
     tarkovStore.setHideoutPartCount(props.requirement.id, newCount);
-
     // Mark as complete when reaching required count
     if (newCount >= props.requirement.count) {
       tarkovStore.setHideoutPartComplete(props.requirement.id);
     }
   };
-
   const decrementCount = () => {
     const newCount = Math.max(currentCount.value - 1, 0);
     tarkovStore.setHideoutPartCount(props.requirement.id, newCount);
-
     // Unmark if going below required count
     if (newCount < props.requirement.count) {
       tarkovStore.setHideoutPartUncomplete(props.requirement.id);
     }
   };
-
   // Manual entry functions
   const startEditing = () => {
     editValue.value = currentCount.value;
@@ -169,24 +154,19 @@
       inputRef.value?.select();
     });
   };
-
   const finishEditing = () => {
     const newValue = Math.max(0, Math.min(editValue.value, props.requirement.count));
     tarkovStore.setHideoutPartCount(props.requirement.id, newValue);
-
     if (newValue >= props.requirement.count) {
       tarkovStore.setHideoutPartComplete(props.requirement.id);
     } else {
       tarkovStore.setHideoutPartUncomplete(props.requirement.id);
     }
-
     isEditing.value = false;
   };
-
   const cancelEditing = () => {
     isEditing.value = false;
   };
-
   // Toggle between 0% and 100% completion
   const toggleComplete = () => {
     if (isComplete.value) {

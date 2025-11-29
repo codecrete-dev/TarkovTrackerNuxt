@@ -1,7 +1,4 @@
 import Graph from "graphology";
-/**
- * Recursively gets all predecessors (ancestors) of a node in the graph
- */
 export function getPredecessors(graph: Graph, nodeId: string, visited: string[] = []): string[] {
   let predecessors: string[] = [];
   try {
@@ -21,9 +18,6 @@ export function getPredecessors(graph: Graph, nodeId: string, visited: string[] 
   }
   return [...new Set(predecessors)];
 }
-/**
- * Recursively gets all successors (descendants) of a node in the graph
- */
 export function getSuccessors(graph: Graph, nodeId: string, visited: string[] = []): string[] {
   let successors: string[] = [];
   try {
@@ -43,9 +37,6 @@ export function getSuccessors(graph: Graph, nodeId: string, visited: string[] = 
   }
   return [...new Set(successors)];
 }
-/**
- * Gets immediate parent nodes (direct predecessors)
- */
 export function getParents(graph: Graph, nodeId: string): string[] {
   try {
     return graph.inNeighbors(nodeId);
@@ -54,9 +45,6 @@ export function getParents(graph: Graph, nodeId: string): string[] {
     return [];
   }
 }
-/**
- * Gets immediate child nodes (direct successors)
- */
 export function getChildren(graph: Graph, nodeId: string): string[] {
   try {
     return graph.outNeighbors(nodeId);
@@ -65,9 +53,6 @@ export function getChildren(graph: Graph, nodeId: string): string[] {
     return [];
   }
 }
-/**
- * Safely adds a node to the graph if it doesn't exist
- */
 export function safeAddNode(graph: Graph, nodeId: string): void {
   try {
     graph.mergeNode(nodeId);
@@ -75,9 +60,6 @@ export function safeAddNode(graph: Graph, nodeId: string): void {
     console.error(`Error adding node ${nodeId} to graph:`, error);
   }
 }
-/**
- * Safely adds an edge to the graph if both nodes exist
- */
 export function safeAddEdge(graph: Graph, sourceId: string, targetId: string): void {
   try {
     if (graph.hasNode(sourceId) && graph.hasNode(targetId)) {
@@ -91,15 +73,9 @@ export function safeAddEdge(graph: Graph, sourceId: string, targetId: string): v
     console.error(`Error adding edge from ${sourceId} to ${targetId}:`, error);
   }
 }
-/**
- * Creates a new empty graph instance
- */
 export function createGraph(): Graph {
   return new Graph();
 }
-/**
- * Checks if a node exists in the graph
- */
 export function hasNode(graph: Graph, nodeId: string): boolean {
   try {
     return graph.hasNode(nodeId);
@@ -108,9 +84,6 @@ export function hasNode(graph: Graph, nodeId: string): boolean {
     return false;
   }
 }
-/**
- * Gets all nodes in the graph
- */
 export function getAllNodes(graph: Graph): string[] {
   try {
     return graph.nodes();
@@ -119,9 +92,6 @@ export function getAllNodes(graph: Graph): string[] {
     return [];
   }
 }
-/**
- * Clears all nodes and edges from the graph
- */
 export function clearGraph(graph: Graph): void {
   try {
     graph.clear();

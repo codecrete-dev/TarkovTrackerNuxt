@@ -1,11 +1,10 @@
-import { computed, ref, watch, nextTick } from "vue";
 import { defineStore } from "pinia";
+import { computed, nextTick, ref, watch } from "vue";
 import { useSupabaseListener } from "@/composables/supabase/useSupabaseListener";
-import { useSystemStoreWithSupabase } from "./useSystemStore";
-import type { TeamState, TeamGetters } from "@/types/tarkov";
+import type { UserState } from "@/stores/progressState";
+import { useSystemStoreWithSupabase } from "@/stores/useSystemStore";
+import type { TeamGetters, TeamState } from "@/types/tarkov";
 import type { Store } from "pinia";
-import type { UserState } from "@/shared_state";
-
 /**
  * Team store definition with getters for team info and members
  */
@@ -62,7 +61,7 @@ export function useTeamStoreWithSupabase() {
       if ("join_code" in data) {
         patch.password = (data as { join_code: string }).join_code;
       }
-      teamStore.$patch(patch);
+      teamStore.$patch(patch as Partial<TeamState>);
     } else {
       teamStore.$reset();
     }
@@ -131,7 +130,7 @@ export function useTeammateStores() {
     try {
       // Import required dependencies
       const { defineStore } = await import("pinia");
-      const { getters, actions, defaultState } = await import("@/shared_state");
+      const { getters, actions, defaultState } = await import("@/stores/progressState");
       // Define the teammate store
       const storeDefinition = defineStore(`teammate-${teammateId}`, {
         state: () => JSON.parse(JSON.stringify(defaultState)),

@@ -1,4 +1,4 @@
-import { ref, onMounted, onUnmounted } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 export function useTarkovTime() {
   const tarkovTime = ref("");
   let intervalId: number | null = null;

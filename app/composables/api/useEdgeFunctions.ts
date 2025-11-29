@@ -2,34 +2,23 @@
  * Composable for calling Supabase Edge Functions
  * Provides typed methods for common edge function operations
  */
-
+import type { UpdateProgressPayload } from "@/types/api";
 import type {
   CreateTeamResponse,
-  LeaveTeamResponse,
   JoinTeamResponse,
   KickMemberResponse,
+  LeaveTeamResponse,
 } from "@/types/team";
-
 type GameMode = "pvp" | "pve";
-
-interface ProgressData {
-  level?: number;
-  faction?: string;
-  taskCompletions?: Record<string, boolean>;
-  taskObjectives?: Record<string, boolean>;
-  hideoutModules?: Record<string, number>;
-  hideoutParts?: Record<string, number>;
-}
-
 export const useEdgeFunctions = () => {
   const { $supabase } = useNuxtApp();
   const runtimeConfig = useRuntimeConfig();
-  const rawGatewayUrl =
+  const rawGatewayUrl = String(
     runtimeConfig?.public?.teamGatewayUrl ||
-    runtimeConfig?.public?.team_gateway_url || // safety for snake_case envs
-    "";
+      runtimeConfig?.public?.team_gateway_url || // safety for snake_case envs
+      ""
+  );
   const gatewayUrl = rawGatewayUrl.replace(/\/+$/, ""); // trim trailing slashes to avoid //team paths
-
   const getAuthToken = async () => {
     const { data, error } = await $supabase.client.auth.getSession();
     if (error) throw error;
@@ -39,7 +28,6 @@ export const useEdgeFunctions = () => {
     }
     return token;
   };
-
   const callGateway = async <T>(action: string, body: Record<string, unknown>): Promise<T> => {
     if (!gatewayUrl) {
       throw new Error("Gateway URL not configured");
@@ -55,20 +43,16 @@ export const useEdgeFunctions = () => {
     });
     return response;
   };
-
   const callSupabaseFunction = async <T>(fnName: string, body: Record<string, unknown>) => {
     const { data, error } = await $supabase.client.functions.invoke<T>(fnName, {
       body,
       method: "POST",
     });
-
     if (error) {
       throw error;
     }
-
     return data as T;
   };
-
   const preferGateway = async <T>(action: string, body: Record<string, unknown>): Promise<T> => {
     if (gatewayUrl) {
       try {
@@ -80,26 +64,22 @@ export const useEdgeFunctions = () => {
     const fnName = `team-${action}`;
     return await callSupabaseFunction<T>(fnName, body);
   };
-
   /**
    * Update user progress for a specific game mode
    * @param gameMode The game mode (pvp or pve)
    * @param progressData The progress data to update
    */
-  const updateProgress = async (gameMode: GameMode, progressData: ProgressData) => {
+  const updateProgress = async (gameMode: GameMode, progressData: UpdateProgressPayload) => {
     const { data, error } = await $supabase.client.functions.invoke("progress-update", {
       body: { gameMode, progressData },
       method: "POST",
     });
-
     if (error) {
       console.error("Progress update failed:", error);
       throw error;
     }
-
     return data;
   };
-
   /**
    * Create a new team
    * @param name Team name
@@ -117,7 +97,6 @@ export const useEdgeFunctions = () => {
       maxMembers,
     });
   };
-
   /**
    * Join an existing team
    * @param teamId The ID of the team to join
@@ -126,7 +105,6 @@ export const useEdgeFunctions = () => {
   const joinTeam = async (teamId: string, password: string): Promise<JoinTeamResponse> => {
     return await preferGateway<JoinTeamResponse>("join", { teamId, join_code: password });
   };
-
   /**
    * Leave a team
    * @param teamId The ID of the team to leave
@@ -134,7 +112,6 @@ export const useEdgeFunctions = () => {
   const leaveTeam = async (teamId: string): Promise<LeaveTeamResponse> => {
     return await preferGateway<LeaveTeamResponse>("leave", { teamId });
   };
-
   /**
    * Kick a member from a team (owner only)
    * @param teamId The ID of the team
@@ -143,7 +120,6 @@ export const useEdgeFunctions = () => {
   const kickTeamMember = async (teamId: string, memberId: string): Promise<KickMemberResponse> => {
     return await preferGateway<KickMemberResponse>("kick", { teamId, memberId });
   };
-
   /**
    * Revoke an API token
    * @param tokenId The ID of the token to revoke
@@ -153,25 +129,20 @@ export const useEdgeFunctions = () => {
       body: { tokenId },
       method: "DELETE",
     });
-
     if (error) {
       console.error("Token revocation failed:", error);
       throw error;
     }
-
     return data;
   };
-
   return {
     // Progress management
     updateProgress,
-
     // Team management
     createTeam,
     joinTeam,
     leaveTeam,
     kickTeamMember,
-
     // API token management
     revokeToken,
   };

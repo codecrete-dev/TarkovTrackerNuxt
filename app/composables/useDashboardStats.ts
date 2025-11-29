@@ -1,14 +1,13 @@
 import { computed } from "vue";
-import { useProgressStore } from "@/stores/progress";
-import { useMetadataStore } from "@/stores/metadata";
-import { useTarkovStore } from "@/stores/tarkov";
-import { CURRENCY_ITEM_IDS } from "@/utils/constants";
+import { useMetadataStore } from "@/stores/useMetadata";
+import { useProgressStore } from "@/stores/useProgress";
+import { useTarkovStore } from "@/stores/useTarkov";
 import type { TaskObjective } from "@/types/tarkov";
+import { CURRENCY_ITEM_IDS } from "@/utils/constants";
 export function useDashboardStats() {
   const progressStore = useProgressStore();
   const metadataStore = useMetadataStore();
   const tarkovStore = useTarkovStore();
-
   // Memoize tasks filtered by faction to avoid repeated filtering
   const relevantTasks = computed(() => {
     if (!metadataStore.tasks) return [];
@@ -17,7 +16,6 @@ export function useDashboardStats() {
       (task) => task && (task.factionName === "Any" || task.factionName === currentFaction)
     );
   });
-
   // Available tasks count
   const availableTasksCount = computed(() => {
     if (!progressStore.unlockedTasks) return 0;
@@ -27,13 +25,11 @@ export function useDashboardStats() {
     }
     return count;
   });
-
   // Failed tasks count
   const failedTasksCount = computed(() => {
     if (!metadataStore.tasks) return 0;
     return metadataStore.tasks.filter((t) => tarkovStore.isTaskFailed(t.id)).length;
   });
-
   // Needed item task objectives (memoized)
   const neededItemTaskObjectives = computed(() => {
     if (!metadataStore.objectives) return [];
@@ -50,7 +46,6 @@ export function useDashboardStats() {
       (obj) => obj && obj.type && itemObjectiveTypes.includes(obj.type)
     );
   });
-
   // Total tasks count
   const totalTasks = computed(() => relevantTasks.value.length);
   // Total objectives count
@@ -97,7 +92,6 @@ export function useDashboardStats() {
       (relatedTask.factionName === "Any" || relatedTask.factionName === currentPMCFaction)
     );
   };
-
   // Completed task items count
   const completedTaskItems = computed(() => {
     if (
@@ -113,10 +107,8 @@ export function useDashboardStats() {
     neededItemTaskObjectives.value.forEach((objective) => {
       if (!isObjectiveRelevant(objective)) return;
       if (!objective.id || !objective.taskId) return;
-
       const taskCompletion = progressStore.tasksCompletions[objective.taskId];
       const objectiveCompletion = progressStore.objectiveCompletions[objective.id];
-
       if (
         (taskCompletion && taskCompletion["self"]) ||
         (objectiveCompletion && objectiveCompletion["self"]) ||
@@ -133,7 +125,6 @@ export function useDashboardStats() {
     });
     return total;
   });
-
   // Total task items count
   const totalTaskItems = computed(() => {
     if (!metadataStore.objectives || !metadataStore.tasks || !tarkovStore) {
@@ -148,7 +139,6 @@ export function useDashboardStats() {
   const totalKappaTasks = computed(() => {
     return relevantTasks.value.filter((task) => task.kappaRequired === true).length;
   });
-
   // Completed Kappa tasks count
   const completedKappaTasks = computed(() => {
     if (!progressStore.tasksCompletions) return 0;
@@ -161,7 +151,6 @@ export function useDashboardStats() {
   const totalLightkeeperTasks = computed(() => {
     return relevantTasks.value.filter((task) => task.lightkeeperRequired === true).length;
   });
-
   // Completed Lightkeeper tasks count
   const completedLightkeeperTasks = computed(() => {
     if (!progressStore.tasksCompletions) return 0;
@@ -170,11 +159,9 @@ export function useDashboardStats() {
         task.lightkeeperRequired === true && progressStore.tasksCompletions[task.id]?.self === true
     ).length;
   });
-
   // Trader-specific stats
   const traderStats = computed(() => {
     if (!metadataStore.traders || !progressStore.tasksCompletions) return [];
-
     return metadataStore.sortedTraders
       .map((trader) => {
         const traderTasks = relevantTasks.value.filter((task) => task.trader?.id === trader.id);
@@ -182,7 +169,6 @@ export function useDashboardStats() {
         const completedTasks = traderTasks.filter(
           (task) => progressStore.tasksCompletions[task.id]?.self === true
         ).length;
-
         return {
           id: trader.id,
           name: trader.name,
@@ -194,7 +180,6 @@ export function useDashboardStats() {
       })
       .filter((stats) => stats.totalTasks > 0); // Only show traders with at least 1 task
   });
-
   return {
     availableTasksCount,
     failedTasksCount,

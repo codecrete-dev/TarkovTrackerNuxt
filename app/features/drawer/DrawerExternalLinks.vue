@@ -4,7 +4,6 @@
     <div v-if="!props.isCollapsed" class="px-4 py-1">
       <h3 class="text-xs font-semibold tracking-wider text-gray-500 uppercase">External</h3>
     </div>
-
     <!-- External Links -->
     <ul class="flex flex-col gap-1 px-1">
       <DrawerItem

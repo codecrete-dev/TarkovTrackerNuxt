@@ -1,20 +1,19 @@
+import { storeToRefs } from "pinia";
 import { computed } from "vue";
-import { useHideoutData } from "@/composables/data/useHideoutData";
-import { useProgressStore } from "@/stores/progress";
-import { usePreferencesStore } from "@/stores/preferences";
+import { useMetadataStore } from "@/stores/useMetadata";
+import { usePreferencesStore } from "@/stores/usePreferences";
+import { useProgressStore } from "@/stores/useProgress";
 import type { HideoutStation } from "@/types/tarkov";
-
 export function useHideoutFiltering() {
-  const { hideoutStations, loading: hideoutLoading } = useHideoutData();
+  const metadataStore = useMetadataStore();
+  const { hideoutStations, hideoutLoading } = storeToRefs(metadataStore);
   const progressStore = useProgressStore();
   const preferencesStore = usePreferencesStore();
-
   // Active primary view (available, maxed, locked, all)
   const activePrimaryView = computed({
     get: () => preferencesStore.getTaskPrimaryView,
     set: (value) => preferencesStore.setTaskPrimaryView(value),
   });
-
   // Comprehensive loading check
   const isStoreLoading = computed(() => {
     try {
@@ -40,7 +39,6 @@ export function useHideoutFiltering() {
       return false;
     }
   });
-
   // Filter stations based on current view
   const visibleStations = computed(() => {
     try {
@@ -49,7 +47,6 @@ export function useHideoutFiltering() {
         return [];
       }
       const hideoutStationList = JSON.parse(JSON.stringify(hideoutStations.value));
-
       // Display all upgradeable stations
       if (activePrimaryView.value === "available") {
         return hideoutStationList.filter((station: HideoutStation) => {
@@ -61,7 +58,6 @@ export function useHideoutFiltering() {
           );
         });
       }
-
       // Display all maxed stations
       if (activePrimaryView.value === "maxed") {
         return hideoutStationList.filter(
@@ -69,7 +65,6 @@ export function useHideoutFiltering() {
             (progressStore.hideoutLevels?.[station.id]?.self || 0) === station.levels.length
         );
       }
-
       // Display all locked stations
       if (activePrimaryView.value === "locked") {
         return hideoutStationList.filter((station: HideoutStation) => {
@@ -81,7 +76,6 @@ export function useHideoutFiltering() {
           );
         });
       }
-
       // Display all stations
       if (activePrimaryView.value === "all") return hideoutStationList;
       return hideoutStationList;
@@ -91,7 +85,6 @@ export function useHideoutFiltering() {
       return [];
     }
   });
-
   return {
     activePrimaryView,
     isStoreLoading,

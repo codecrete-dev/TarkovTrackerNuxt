@@ -21,8 +21,8 @@
   </Teleport>
 </template>
 <script setup lang="ts">
-  import { ref, nextTick } from "vue";
   import { onClickOutside } from "@vueuse/core";
+  import { nextTick, ref } from "vue";
   const visible = ref(false);
   const x = ref(0);
   const y = ref(0);

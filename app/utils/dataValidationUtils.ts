@@ -1,11 +1,10 @@
-import type { ProgressData } from "./DataMigrationService";
 import {
   DEFAULT_GAME_EDITION,
   DEFAULT_PMC_FACTION,
   GAME_EDITION_STRING_VALUES,
   normalizePMCFaction,
 } from "./constants";
-
+import type { ProgressData } from "./dataMigrationService";
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class DataValidationUtils {
   /**

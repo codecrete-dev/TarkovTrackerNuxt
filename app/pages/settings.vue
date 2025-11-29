@@ -191,7 +191,6 @@
                 </div>
               </template>
             </UModal>
-
             <!-- Reset PvE Button with Modal -->
             <UModal
               :title="$t('settings.data_management.reset_pve_title', 'Reset PvE Data')"
@@ -249,7 +248,6 @@
                 </div>
               </template>
             </UModal>
-
             <!-- Reset All Button with Modal -->
             <UModal
               :title="$t('settings.data_management.reset_all_title', 'Reset All Data')"
@@ -318,10 +316,15 @@
       </template>
     </GenericCard>
     <!-- Section 4: API Management -->
-    <GenericCard icon="mdi-api" icon-color="primary" highlight-color="blue" :fill-height="false">
+    <GenericCard
+      icon="mdi-key-chain"
+      icon-color="primary"
+      highlight-color="blue"
+      :fill-height="false"
+    >
       <template #title>
         <span class="text-lg font-semibold">
-          {{ $t("settings.api_management.title", "API Management") }}
+          {{ $t("page.settings.card.apitokens.title", "API Tokens") }}
         </span>
       </template>
       <template #title-right>
@@ -336,7 +339,7 @@
             <span class="text-sm">
               {{
                 $t(
-                  "settings.api_management.login_required",
+                  "page.settings.card.apitokens.not_logged_in",
                   "You must be logged in to create and manage API tokens."
                 )
               }}
@@ -345,25 +348,15 @@
         </UAlert>
       </template>
       <template #content>
-        <div class="space-y-3 px-4 py-4">
-          <UButton
-            color="primary"
+        <div class="px-4 py-4">
+          <ApiTokens v-if="user.loggedIn" />
+          <UAlert
+            v-else
+            color="warning"
             variant="soft"
-            icon="i-mdi-key-plus"
-            block
-            :disabled="!user.loggedIn"
-            @click="navigateToApiPage"
-          >
-            {{ $t("settings.api_management.manage_tokens", "Manage API Tokens") }}
-          </UButton>
-          <p class="text-surface-400 text-center text-xs">
-            {{
-              $t(
-                "settings.api_management.hint",
-                "Create and manage API tokens for third-party integrations."
-              )
-            }}
-          </p>
+            icon="i-mdi-lock"
+            :title="$t('page.settings.card.apitokens.not_logged_in')"
+          />
         </div>
       </template>
     </GenericCard>
@@ -375,22 +368,19 @@
 </template>
 <script setup lang="ts">
   import { computed, ref } from "vue";
-  import { useRouter } from "vue-router";
-  import { usePreferencesStore } from "@/stores/preferences";
-  import { useTarkovStore } from "@/stores/tarkov";
-  import { GAME_EDITIONS } from "@/utils/constants";
   import GenericCard from "@/components/ui/GenericCard.vue";
   import AccountDeletionCard from "@/features/settings/AccountDeletionCard.vue";
+  import ApiTokens from "@/features/settings/ApiTokens.vue";
   import DataMigrationCard from "@/features/settings/DataMigrationCard.vue";
-
+  import { usePreferencesStore } from "@/stores/usePreferences";
+  import { useTarkovStore } from "@/stores/useTarkov";
+  import { GAME_EDITIONS } from "@/utils/constants";
   // Page meta
   definePageMeta({
     title: "Settings",
   });
-
   // Composables
   const { $supabase } = useNuxtApp();
-  const router = useRouter();
   const toast = useToast();
   const preferencesStore = usePreferencesStore();
   const tarkovStore = useTarkovStore();
@@ -411,7 +401,6 @@
   };
   // Reactive state
   const resetting = ref(false);
-
   // Computed properties
   const user = computed(() => ({
     loggedIn: $supabase.user.loggedIn,
@@ -440,12 +429,7 @@
       tarkovStore.setGameEdition(newValue);
     },
   });
-
   // Methods
-  const navigateToApiPage = () => {
-    router.push("/api");
-  };
-
   const resetPvPData = async () => {
     resetting.value = true;
     try {
@@ -468,7 +452,6 @@
       resetting.value = false;
     }
   };
-
   const resetPvEData = async () => {
     resetting.value = true;
     try {
@@ -491,7 +474,6 @@
       resetting.value = false;
     }
   };
-
   const resetAllData = async () => {
     resetting.value = true;
     try {

@@ -1,7 +1,7 @@
-import type { UserProgressData } from "@/shared_state";
+import type { UserProgressData } from "@/stores/progressState";
 import type { GameMode } from "@/utils/constants";
 import { GAME_EDITION_STRING_VALUES, normalizePMCFaction } from "@/utils/constants";
-// import { defaultState, migrateToGameModeStructure } from "@/shared_state";
+// import { defaultState, migrateToGameModeStructure } from "@/stores/progressState";
 // Define a basic interface for the progress data structure
 export interface ProgressData {
   level: number;
@@ -165,7 +165,6 @@ export default class DataMigrationService {
       return false;
     }
   }
-
   /**
    * Migrate local data to a user's account
    * @param {string} uid The user's UID

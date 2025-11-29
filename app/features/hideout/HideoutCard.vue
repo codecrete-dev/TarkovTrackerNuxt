@@ -63,7 +63,6 @@
       <div v-else-if="nextLevel" class="mx-2 mb-3 text-left text-sm leading-relaxed text-gray-300">
         {{ getStashAdjustedDescription(nextLevel.description) }}
       </div>
-
       <!-- Stash station special content -->
       <div
         v-if="props.station.normalizedName === SPECIAL_STATIONS.STASH"
@@ -76,7 +75,6 @@
           {{ $t("page.hideout.stationcard.settingsbutton") }}
         </UButton>
       </div>
-
       <!-- Next level requirements -->
       <div v-if="nextLevel" class="space-y-3">
         <!-- Item Requirements Section -->
@@ -85,7 +83,6 @@
             <UIcon name="i-mdi-package-variant-closed-check" class="mr-2 h-5 w-5 text-green-500" />
             {{ $t("page.hideout.stationcard.nextlevel") }}
           </div>
-
           <!-- Item Requirements Grid -->
           <div class="mb-3 grid grid-cols-1 gap-3">
             <HideoutRequirement
@@ -96,13 +93,11 @@
               :level="nextLevel.level"
             />
           </div>
-
           <!-- Prerequisites Section -->
           <div v-if="hasPrerequisites" class="space-y-2 border-t border-gray-700 pt-3">
             <div class="mb-2 text-xs font-medium tracking-wider text-gray-400 uppercase">
               {{ $t("page.hideout.stationcard.prerequisites") || "Prerequisites" }}
             </div>
-
             <!-- Station Level Requirements -->
             <div
               v-for="(requirement, rIndex) in nextLevel.stationLevelRequirements"
@@ -124,7 +119,6 @@
                 </template>
               </i18n-t>
             </div>
-
             <!-- Skill Requirements -->
             <div
               v-for="(requirement, rIndex) in nextLevel.skillRequirements"
@@ -146,7 +140,6 @@
                 </template>
               </i18n-t>
             </div>
-
             <!-- Trader Requirements -->
             <div
               v-for="(requirement, rIndex) in nextLevel.traderRequirements"
@@ -171,7 +164,6 @@
           </div>
         </div>
       </div>
-
       <!-- Max level indicator -->
       <div v-if="!nextLevel" class="rounded bg-gray-800 p-3">
         <div
@@ -204,7 +196,6 @@
               </template>
             </i18n-t>
           </UButton>
-
           <UButton
             v-if="currentLevel && !downgradeDisabled"
             size="sm"
@@ -223,7 +214,6 @@
             </i18n-t>
           </UButton>
         </div>
-
         <div v-if="upgradeDisabled" class="flex flex-wrap items-center justify-center gap-2">
           <UButton
             v-if="currentLevel && !downgradeDisabled"
@@ -241,7 +231,6 @@
               </template>
             </i18n-t>
           </UButton>
-
           <span
             v-if="nextLevel && (!currentLevel || downgradeDisabled)"
             class="text-sm text-gray-400"
@@ -253,37 +242,30 @@
     </template>
   </GenericCard>
 </template>
-
 <script setup>
   import { computed, defineAsyncComponent } from "vue";
-  import { useProgressStore } from "@/stores/progress";
-  import { SPECIAL_STATIONS } from "@/utils/constants";
-  import { useTarkovStore } from "@/stores/tarkov";
   import { useI18n } from "vue-i18n";
-
+  import { useProgressStore } from "@/stores/useProgress";
+  import { useTarkovStore } from "@/stores/useTarkov";
+  import { SPECIAL_STATIONS } from "@/utils/constants";
   const GenericCard = defineAsyncComponent(() => import("@/components/ui/GenericCard.vue"));
   const HideoutRequirement = defineAsyncComponent(() => import("./HideoutRequirement.vue"));
-
   const props = defineProps({
     station: {
       type: Object,
       required: true,
     },
   });
-
   const progressStore = useProgressStore();
   const tarkovStore = useTarkovStore();
   const { t } = useI18n({ useScope: "global" });
   const toast = useToast();
-
   const upgradeButtonUi = {
     base: "bg-success-500 hover:bg-success-600 active:bg-success-700 text-white border border-success-700",
   };
-
   const downgradeButtonUi = {
     base: "bg-red-900/40 hover:bg-red-900/60 active:bg-red-900/80 text-red-300 border border-red-700/50",
   };
-
   const getHighlightColor = () => {
     if (progressStore.hideoutLevels?.[props.station.id]?.self > 0) {
       return "secondary";
@@ -293,11 +275,9 @@
       return "green";
     }
   };
-
   const highlightClasses = computed(() => {
     const color = getHighlightColor();
     const classes = {};
-
     switch (color) {
       case "green":
         classes[
@@ -316,55 +296,44 @@
         classes["bg-gradient-to-br from-accent-800 via-accent-700 to-accent-600"] = true;
         break;
     }
-
     return classes;
   });
-
   const isStationReqMet = (requirement) => {
     const currentStationLevel = progressStore.hideoutLevels?.[requirement.station.id]?.self || 0;
     return currentStationLevel >= requirement.level;
   };
-
   const isSkillReqMet = (_requirement) => {
     // TODO: Implement skill level tracking in user state
     // For now, return true to avoid blocking upgrades based on untracked skills
     return true;
   };
-
   const isTraderReqMet = (_requirement) => {
     // TODO: Implement trader loyalty level and rep tracking in user state
     // For now, return true to avoid blocking upgrades based on untracked trader levels
     return true;
   };
-
   const prerequisitesMet = computed(() => {
     if (!nextLevel.value) return true;
-
     // Check station level requirements
     const stationReqsMet =
       nextLevel.value.stationLevelRequirements?.every((req) => {
         return isStationReqMet(req);
       }) ?? true;
-
     // Check skill requirements
     const skillReqsMet =
       nextLevel.value.skillRequirements?.every((req) => {
         return isSkillReqMet(req);
       }) ?? true;
-
     // Check trader requirements
     const traderReqsMet =
       nextLevel.value.traderRequirements?.every((req) => {
         return isTraderReqMet(req);
       }) ?? true;
-
     return stationReqsMet && skillReqsMet && traderReqsMet;
   });
-
   const upgradeDisabled = computed(() => {
     return nextLevel.value === null;
   });
-
   const downgradeDisabled = computed(() => {
     if (props.station.normalizedName === SPECIAL_STATIONS.STASH) {
       const currentStash = progressStore.hideoutLevels?.[props.station.id]?.self ?? 0;
@@ -382,7 +351,6 @@
     }
     return false;
   });
-
   const nextLevel = computed(() => {
     return (
       props.station.levels.find(
@@ -390,7 +358,6 @@
       ) || null
     );
   });
-
   const currentLevel = computed(() => {
     return (
       props.station.levels.find(
@@ -398,11 +365,9 @@
       ) || null
     );
   });
-
   const hasItemRequirements = computed(() => {
     return nextLevel.value?.itemRequirements?.length > 0;
   });
-
   const hasPrerequisites = computed(() => {
     return (
       nextLevel.value?.stationLevelRequirements?.length > 0 ||
@@ -410,11 +375,9 @@
       nextLevel.value?.traderRequirements?.length > 0
     );
   });
-
   const stationAvatar = computed(() => {
     return `/img/hideout/${props.station.id}.avif`;
   });
-
   const getStashAdjustedDescription = (description) => {
     // Only modify description for stash station
     if (props.station.normalizedName !== SPECIAL_STATIONS.STASH) {
@@ -430,7 +393,6 @@
     }
     return description;
   };
-
   const upgradeStation = () => {
     // Store next level to a variable because it can change mid-function
     const upgradeLevel = nextLevel.value;
@@ -447,7 +409,6 @@
       color: "green",
     });
   };
-
   const downgradeStation = () => {
     // Store current level to a variable because it can change mid-function
     const downgradeLevel = currentLevel.value;

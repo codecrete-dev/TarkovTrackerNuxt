@@ -1,5 +1,4 @@
-import { useMetadataStore } from "@/stores/metadata";
-
+import { useMetadataStore } from "@/stores/useMetadata";
 /**
  * Plugin to initialize the metadata store
  * This ensures the store is properly initialized and data is fetched
@@ -7,10 +6,8 @@ import { useMetadataStore } from "@/stores/metadata";
  */
 export default defineNuxtPlugin(async () => {
   const metadataStore = useMetadataStore();
-
   // Initialize the metadata store and fetch data
   await metadataStore.initialize();
-
   return {
     provide: {
       metadata: metadataStore,

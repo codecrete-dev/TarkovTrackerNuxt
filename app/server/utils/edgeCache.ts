@@ -19,7 +19,7 @@ interface CacheOptions {
  * @param ttl - Time to live in seconds (default: 43200 = 12 hours)
  * @returns Promise resolving to cached or fresh data
  */
-export async function useEdgeCache<T>(
+export async function edgeCache<T>(
   event: H3Event,
   key: string,
   fetcher: () => Promise<T>,
@@ -98,7 +98,7 @@ export async function useEdgeCache<T>(
       return response;
     }
   } catch (error) {
-    console.error(`Error in useEdgeCache for ${fullCacheKey}:`, error);
+    console.error(`Error in edgeCache for ${fullCacheKey}:`, error);
     throw createError({
       statusCode: 502,
       statusMessage: `Failed to fetch data for ${fullCacheKey}`,

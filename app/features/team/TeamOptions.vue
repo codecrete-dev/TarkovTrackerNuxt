@@ -70,8 +70,8 @@
 </template>
 <script setup>
   import { computed } from "vue";
-  import { usePreferencesStore } from "@/stores/preferences";
   import GenericCard from "@/components/ui/GenericCard.vue";
+  import { usePreferencesStore } from "@/stores/usePreferences";
   const preferencesStore = usePreferencesStore();
   const taskHideAll = computed({
     get: () => preferencesStore.taskTeamAllHidden,

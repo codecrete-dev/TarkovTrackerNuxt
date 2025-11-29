@@ -10,7 +10,6 @@
           <MyTeam />
           <TeamOptions />
         </div>
-
         <!-- Team Members Section -->
         <TeamMembers v-if="systemStore.$state.team" />
       </div>
@@ -19,8 +18,8 @@
 </template>
 <script setup>
   import { defineAsyncComponent } from "vue";
-  import { useSystemStoreWithSupabase } from "@/stores/useSystemStore";
   import { useRoute } from "vue-router";
+  import { useSystemStoreWithSupabase } from "@/stores/useSystemStore";
   const TeamMembers = defineAsyncComponent(() => import("@/features/team/TeamMembers"));
   const TeamOptions = defineAsyncComponent(() => import("@/features/team/TeamOptions"));
   const MyTeam = defineAsyncComponent(() => import("@/features/team/MyTeam"));

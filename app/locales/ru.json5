@@ -152,6 +152,9 @@
       title: "Документация API",
       description: "Получайте доступ к данным Tarkov Tracker программно.",
       note: "Для аутентификации требуются API-токены.",
+      tokens_moved_title: "API-токены теперь в разделе Настройки",
+      tokens_moved_description: "Создавайте и отзывайте токены в Настройки → API Tokens. Эта страница остается для документации.",
+      tokens_moved_action: "Открыть настройки",
       endpoints: {
         title: "Доступные эндпоинты",
         data: {
@@ -194,7 +197,31 @@
           show_tokens: "Показать мои токены",
           create_token_success: "Успешно создан новый API токен.",
           create_token_error: "Не удалось создать новый API токен.",
+          token_created: "Токен создан",
+          token_created_description: "Скопируйте и сохраните этот токен сейчас. Позже просмотреть его будет нельзя.",
+          token_created_close: "Готово",
+          token_copied: "Токен скопирован в буфер обмена",
+          token_revoked: "Токен отозван",
+          token_revoke_error: "Не удалось отозвать токен. Попробуйте еще раз.",
           no_tokens: "У вас пока нет API токенов TarkovTracker.",
+          not_logged_in: "Необходимо войти, чтобы создать API токен.",
+          default_note: "Токен без названия",
+          revoke_button: "Отозвать",
+          list: {
+            created: "Создан",
+            last_used: "Последнее использование",
+            never: "Никогда",
+            usage_count: "{count} использований",
+            revoked: "Отозван",
+          },
+          form: {
+            gamemode_title: "Режим игры",
+            permissions_title: "Разрешения",
+            note_label: "Метка или заметка",
+            note_placeholder: "например, стрим-оверлей, бот клана, личное приложение",
+            warning: "Токены показываются только один раз. Храните их в безопасном месте.",
+            cancel: "Отмена",
+          },
           token_column: "Токен",
           note_column: "Примечание",
           created_column: "Созданные",
@@ -284,6 +311,12 @@
     not_found: {
       title: "Страница не найдена",
       not_found_description: "Извините, эта страница не может быть найдена!",
+    },
+    "terms_of-service": {
+      title: "Условия использования",
+    },
+    privacy: {
+      title: "Политика конфиденциальности",
     },
   },
   footer: {

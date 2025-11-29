@@ -32,7 +32,6 @@
 <script setup>
   import { computed } from "vue";
   import { useI18n } from "vue-i18n";
-
   // Define the props for the component
   const props = defineProps({
     task: {

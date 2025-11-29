@@ -1,8 +1,8 @@
 import { defineStore, type StoreDefinition } from "pinia";
 import { watch } from "vue";
+import { useSupabaseSync } from "@/composables/supabase/useSupabaseSync";
 import { pinia as pluginPinia } from "@/plugins/01.pinia.client";
 import { useNuxtApp } from "#imports";
-import { useSupabaseSync } from "@/composables/supabase/useSupabaseSync";
 // Define the state structure
 interface PreferencesState {
   streamerMode: boolean;
@@ -32,7 +32,7 @@ interface PreferencesState {
   };
 }
 // Export the default state with type annotation
-export const defaultState: PreferencesState = {
+export const preferencesDefaultState: PreferencesState = {
   streamerMode: false,
   teamHide: {},
   taskTeamHideAll: false,
@@ -119,7 +119,7 @@ type PreferencesStoreDefinition = StoreDefinition<
 >;
 export const usePreferencesStore: PreferencesStoreDefinition = defineStore("preferences", {
   state: (): PreferencesState => {
-    const state = JSON.parse(JSON.stringify(defaultState));
+    const state = JSON.parse(JSON.stringify(preferencesDefaultState));
     // Always reset saving state on store creation
     state.saving = { ...initialSavingState };
     return state;
@@ -314,7 +314,6 @@ if (import.meta.client) {
               const resolvedPinia = pluginPinia ?? nuxtApp.$pinia;
               if (!resolvedPinia) return;
               const preferencesStore = usePreferencesStore(resolvedPinia);
-
               if (newValue && $supabase.user.id) {
                 // Load user preferences from Supabase
                 const { data, error } = await $supabase.client
@@ -322,7 +321,6 @@ if (import.meta.client) {
                   .select("*")
                   .eq("user_id", $supabase.user.id)
                   .single();
-
                 if (data && !error) {
                   console.log("[PreferencesStore] Loading preferences from Supabase:", data);
                   // Update store with server data

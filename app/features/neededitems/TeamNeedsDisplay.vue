@@ -16,7 +16,7 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { useProgressStore } from "@/stores/progress";
+  import { useProgressStore } from "@/stores/useProgress";
   interface UserNeed {
     user: string;
     count: number;

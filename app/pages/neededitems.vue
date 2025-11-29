@@ -15,7 +15,6 @@
             @click="activeFilter = tab.value"
           />
         </div>
-
         <!-- Search Bar -->
         <div class="mx-4 max-w-md flex-1">
           <UInput
@@ -26,7 +25,6 @@
             :ui="inputUi"
           />
         </div>
-
         <!-- Item Count & View Mode -->
         <div class="flex items-center gap-3">
           <UBadge color="neutral" variant="soft" size="md" class="px-3 py-1 text-sm">
@@ -58,12 +56,10 @@
           </div>
         </div>
       </div>
-
       <!-- Items Container -->
       <div v-if="filteredItems.length === 0" class="text-surface-400 p-8 text-center">
         {{ $t("page.neededitems.empty", "No items match your search.") }}
       </div>
-
       <!-- List View -->
       <div v-else-if="viewMode === 'list'" class="divide-y divide-white/5">
         <NeededItem
@@ -76,7 +72,6 @@
         <!-- Sentinel for infinite scroll -->
         <div v-if="visibleCount < filteredItems.length" ref="listSentinel" class="h-1"></div>
       </div>
-
       <!-- Grid Views -->
       <div v-else class="p-2">
         <div class="-m-1 flex flex-wrap">
@@ -95,28 +90,24 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { ref, computed, watch } from "vue";
   import { storeToRefs } from "pinia";
-  import { useMetadataStore } from "@/stores/metadata";
-  import { useProgressStore } from "@/stores/progress";
-  import NeededItem from "@/features/neededitems/NeededItem.vue";
+  import { computed, ref, watch } from "vue";
   import { useInfiniteScroll } from "@/composables/useInfiniteScroll";
-  import type { NeededItemTaskObjective, NeededItemHideoutModule } from "@/types/tarkov";
-
+  import NeededItem from "@/features/neededitems/NeededItem.vue";
+  import { useMetadataStore } from "@/stores/useMetadata";
+  import { useProgressStore } from "@/stores/useProgress";
+  import type { NeededItemHideoutModule, NeededItemTaskObjective } from "@/types/tarkov";
   const inputUi = {
     base: "w-full",
     input:
       "h-11 bg-surface-900 border border-white/15 text-surface-50 placeholder:text-surface-500 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-white/20",
     leadingIcon: "text-surface-300",
   };
-
   const metadataStore = useMetadataStore();
   const progressStore = useProgressStore();
   const { neededItemTaskObjectives, neededItemHideoutModules } = storeToRefs(metadataStore);
-
   // View mode state: 'list', 'bigGrid', or 'smallGrid'
   const viewMode = ref<"list" | "bigGrid" | "smallGrid">("list");
-
   // Filter state
   type FilterType = "all" | "tasks" | "hideout";
   const activeFilter = ref<FilterType>("all");
@@ -125,46 +116,37 @@
     { label: "Tasks", value: "tasks" },
     { label: "Hideout", value: "hideout" },
   ];
-
   const allItems = computed(() => {
     const combined = [
       ...(neededItemTaskObjectives.value || []),
       ...(neededItemHideoutModules.value || []),
     ];
-
     // Aggregate items by (taskId/hideoutModule, itemId) to combine duplicate items
     // from different objectives in the same task
     const aggregated = new Map<string, NeededItemTaskObjective | NeededItemHideoutModule>();
-
     for (const need of combined) {
       let key: string;
       let itemId: string | undefined;
-
       if (need.needType === "taskObjective") {
         // For tasks: get itemId from either item or markerItem (for mark objectives)
         itemId = need.item?.id || need.markerItem?.id;
-
         if (!itemId) {
           console.warn("[NeededItems] Skipping objective without item/markerItem:", need);
           continue;
         }
-
         // Aggregate by taskId + itemId
         // This combines multiple objectives for the same item in the same task
         key = `task:${need.taskId}:${itemId}`;
       } else {
         // For hideout: get itemId from item
         itemId = need.item?.id;
-
         if (!itemId) {
           console.warn("[NeededItems] Skipping hideout requirement without item:", need);
           continue;
         }
-
         // This combines multiple requirements for the same item in the same module
         key = `hideout:${need.hideoutModule.id}:${itemId}`;
       }
-
       const existing = aggregated.get(key);
       if (existing) {
         // Item already exists for this task/module, sum the counts
@@ -174,7 +156,6 @@
         aggregated.set(key, { ...need });
       }
     }
-
     // Filter out items that nobody needs anymore
     const aggregatedArray = Array.from(aggregated.values());
     return aggregatedArray.filter((need) => {
@@ -182,9 +163,7 @@
         // Check if anyone still needs this objective
         const objectiveCompletions = progressStore.objectiveCompletions?.[need.id];
         const taskCompletions = progressStore.tasksCompletions?.[need.taskId];
-
         if (!objectiveCompletions || !taskCompletions) return true;
-
         // Return true if at least one team member hasn't completed the objective and task
         return Object.keys(objectiveCompletions).some(
           (user) => !objectiveCompletions[user] && !taskCompletions[user]
@@ -192,28 +171,22 @@
       } else if (need.needType === "hideoutModule") {
         // Check if anyone still needs this hideout module part
         const partCompletions = progressStore.modulePartCompletions?.[need.id];
-
         if (!partCompletions) return true;
-
         // Return true if at least one team member hasn't completed the part
         return Object.keys(partCompletions).some((user) => !partCompletions[user]);
       }
       return true;
     });
   });
-
   const search = ref("");
-
   const filteredItems = computed(() => {
     let items = allItems.value;
-
     // Filter by type (All, Tasks, Hideout)
     if (activeFilter.value === "tasks") {
       items = items.filter((item) => item.needType === "taskObjective");
     } else if (activeFilter.value === "hideout") {
       items = items.filter((item) => item.needType === "hideoutModule");
     }
-
     // Filter by search
     if (search.value) {
       items = items.filter((item) => {
@@ -222,47 +195,38 @@
         return itemName?.toLowerCase().includes(search.value.toLowerCase());
       });
     }
-
     return items;
   });
-
   const visibleCount = ref(20);
   const visibleItems = computed(() => {
     return filteredItems.value.slice(0, visibleCount.value);
   });
-
   const loadMore = () => {
     if (visibleCount.value < filteredItems.value.length) {
       visibleCount.value += 20;
     }
   };
-
   // Sentinel refs for infinite scroll
   const listSentinel = ref<HTMLElement | null>(null);
   const gridSentinel = ref<HTMLElement | null>(null);
-
   // Determine which sentinel to use based on view mode
   const currentSentinel = computed(() => {
     return viewMode.value === "list" ? listSentinel.value : gridSentinel.value;
   });
-
   // Enable infinite scroll
   const infiniteScrollEnabled = computed(() => {
     return visibleCount.value < filteredItems.value.length;
   });
-
   // Set up infinite scroll
   const { stop, start } = useInfiniteScroll(currentSentinel, loadMore, {
     rootMargin: "100px",
     threshold: 0.1,
     enabled: infiniteScrollEnabled.value,
   });
-
   // Reset visible count when search or filter changes
   watch([search, activeFilter], () => {
     visibleCount.value = 20;
   });
-
   // Watch for enabled state changes to restart observer
   watch(infiniteScrollEnabled, (newEnabled) => {
     if (newEnabled) {

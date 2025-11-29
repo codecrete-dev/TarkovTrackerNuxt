@@ -6,6 +6,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 TarkovTracker is a Nuxt 3-based web application for tracking progress in Escape from Tarkov. It supports both PvP and PvE game modes, team collaboration, and synchronizes user progress through Supabase.
 
+## Code Organization Philosophy
+
+**This project prioritizes flat structure and minimal abstraction:**
+
+- Keep directory nesting shallow (prefer 2-3 levels over 4-5)
+- Avoid creating abstractions or wrappers unless solving a real, current problem
+- Don't speculate about future needs - refactor when duplication becomes painful
+- Code should be easy to find and trace without excessive indirection
+
+See `docs/APP_STRUCTURE.md` for detailed examples and anti-patterns.
+
 ## Key Commands
 
 ### Development
@@ -31,6 +42,8 @@ npx vitest               # Run tests (if configured)
 **SPA Mode**: This is a client-side only application (`ssr: false` in nuxt.config.ts). It uses Cloudflare Pages for deployment.
 
 **Source Directory**: All application code lives in the `app/` directory (configured via `srcDir: "app"`)
+
+**Component Organization**: See `docs/APP_STRUCTURE.md` for detailed explanation of how `app.vue`, layouts, and shell components are organized and why.
 
 ### State Management Architecture
 
@@ -97,22 +110,39 @@ The app supports **two separate game modes** (PvP and PvE) with independent prog
 
 ### Component Organization
 
-**Auto-imported components** from two locations:
+**Auto-imported components** from three locations:
 
 - `app/components/`: General components
 - `app/features/`: Feature-specific components (organized by domain: tasks, hideout, team, settings, etc.)
+- `app/shell/`: App shell/chrome components (AppBar, NavDrawer, AppFooter)
+- `app/layouts/`: Nuxt page layout wrappers (default.vue directly uses shell components)
 
 Components are auto-imported without path prefix (`pathPrefix: false`), so `features/tasks/TaskCard.vue` is used as `<TaskCard />`.
+
+### UI Framework & Styling
+
+**Nuxt UI v4** (`@nuxt/ui`): Official Nuxt component library built on Tailwind CSS and Radix Vue primitives.
+
+**Tailwind CSS v4**: Utility-first CSS framework configured via `@theme` blocks in `app/assets/css/tailwind.css`.
+
+**Custom Theme**: The application uses a custom color system with:
+- Primary/Brand colors (tan)
+- Secondary colors (dark blue)
+- Game mode colors (PVP tan, PVE blue)
+- Semantic colors (success, warning, error)
+- OKLCH color space for better perceptual consistency on modern browsers
+
+**Typography**: "Share Tech Mono" font loaded from Google Fonts, applied to both sans and mono font families.
 
 ### Plugin System
 
 Plugins in `app/plugins/` initialize core functionality:
 
 - `supabase.client.ts`: Auth and database client
-- `vuetify.client.ts`: Material Design component library
+- `01.pinia.client.ts`: Pinia instance creation (numbered for load order)
 - `store-initializer.ts`: Initializes Pinia stores and data migration
-- `pinia.client.ts`: Pinia instance creation
 - `i18n.client.ts`: Internationalization support
+- `metadata.client.ts`: Dynamic meta tag management
 
 ### TypeScript Configuration
 
@@ -159,6 +189,114 @@ const completions = progressStore.tasksCompletions;
 // completions[taskId][teamId] = boolean
 ```
 
+## Team Features
+
+### Team Management UI
+
+The Team page (`app/pages/team.vue`) provides comprehensive team collaboration features:
+
+**Team Display Name**:
+- Located in `MyTeam.vue` component
+- Editable input field with 15-character limit
+- Per-game-mode storage (PVP and PVE have separate display names)
+- Auto-saves on blur or Enter key press
+- Changes sync to Supabase `user_progress` table via `useSupabaseSync`
+- Accessed via `tarkovStore.getDisplayName()` / `tarkovStore.setDisplayName()`
+
+**Team Invite System**:
+- Show/Hide toggle for invite URL privacy
+- Secure invite links with team ID and join code
+- Copy-to-clipboard functionality
+- URL format: `/team?team={teamId}&code={joinCode}`
+- Hidden by default with user-friendly messaging
+
+**Team Members Display**:
+- Located in `TeamMembers.vue` component
+- Always shows current user (even if not in backend members list)
+- Current user sorted first in the list
+- Owner badge displayed on team owner's card
+- "(This is you)" indicator on current user's card
+- Responsive grid layout (1 column mobile, 2 tablet, 3 desktop)
+
+**Member Cards** (`TeammemberCard.vue`):
+- Display name with Owner badge (if applicable)
+- Player level with level badge image
+- Task completion stats (X/Y tasks completed)
+- Hide/Show teammate progress toggle
+- Kick member button (owner-only)
+- Improved responsive design with proper spacing
+
+**Team Options** (`TeamOptions.vue`):
+- Toggle visibility of teammates' tasks
+- Toggle visibility of teammates' needed items
+- Filter non-FIR items
+- Filter hideout items
+- Toggle map objectives visibility
+
+### Team Data Stores
+
+**System Store** (`stores/useSystemStore.ts`):
+- Tracks user's team membership (`team_id` from `user_system` table)
+- Real-time sync via `useSupabaseListener`
+- Determines if user is in a team
+
+**Team Store** (`stores/useTeamStore.ts`):
+- Stores team metadata: owner, password/join_code, members
+- Syncs from `teams` table via `useSupabaseListener`
+- Supports legacy field mapping (owner_id → owner, join_code → password)
+- Getters: `teamOwner`, `isOwner`, `teamPassword`, `teamMembers`, `teammates`
+
+**Teammate Stores** (dynamic):
+- Created automatically via `useTeammateStores()`
+- One Pinia store per teammate (format: `teammate-{userId}`)
+- Each syncs from `user_progress` table for that user
+- Cleaned up when members leave the team
+
+**Progress Store** (`stores/progress.ts`):
+- Read-only aggregation layer
+- Computes task completions across all team members
+- Format: `tasksCompletions[taskId][userId] = boolean`
+- Used throughout the app to show team progress
+
+### Team Edge Functions
+
+Located in `supabase/functions/`:
+- `team-create/` - Creates new team with owner
+- `team-join/` - Joins existing team with invite code
+- `team-leave/` - Leaves/disbands team
+- `team-kick/` - Kicks member (owner-only)
+
+Called via `useEdgeFunctions()` composable which wraps the Supabase function invocations.
+
+### Database Schema
+
+**Tables**:
+- `teams` - Team metadata (id, owner_id, name, join_code, max_members, created_at)
+- `team_memberships` - Join table (team_id, user_id, joined_at)
+- `user_system` - User's current team reference (user_id, team_id)
+- `user_progress` - User's game progress including display_name per game mode
+
+**Real-time Subscriptions**:
+- `teams` table → `useTeamStore`
+- `user_system` table → `useSystemStore`
+- `user_progress` table → teammate stores (one per member)
+
+### Team Page Layout
+
+```
+/team Page Structure:
+├─ TeamInvite (if invite in URL query params)
+├─ Team Management Section (2-column grid on desktop)
+│  ├─ MyTeam
+│  │  ├─ Display Name Editor (NEW in 2025-01)
+│  │  ├─ Team Invite URL (Show/Hide toggle)
+│  │  └─ Create/Leave/Disband Team button
+│  └─ TeamOptions
+│     └─ Team integration visibility toggles
+└─ Team Members Section
+   └─ Grid of TeammemberCard components
+```
+
 ## Data Flow
 
 1. **Initial Load**:
@@ -175,8 +313,9 @@ const completions = progressStore.tasksCompletions;
 
 3. **Team Collaboration**:
    - `useSupabaseListener` listens for team member changes.
-   - Creates dynamic Pinia stores for each teammate.
+   - Creates dynamic Pinia stores for each teammate via `useTeammateStores()`.
    - `progressStore` aggregates data across all team stores.
+   - Team member updates trigger real-time UI updates across all team members.
 
 ## Testing
 

@@ -34,15 +34,12 @@
 </template>
 <script setup lang="ts">
   import { computed } from "vue";
-
   interface Props {
     icon?: string;
   }
-
   const props = withDefaults(defineProps<Props>(), {
     icon: "mdi-check-all",
   });
-
   // Convert icon name to proper format
   const iconName = computed(() => {
     return props.icon.startsWith("mdi-") ? `i-${props.icon}` : props.icon;

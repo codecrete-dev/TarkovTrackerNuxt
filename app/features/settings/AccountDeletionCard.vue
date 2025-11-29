@@ -217,10 +217,10 @@
   </UModal>
 </template>
 <script setup>
-  import { ref, computed } from "vue";
+  import { computed, ref } from "vue";
   import { useRouter } from "vue-router";
-  import { useTeamStoreWithSupabase } from "@/stores/useTeamStore";
   import GenericCard from "@/components/ui/GenericCard.vue";
+  import { useTeamStoreWithSupabase } from "@/stores/useTeamStore";
   defineOptions({
     inheritAttrs: false,
   });

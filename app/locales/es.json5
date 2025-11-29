@@ -130,6 +130,9 @@
       title: "Documentación de la API",
       description: "Accede a tus datos de Tarkov Tracker de forma programática.",
       note: "Se requieren tokens de API para la autenticación.",
+      tokens_moved_title: "Los tokens de API ahora se gestionan en Configuración",
+      tokens_moved_description: "Crea y revoca tokens en Configuración → Tokens de API. Esta página mantiene la documentación.",
+      tokens_moved_action: "Abrir Configuración",
       endpoints: {
         title: "Endpoints disponibles",
         data: {
@@ -172,7 +175,31 @@
           show_tokens: "Mostrar mis tokens",
           create_token_success: "Se ha creado correctamente un nuevo token de API.",
           create_token_error: "Error al crear un nuevo token de API.",
+          token_created: "Token creado",
+          token_created_description: "Copia y guarda este token ahora. No podrás verlo nuevamente.",
+          token_created_close: "Listo",
+          token_copied: "Token copiado al portapapeles",
+          token_revoked: "Token revocado",
+          token_revoke_error: "No se pudo revocar el token. Inténtalo nuevamente.",
           no_tokens: "No tienes ningún token de API de TarkovTracker.",
+          not_logged_in: "Debes iniciar sesión para crear un token de API.",
+          default_note: "Token sin nombre",
+          revoke_button: "Revocar",
+          list: {
+            created: "Creado",
+            last_used: "Último uso",
+            never: "Nunca",
+            usage_count: "{count} usos",
+            revoked: "Revocado",
+          },
+          form: {
+            gamemode_title: "Modo de juego",
+            permissions_title: "Permisos",
+            note_label: "Etiqueta o nota",
+            note_placeholder: "p. ej. overlay de streaming, bot del clan, app personal",
+            warning: "Los tokens se muestran solo una vez. Guárdalos de forma segura.",
+            cancel: "Cancelar",
+          },
           token_column: "Token",
           note_column: "Nota",
           created_column: "Creado",
@@ -274,6 +301,12 @@
     not_found: {
       title: "Página no encontrada",
       not_found_description: "Lo sentimos, no se ha encontrado la página.",
+    },
+    "terms_of-service": {
+      title: "Términos de Servicio",
+    },
+    privacy: {
+      title: "Política de Privacidad",
     },
   },
   footer: {

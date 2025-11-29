@@ -18,7 +18,7 @@
 </template>
 <script setup>
   import { computed, defineAsyncComponent, ref } from "vue";
-  import { useMetadataStore } from "@/stores/metadata";
+  import { useMetadataStore } from "@/stores/useMetadata";
   const TaskObjective = defineAsyncComponent(() => import("@/features/tasks/TaskObjective"));
   const TaskLink = defineAsyncComponent(() => import("@/features/tasks/TaskLink"));
   const metadataStore = useMetadataStore();

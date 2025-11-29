@@ -18,12 +18,10 @@
           {{ $t("page.login.subtitle") }}
         </p>
       </div>
-
       <!-- Auth Buttons -->
       <div class="px-10 pb-10">
         <auth-buttons />
       </div>
-
       <!-- Footer Links -->
       <div class="rounded-b-lg border-t border-white/5 bg-black/20 px-8 py-5">
         <div class="flex items-center justify-between">
@@ -38,7 +36,7 @@
             {{ $t("page.login.privacy_policy") }}
           </UButton>
           <UButton
-            to="/terms"
+            to="/terms-of-service"
             target="_blank"
             variant="ghost"
             color="neutral"

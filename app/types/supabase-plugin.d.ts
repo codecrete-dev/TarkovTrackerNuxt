@@ -18,8 +18,8 @@ export interface SupabaseUser {
   emailVerified?: boolean;
   photoURL?: string | null;
   avatarUrl?: string | null;
-  lastLoginAt?: string | null; // Made optional to align with new properties
-  createdAt?: string | null; // Made optional to align with new properties
+  lastLoginAt?: string | null;
+  createdAt?: string | null;
 }
 export interface SupabasePlugin {
   client: SupabaseClient;

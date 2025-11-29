@@ -1,7 +1,7 @@
+import type { UserState } from "@/stores/progressState";
 import type Graph from "graphology";
-import type { Store, StateTree, _GettersTree } from "pinia";
-import type { Ref, ComputedRef } from "vue";
-import type { UserState } from "@/shared_state";
+import type { _GettersTree, StateTree, Store } from "pinia";
+import type { ComputedRef, Ref } from "vue";
 /**
  * Type definitions for Tarkov data structures
  * This file defines the structure for:
@@ -9,7 +9,6 @@ import type { UserState } from "@/shared_state";
  * - Hideout module progress
  * - Game objectives and quest data
  */
-
 // Core Tarkov Data Types
 export interface TarkovItem {
   id: string;

@@ -25,7 +25,6 @@
             </UButton>
           </div>
         </div>
-
         <!-- Reputation Input -->
         <div class="space-y-2">
           <div class="text-surface-300 text-sm font-medium">Reputation</div>
@@ -45,17 +44,14 @@
     </template>
   </GenericCard>
 </template>
-
 <script setup lang="ts">
-  import type { Trader } from "@/types/tarkov";
   import GenericCard from "@/components/ui/GenericCard.vue";
-
+  import type { Trader } from "@/types/tarkov";
   defineProps<{
     trader: Trader;
     level: number;
     reputation: number;
   }>();
-
   defineEmits<{
     (e: "update:level" | "update:reputation", value: number): void;
   }>();

@@ -140,11 +140,11 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { ref, computed, defineAsyncComponent } from "vue";
+  import { computed, defineAsyncComponent, ref } from "vue";
   import ContextMenu from "./ContextMenu.vue";
   import ContextMenuItem from "./ContextMenuItem.vue";
   const ItemCountControls = defineAsyncComponent(
-    () => import("@/features/neededitems/components/ItemCountControls.vue")
+    () => import("@/features/neededitems/ItemCountControls.vue")
   );
   interface Props {
     // Basic item identification

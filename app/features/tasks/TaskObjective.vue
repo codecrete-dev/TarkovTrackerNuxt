@@ -15,7 +15,6 @@
         class="mr-1 h-4 w-4 shrink-0"
       />
       <span class="text-base">{{ props.objective?.description }}</span>
-
       <!-- Counter for shoot/kill objectives -->
       <div
         v-if="
@@ -89,16 +88,14 @@
   </span>
 </template>
 <script setup>
-  import { computed, ref, watch, defineAsyncComponent } from "vue";
-  import { useTarkovStore } from "@/stores/tarkov";
-  import { useMetadataStore } from "@/stores/metadata";
-  import { useProgressStore } from "@/stores/progress";
+  import { computed, defineAsyncComponent, ref, watch } from "vue";
+  import { useMetadataStore } from "@/stores/useMetadata";
+  import { useProgressStore } from "@/stores/useProgress";
   import { useSystemStoreWithSupabase } from "@/stores/useSystemStore";
-
+  import { useTarkovStore } from "@/stores/useTarkov";
   const ItemCountControls = defineAsyncComponent(
-    () => import("@/features/neededitems/components/ItemCountControls.vue")
+    () => import("@/features/neededitems/ItemCountControls.vue")
   );
-
   const { systemStore } = useSystemStoreWithSupabase();
   // Define the props for the component
   const props = defineProps({
@@ -107,7 +104,6 @@
       required: true,
     },
   });
-
   const metadataStore = useMetadataStore();
   const objectives = computed(() => metadataStore.objectives);
   const tarkovStore = useTarkovStore();
@@ -119,7 +115,6 @@
   const fullObjective = computed(() => {
     return objectives.value.find((o) => o.id == props.objective.id);
   });
-
   const relatedTask = computed(() => {
     if (!fullObjective.value?.taskId) return null;
     return tasks.value.find((t) => t.id === fullObjective.value.taskId);
@@ -216,20 +211,16 @@
     }
     tarkovStore.toggleTaskObjectiveComplete(props.objective.id);
   };
-
   const currentItemCount = computed(() => {
     return tarkovStore.getObjectiveCount(props.objective.id);
   });
-
   const currentObjectiveCount = computed(() => {
     return tarkovStore.getObjectiveCount(props.objective.id);
   });
-
   const isItemCollected = computed(() => {
     const neededCount = fullObjective.value.count ?? 1;
     return currentItemCount.value >= neededCount;
   });
-
   // Watch for objective completion to auto-complete item collection
   watch(isComplete, (newVal) => {
     if (newVal) {
@@ -238,18 +229,14 @@
       tarkovStore.setObjectiveCount(props.objective.id, neededCount);
     }
   });
-
   const handleItemClick = (event) => {
     // Prevent bubbling to the objective click handler if needed, though they are separate elements
     event.stopPropagation();
-
     // If multi-item, clicking the item itself (not the controls) should probably just increment
     // or maybe do nothing if controls are present?
     // The user requested controls "similar to Needed Items", which implies the controls handle the interaction.
     // But for single items, we still want the click-to-toggle behavior.
-
     const neededCount = fullObjective.value.count ?? 1;
-
     if (neededCount > 1) {
       // For multi-item, let the controls handle it, or maybe clicking the icon increments?
       // Let's keep increment behavior on icon click for consistency, but controls offer fine-grained.
@@ -259,13 +246,11 @@
       toggleCount();
     }
   };
-
   const decreaseCount = () => {
     const currentCount = currentItemCount.value;
     if (currentCount > 0) {
       const newCount = currentCount - 1;
       tarkovStore.setObjectiveCount(props.objective.id, newCount);
-
       // If we drop below needed count and objective was complete, uncomplete it
       const neededCount = fullObjective.value.count ?? 1;
       if (newCount < neededCount && isComplete.value) {
@@ -273,25 +258,20 @@
       }
     }
   };
-
   const increaseCount = () => {
     const currentCount = currentItemCount.value;
     const neededCount = fullObjective.value.count ?? 1;
-
     if (currentCount < neededCount) {
       const newCount = currentCount + 1;
       tarkovStore.setObjectiveCount(props.objective.id, newCount);
-
       if (newCount >= neededCount && !isComplete.value) {
         tarkovStore.setTaskObjectiveComplete(props.objective.id);
       }
     }
   };
-
   const toggleCount = () => {
     const currentCount = currentItemCount.value;
     const neededCount = fullObjective.value.count ?? 1;
-
     if (currentCount >= neededCount) {
       tarkovStore.setObjectiveCount(props.objective.id, Math.max(0, neededCount - 1));
       if (isComplete.value) {

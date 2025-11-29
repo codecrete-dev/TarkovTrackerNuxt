@@ -1,5 +1,4 @@
-import { ref, onMounted, onUnmounted, watch, type Ref } from "vue";
-
+import { onMounted, onUnmounted, type Ref, ref, watch } from "vue";
 export function useInfiniteScroll(
   sentinelRef: Ref<HTMLElement | null>,
   onLoadMore: () => void,
@@ -10,10 +9,8 @@ export function useInfiniteScroll(
   } = {}
 ) {
   const { rootMargin = "100px", threshold = 0.1, enabled = true } = options;
-
   let observer: IntersectionObserver | null = null;
   const isLoading = ref(false);
-
   const handleIntersection = (entries: IntersectionObserverEntry[]) => {
     const target = entries[0];
     if (target?.isIntersecting && enabled && !isLoading.value) {
@@ -25,7 +22,6 @@ export function useInfiniteScroll(
       }, 100);
     }
   };
-
   const start = () => {
     if (!observer) {
       observer = new IntersectionObserver(handleIntersection, {
@@ -37,12 +33,10 @@ export function useInfiniteScroll(
       }
     }
   };
-
   const stop = () => {
     observer?.disconnect();
     observer = null;
   };
-
   // Watch for sentinel element changes (e.g. when v-if renders it)
   watch(sentinelRef, (el) => {
     if (observer) {
@@ -52,15 +46,12 @@ export function useInfiniteScroll(
       }
     }
   });
-
   onMounted(() => {
     start();
   });
-
   onUnmounted(() => {
     stop();
   });
-
   return {
     isLoading,
     stop,

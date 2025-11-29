@@ -1,13 +1,38 @@
 <template>
   <div class="container mx-auto max-w-4xl space-y-4 px-4 py-6">
+    <UAlert
+      icon="i-heroicons-information-circle"
+      color="info"
+      variant="soft"
+      class="bg-surface-900 border border-white/10"
+      :title="$t('page.api.tokens_moved_title', 'API tokens moved to Settings')"
+      :description="
+        $t(
+          'page.api.tokens_moved_description',
+          'Create and revoke API tokens from Settings → API Tokens. The docs remain here.'
+        )
+      "
+    >
+      <template #actions>
+        <UButton
+          to="/settings"
+          color="primary"
+          variant="soft"
+          size="xs"
+          icon="i-heroicons-cog-6-tooth"
+        >
+          {{ $t('page.api.tokens_moved_action', 'Open Settings') }}
+        </UButton>
+      </template>
+    </UAlert>
     <UCard class="bg-surface-900 border border-white/10" :ui="{ body: 'space-y-3' }">
       <template #header>
         <h1 class="text-surface-50 text-xl font-semibold">
-          {{ $t("page.api.title") }}
+          {{ $t('page.api.title') }}
         </h1>
       </template>
       <p class="text-surface-200">
-        {{ $t("page.api.description") }}
+        {{ $t('page.api.description') }}
       </p>
       <UAlert
         icon="i-heroicons-information-circle"
@@ -19,7 +44,7 @@
     <UCard class="bg-surface-900 border border-white/10" :ui="{ body: 'space-y-3' }">
       <template #header>
         <h2 class="text-surface-50 text-lg font-semibold">
-          {{ $t("page.api.endpoints.title") }}
+          {{ $t('page.api.endpoints.title') }}
         </h2>
       </template>
       <div class="space-y-3">
@@ -28,7 +53,7 @@
           <div class="space-y-1">
             <div class="text-surface-50 font-medium">/api/items</div>
             <div class="text-surface-300 text-sm">
-              {{ $t("page.api.endpoints.items") }}
+              {{ $t('page.api.endpoints.items') }}
             </div>
           </div>
         </div>
@@ -38,7 +63,7 @@
           <div class="space-y-1">
             <div class="text-surface-50 font-medium">/api/tasks</div>
             <div class="text-surface-300 text-sm">
-              {{ $t("page.api.endpoints.tasks") }}
+              {{ $t('page.api.endpoints.tasks') }}
             </div>
           </div>
         </div>

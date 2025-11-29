@@ -224,6 +224,9 @@
       title: "API Documentation",
       description: "Access your Tarkov Tracker data programmatically.",
       note: "API tokens are required for authentication.",
+      tokens_moved_title: "API tokens are managed in Settings",
+      tokens_moved_description: "Create and revoke tokens in Settings → API Tokens. This page remains the place for API docs and endpoint details.",
+      tokens_moved_action: "Open Settings",
       endpoints: {
         title: "Available Endpoints",
         data: {
@@ -246,8 +249,31 @@
           show_tokens: "Show my tokens",
           create_token_success: "Successfully created a new API token.",
           create_token_error: "Failed to create a new API token.",
+          token_created: "Token created",
+          token_created_description: "Copy and store this token now. You will not be able to view it again.",
+          token_created_close: "Done",
+          token_copied: "Token copied to clipboard",
+          token_revoked: "Token revoked",
+          token_revoke_error: "Failed to revoke token. Please try again.",
           no_tokens: "You do not have any TarkovTracker API tokens.",
           not_logged_in: "You must be logged in to create an API token.",
+          default_note: "Untitled token",
+          revoke_button: "Revoke",
+          list: {
+            created: "Created",
+            last_used: "Last used",
+            never: "Never",
+            usage_count: "{count} uses",
+            revoked: "Revoked",
+          },
+          form: {
+            gamemode_title: "Game mode",
+            permissions_title: "Permissions",
+            note_label: "Label or note",
+            note_placeholder: "e.g. streamer overlay, clan bot, personal app",
+            warning: "Tokens are shown only once. Store them securely.",
+            cancel: "Cancel",
+          },
           token_column: "Token",
           note_column: "Note",
           created_column: "Created",
@@ -341,6 +367,12 @@
     not_found: {
       title: "Page Not Found",
       not_found_description: "Sorry, that page could not be found!",
+    },
+    "terms_of-service": {
+      title: "Terms of Service",
+    },
+    privacy: {
+      title: "Privacy Policy",
     },
     api: {
       title: "API Documentation",

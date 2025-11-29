@@ -1,15 +1,13 @@
-import { ref, watch, onUnmounted, getCurrentInstance } from "vue";
-import type { Store } from "pinia";
+import { getCurrentInstance, onUnmounted, ref, watch } from "vue";
 import { debounce } from "@/utils/debounce";
-import type { UserProgressData } from "~/shared_state";
-
+import type { Store } from "pinia";
+import type { UserProgressData } from "~/stores/progressState";
 export interface SupabaseSyncConfig {
   store: Store;
   table: string;
   transform?: (state: Record<string, unknown>) => Record<string, unknown>;
   debounceMs?: number;
 }
-
 // Type for the transformed data that gets sent to Supabase
 interface SupabaseUserData {
   user_id?: string;
@@ -19,7 +17,6 @@ interface SupabaseUserData {
   pve_data?: UserProgressData;
   [key: string]: unknown;
 }
-
 export function useSupabaseSync({
   store,
   table,
@@ -58,7 +55,6 @@ export function useSupabaseSync({
       if (!dataToSave.user_id) {
         dataToSave.user_id = $supabase.user.id;
       }
-
       // Log detailed info about what we're syncing
       if (table === "user_progress") {
         const userData = dataToSave as SupabaseUserData;
@@ -87,7 +83,6 @@ export function useSupabaseSync({
       isSyncing.value = false;
     }
   };
-
   const debouncedSync = debounce(syncToSupabase, debounceMs);
   const unwatch = watch(
     () => store.$state,
@@ -104,18 +99,15 @@ export function useSupabaseSync({
   if (getCurrentInstance()) {
     onUnmounted(cleanup);
   }
-
   const pause = () => {
     console.log(`[Sync] Pausing sync for ${table}`);
     isPaused.value = true;
     debouncedSync.cancel();
   };
-
   const resume = () => {
     console.log(`[Sync] Resuming sync for ${table}`);
     isPaused.value = false;
   };
-
   return {
     isSyncing,
     isPaused,

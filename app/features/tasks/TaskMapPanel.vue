@@ -39,9 +39,9 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { defineAsyncComponent, computed } from "vue";
-  import { useTarkovTime } from "~/composables/useTarkovTime";
+  import { computed, defineAsyncComponent } from "vue";
   import type { TarkovMap } from "~/types/tarkov";
+  import { useTarkovTime } from "~/composables/useTarkovTime";
   const TarkovMap = defineAsyncComponent(() => import("~/features/maps/TarkovMap.vue"));
   // Use structural types compatible with TarkovMap's expectations
   interface Props {

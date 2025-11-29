@@ -71,16 +71,16 @@
   </header>
 </template>
 <script setup lang="ts">
-  import { computed, ref, onMounted, onUnmounted } from "vue";
-  import { storeToRefs } from "pinia";
-  import { useAppStore } from "@/stores/app";
-  import { useTarkovStore } from "@/stores/tarkov";
-  import { useMetadataStore } from "@/stores/metadata";
-  import { usePreferencesStore } from "@/stores/preferences";
-  import { useRoute } from "vue-router";
-  import { useI18n } from "vue-i18n";
-  import { GAME_MODES, type GameMode } from "@/utils/constants";
   import { useWindowSize } from "@vueuse/core";
+  import { storeToRefs } from "pinia";
+  import { computed, onMounted, onUnmounted, ref } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { useRoute } from "vue-router";
+  import { useAppStore } from "@/stores/useApp";
+  import { useMetadataStore } from "@/stores/useMetadata";
+  import { usePreferencesStore } from "@/stores/usePreferences";
+  import { useTarkovStore } from "@/stores/useTarkov";
+  import { GAME_MODES, type GameMode } from "@/utils/constants";
   const { t } = useI18n({ useScope: "global" });
   const appStore = useAppStore();
   const tarkovStore = useTarkovStore();

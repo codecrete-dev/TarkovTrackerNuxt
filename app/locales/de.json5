@@ -141,6 +141,9 @@
       title: "API-Dokumentation",
       description: "Greife programmatisch auf deine Tarkov Tracker Daten zu.",
       note: "API-Tokens sind für die Authentifizierung erforderlich.",
+      tokens_moved_title: "API-Tokens werden jetzt in den Einstellungen verwaltet",
+      tokens_moved_description: "Erstelle und widerrufe Tokens unter Einstellungen → API Tokens. Diese Seite enthält weiterhin die API-Dokumentation.",
+      tokens_moved_action: "Einstellungen öffnen",
       endpoints: {
         title: "Verfügbare Endpunkte",
         data: {
@@ -183,7 +186,31 @@
           show_tokens: "Zeige meine Tokens",
           create_token_success: "Es wurde erfolgreich ein API token erstellt.",
           create_token_error: "Erstellung eines neuen API Tokens fehlgeschlagen.",
+          token_created: "Token erstellt",
+          token_created_description: "Kopiere und speichere dieses Token jetzt. Du kannst es später nicht mehr einsehen.",
+          token_created_close: "Fertig",
+          token_copied: "Token in die Zwischenablage kopiert",
+          token_revoked: "Token widerrufen",
+          token_revoke_error: "Token konnte nicht widerrufen werden. Bitte erneut versuchen.",
           no_tokens: "Du hast keine TarkovTracker API Tokens.",
+          not_logged_in: "Du musst angemeldet sein, um ein API-Token zu erstellen.",
+          default_note: "Unbenanntes Token",
+          revoke_button: "Widerrufen",
+          list: {
+            created: "Erstellt",
+            last_used: "Zuletzt verwendet",
+            never: "Niemals",
+            usage_count: "{count} Nutzungen",
+            revoked: "Widerrufen",
+          },
+          form: {
+            gamemode_title: "Spielmodus",
+            permissions_title: "Berechtigungen",
+            note_label: "Label oder Notiz",
+            note_placeholder: "z. B. Stream-Overlay, Clan-Bot, eigene App",
+            warning: "Tokens werden nur einmal angezeigt. Bewahre sie sicher auf.",
+            cancel: "Abbrechen",
+          },
           token_column: "Token",
           note_column: "Notiz",
           created_column: "Erstellt",
@@ -285,6 +312,12 @@
     not_found: {
       title: "Seite nicht gefunden",
       not_found_description: "Entschuldigung die Seite konnte nicht gefunden werden!",
+    },
+    "terms_of-service": {
+      title: "Nutzungsbedingungen",
+    },
+    privacy: {
+      title: "Datenschutzrichtlinie",
     },
   },
   footer: {

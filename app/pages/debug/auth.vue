@@ -7,7 +7,6 @@
           <p class="text-surface-300 text-sm">Testing Supabase Authentication</p>
         </div>
       </template>
-
       <div class="space-y-3">
         <UAlert
           v-if="!user.loggedIn"
@@ -29,7 +28,6 @@
               : 'Successfully authenticated!'
           "
         />
-
         <div class="bg-surface-800/80 space-y-3 rounded-lg border border-white/5 p-4">
           <h3 class="text-surface-100 text-sm font-semibold">Auth State</h3>
           <div class="text-surface-300 grid grid-cols-1 gap-2 text-xs sm:grid-cols-2">
@@ -59,7 +57,6 @@
             </div>
           </div>
         </div>
-
         <div class="bg-surface-800/80 space-y-3 rounded-lg border border-white/5 p-4">
           <h3 class="text-surface-100 text-sm font-semibold">User Store State</h3>
           <div class="text-surface-300 grid grid-cols-1 gap-2 text-xs sm:grid-cols-2">
@@ -73,7 +70,6 @@
             </div>
           </div>
         </div>
-
         <div class="flex items-center gap-2">
           <AuthButtons v-if="!user.loggedIn" />
           <UButton
@@ -86,7 +82,6 @@
             Logout
           </UButton>
         </div>
-
         <div class="space-y-2 border-t border-white/10 pt-3">
           <h3 class="text-surface-100 text-sm font-semibold">Raw User Object</h3>
           <pre class="debug-json">{{ JSON.stringify(user, null, 2) }}</pre>
@@ -96,7 +91,7 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { usePreferencesStore } from "@/stores/preferences";
+  import { usePreferencesStore } from "@/stores/usePreferences";
   const { $supabase } = useNuxtApp();
   const user = $supabase.user;
   const preferencesStore = usePreferencesStore();

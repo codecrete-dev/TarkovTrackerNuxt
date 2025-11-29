@@ -154,6 +154,9 @@
       title: "Documentation de l’API",
       description: "Accédez à vos données Tarkov Tracker de manière programmatique.",
       note: "Des jetons API sont nécessaires pour l’authentification.",
+      tokens_moved_title: "Les tokens API sont gérés dans Paramètres",
+      tokens_moved_description: "Créez et révoquez vos tokens dans Paramètres → Tokens API. Cette page conserve la documentation.",
+      tokens_moved_action: "Ouvrir Paramètres",
       endpoints: {
         title: "Points de terminaison disponibles",
         data: {
@@ -213,7 +216,31 @@
           show_tokens: "Afficher les tokens",
           create_token_success: "Nouveau token créé avec succès.",
           create_token_error: "Échec de la création du nouveau token.",
+          token_created: "Token créé",
+          token_created_description: "Copiez et conservez ce token maintenant. Vous ne pourrez plus le consulter ensuite.",
+          token_created_close: "Terminé",
+          token_copied: "Token copié dans le presse-papiers",
+          token_revoked: "Token révoqué",
+          token_revoke_error: "Échec de la révocation du token. Veuillez réessayer.",
           no_tokens: "Aucun token trouvé.",
+          not_logged_in: "Vous devez être connecté pour créer un token API.",
+          default_note: "Token sans titre",
+          revoke_button: "Révoquer",
+          list: {
+            created: "Créé le",
+            last_used: "Dernière utilisation",
+            never: "Jamais",
+            usage_count: "{count} utilisations",
+            revoked: "Révoqué",
+          },
+          form: {
+            gamemode_title: "Mode de jeu",
+            permissions_title: "Permissions",
+            note_label: "Libellé ou note",
+            note_placeholder: "ex. overlay stream, bot de clan, appli perso",
+            warning: "Les tokens ne sont affichés qu'une seule fois. Conservez-les en lieu sûr.",
+            cancel: "Annuler",
+          },
           token_column: "Token",
           note_column: "Note",
           created_column: "Créé le",
@@ -316,6 +343,12 @@
     not_found: {
       title: "Page non trouvée",
       not_found_description: "La page que vous avez demandée n'a pas été trouvée.",
+    },
+    "terms_of-service": {
+      title: "Conditions d'Utilisation",
+    },
+    privacy: {
+      title: "Politique de Confidentialité",
     },
   },
   footer: {

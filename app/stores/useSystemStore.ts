@@ -1,7 +1,7 @@
-import { computed } from "vue";
 import { defineStore } from "pinia";
+import { computed } from "vue";
 import { useSupabaseListener } from "@/composables/supabase/useSupabaseListener";
-import type { SystemState, SystemGetters } from "@/types/tarkov";
+import type { SystemGetters, SystemState } from "@/types/tarkov";
 /**
  * System store definition with getters for user tokens and team info
  */
@@ -28,9 +28,11 @@ export function useSystemStoreWithSupabase() {
   const { $supabase } = useNuxtApp();
   const handleSystemSnapshot = (data: Record<string, unknown> | null) => {
     if (data && "team_id" in data) {
-      systemStore.$patch({ team: (data as { team_id: string | null }).team_id });
+      systemStore.$patch({
+        team: (data as { team_id: string | null }).team_id,
+      } as Partial<SystemState>);
     } else if (data === null) {
-      systemStore.$patch({ team: null });
+      systemStore.$patch({ team: null } as Partial<SystemState>);
     }
   };
   // Computed reference to the system document

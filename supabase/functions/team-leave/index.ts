@@ -139,7 +139,11 @@ serve(async (req) => {
 
     if (systemError) {
       console.error("user_system upsert failed:", systemError)
-      return createErrorResponse("Failed to update user system state", 500)
+      // If the table is missing in an environment, don't block leaving the team
+      if (systemError.code !== "42P01") {
+        return createErrorResponse("Failed to update user system state", 500)
+      }
+      console.warn("user_system table missing, continuing without system state update")
     }
 
     return createSuccessResponse({

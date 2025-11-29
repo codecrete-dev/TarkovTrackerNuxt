@@ -7,7 +7,6 @@
           <p class="text-surface-300 text-sm">Testing Tarkov API Data Fetching</p>
         </div>
       </template>
-
       <UAlert
         v-if="loading"
         icon="i-heroicons-arrow-path"
@@ -25,10 +24,8 @@
         class="mb-2"
         :title="`Error: ${error.message}`"
       />
-
       <div v-if="result" class="space-y-4">
         <h3 class="text-surface-100 text-sm font-semibold">Query Results</h3>
-
         <UAccordion multiple variant="ghost" color="neutral" :items="accordionItems">
           <template #traders>
             <ul class="text-surface-200 space-y-1 text-sm">
@@ -37,7 +34,6 @@
               </li>
             </ul>
           </template>
-
           <template #tasks>
             <ul class="text-surface-200 space-y-1 text-sm">
               <li v-for="task in result.tasks?.slice(0, 10)" :key="task.id">
@@ -48,7 +44,6 @@
               </li>
             </ul>
           </template>
-
           <template #maps>
             <ul class="text-surface-200 space-y-1 text-sm">
               <li v-for="map in result.maps" :key="map.id">
@@ -56,7 +51,6 @@
               </li>
             </ul>
           </template>
-
           <template #player-levels>
             <div class="text-surface-200 text-sm">
               First 5:
@@ -69,9 +63,7 @@
             </div>
           </template>
         </UAccordion>
-
         <div class="h-px bg-white/10"></div>
-
         <div class="text-surface-200 space-y-1 text-sm">
           <div>
             <span class="font-semibold">Language:</span>
@@ -83,7 +75,6 @@
           </div>
         </div>
       </div>
-
       <div class="flex justify-end">
         <UButton
           color="primary"
@@ -98,26 +89,29 @@
   </div>
 </template>
 <script setup lang="ts">
+  import { storeToRefs } from "pinia";
   import { computed } from "vue";
-  import { useSharedTarkovDataQuery } from "@/composables/api/useSharedTarkovQuery";
-  import { useTarkovStore } from "@/stores/tarkov";
+  import { useMetadataStore } from "@/stores/useMetadata";
+  import { useTarkovStore } from "@/stores/useTarkov";
   import { API_GAME_MODES, GAME_MODES } from "@/utils/constants";
-
   const tarkovStore = useTarkovStore();
+  const metadataStore = useMetadataStore();
   const gameMode = computed(
     () => tarkovStore.getCurrentGameMode() || API_GAME_MODES[GAME_MODES.PVP]
   );
-  const {
-    result,
-    error,
-    loading,
-    refetch,
-    languageCode: apiLanguageCode,
-  } = useSharedTarkovDataQuery();
-
+  const { loading, error, languageCode: apiLanguageCode } = storeToRefs(metadataStore);
+  const refetch = () => metadataStore.fetchAllData(true);
   // Alias for template consistency
   const languageCode = computed(() => apiLanguageCode.value);
-
+  // Adapt store structure to expected result structure for template
+  const result = computed(() => {
+    return {
+      traders: metadataStore.traders,
+      tasks: metadataStore.tasks,
+      maps: metadataStore.maps,
+      playerLevels: metadataStore.playerLevels,
+    };
+  });
   const accordionItems = computed(() => {
     if (!result.value) return [];
     return [

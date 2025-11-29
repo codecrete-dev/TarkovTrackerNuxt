@@ -49,8 +49,8 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { ref, onMounted, watch, defineAsyncComponent, withDefaults, computed } from "vue";
   import { select, xml } from "d3";
+  import { computed, defineAsyncComponent, onMounted, ref, watch, withDefaults } from "vue";
   import type { TarkovMap } from "~/types/tarkov";
   interface Props {
     map: TarkovMap;

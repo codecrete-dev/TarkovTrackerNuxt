@@ -4,11 +4,11 @@
   </UButton>
 </template>
 <script setup>
-  import { ref } from "vue";
   import { storeToRefs } from "pinia";
+  import { ref } from "vue";
   import { useI18n } from "vue-i18n";
-  import { useMetadataStore } from "@/stores/metadata";
   import { useRouter } from "vue-router";
+  import { useMetadataStore } from "@/stores/useMetadata";
   const { t } = useI18n({ useScope: "global" });
   const metadataStore = useMetadataStore();
   const { loading, hideoutLoading } = storeToRefs(metadataStore);

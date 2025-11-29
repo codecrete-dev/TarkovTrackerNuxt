@@ -55,7 +55,6 @@
         />
       </div>
     </div>
-
     <!-- Task Context Menu -->
     <ContextMenu ref="taskContextMenu">
       <template #default="{ close }">
@@ -73,15 +72,14 @@
   </UCard>
 </template>
 <script setup>
-  import { defineAsyncComponent, computed, ref } from "vue";
   import { useBreakpoints } from "@vueuse/core";
-  import { useTarkovStore } from "@/stores/tarkov";
-  import { useProgressStore } from "@/stores/progress";
-  import { usePreferencesStore } from "@/stores/preferences";
-  import { useMetadataStore } from "@/stores/metadata";
+  import { computed, defineAsyncComponent, ref } from "vue";
   import ContextMenu from "@/components/ui/ContextMenu.vue";
   import ContextMenuItem from "@/components/ui/ContextMenuItem.vue";
-
+  import { useMetadataStore } from "@/stores/useMetadata";
+  import { usePreferencesStore } from "@/stores/usePreferences";
+  import { useProgressStore } from "@/stores/useProgress";
+  import { useTarkovStore } from "@/stores/useTarkov";
   const TaskInfo = defineAsyncComponent(() => import("./TaskInfo.vue"));
   const QuestKeys = defineAsyncComponent(() => import("./QuestKeys.vue"));
   const QuestObjectives = defineAsyncComponent(() => import("./QuestObjectives.vue"));
@@ -91,9 +89,7 @@
     activeUserView: { type: String, required: true },
     neededBy: { type: Array, default: () => [] },
   });
-
   const emit = defineEmits(["on-task-action"]);
-
   // Define breakpoints (matching Vuetify's xs/sm breakpoint at 600px)
   const breakpoints = useBreakpoints({
     mobile: 0,
@@ -105,10 +101,8 @@
   const preferencesStore = usePreferencesStore();
   const metadataStore = useMetadataStore();
   const tasks = computed(() => metadataStore.tasks);
-
   // Context menu ref
   const taskContextMenu = ref();
-
   // Computed properties
   const isComplete = computed(() => tarkovStore.isTaskComplete(props.task.id));
   const isFailed = computed(() => tarkovStore.isTaskFailed(props.task.id));
@@ -183,7 +177,6 @@
       .filter((o) => !tarkovStore.isTaskObjectiveComplete(o.id))
   );
   // Methods
-
   const handleTaskObjectives = (objectives, action) => {
     objectives.forEach((o) => tarkovStore[action](o.id));
   };
@@ -261,14 +254,12 @@
       undoKey: "page.tasks.questcard.statusavailable",
     });
   };
-
   // Context menu handlers
   const handleTaskContextMenu = (event) => {
     if (props.task.wikiLink) {
       taskContextMenu.value?.open(event);
     }
   };
-
   const openTaskWiki = () => {
     if (props.task.wikiLink) {
       window.open(props.task.wikiLink, "_blank");

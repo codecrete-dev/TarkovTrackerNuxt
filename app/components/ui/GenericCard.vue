@@ -66,12 +66,10 @@
             class="border-surface-700 mx-4 border-b"
           ></div>
         </header>
-
         <!-- Content Section -->
         <main v-if="hasContent" class="mt-2 w-full grow" :class="contentClasses">
           <slot name="content"></slot>
         </main>
-
         <!-- Footer Section -->
         <footer v-if="hasFooter" class="mt-auto w-full pb-1" :class="footerClasses">
           <slot name="footer"></slot>
@@ -80,10 +78,8 @@
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
   import { computed } from "vue";
-
   interface Props {
     // Header props
     title?: string;
@@ -93,22 +89,18 @@
     iconColor?: string;
     titleClasses?: string;
     headerClasses?: string;
-
     // Styling props
     highlightColor?: "green" | "blue" | "red" | "tan" | "purple" | "secondary" | "accent";
     fillHeight?: boolean;
     showDivider?: boolean;
-
     // Layout props
     contentClasses?: string;
     footerClasses?: string;
     cardClass?: string;
-
     // Avatar props
     avatarHeight?: number;
     avatarClass?: string;
   }
-
   const props = withDefaults(defineProps<Props>(), {
     title: "",
     subtitle: "",
@@ -126,16 +118,13 @@
     avatarHeight: 50,
     avatarClass: "",
   });
-
   // Compute slot existence
   const slots = useSlots();
   const hasHeader = computed(() => !!(slots.header || props.title || props.icon || props.avatar));
   const hasContent = computed(() => !!slots.content);
   const hasFooter = computed(() => !!slots.footer);
-
   const highlightClasses = computed(() => {
     const classes: Record<string, boolean> = {};
-
     // Map highlight colors to Tailwind gradient classes
     switch (props.highlightColor) {
       case "green":
@@ -171,7 +160,6 @@
         classes["bg-gradient-to-br from-accent-800 via-accent-700 to-accent-600"] = true;
         break;
     }
-
     return classes;
   });
 </script>

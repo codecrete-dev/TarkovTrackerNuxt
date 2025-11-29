@@ -143,9 +143,9 @@
   </GenericCard>
 </template>
 <script setup>
-  import { useDataMigration } from "@/composables/useDataMigration";
   import GenericCard from "@/components/ui/GenericCard.vue";
-  import MigrationSteps from "./MigrationSteps.vue";
+  import { useDataMigration } from "@/composables/useDataMigration";
   import ImportConfirmDialog from "./ImportConfirmDialog.vue";
+  import MigrationSteps from "./MigrationSteps.vue";
   const migration = useDataMigration();
 </script>

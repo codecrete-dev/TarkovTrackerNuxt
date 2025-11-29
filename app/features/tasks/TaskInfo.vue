@@ -59,9 +59,8 @@
 </template>
 <script setup lang="ts">
   import { useI18n } from "vue-i18n";
-  import TaskLink from "./TaskLink.vue";
   import InfoRow from "./InfoRow.vue";
-
+  import TaskLink from "./TaskLink.vue";
   interface Task {
     minPlayerLevel: number;
     predecessors?: unknown[];

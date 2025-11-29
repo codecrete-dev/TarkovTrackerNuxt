@@ -23,9 +23,9 @@
 </template>
 <script setup>
   import { computed, ref } from "vue";
-  import { useMetadataStore } from "@/stores/metadata";
-  import TaskObjective from "@/features/tasks/TaskObjective.vue";
   import TaskLink from "@/features/tasks/TaskLink.vue";
+  import TaskObjective from "@/features/tasks/TaskObjective.vue";
+  import { useMetadataStore } from "@/stores/useMetadata";
   const metadataStore = useMetadataStore();
   const objectives = computed(() => metadataStore.objectives);
   const tasks = computed(() => metadataStore.tasks);

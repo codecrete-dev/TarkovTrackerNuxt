@@ -37,7 +37,6 @@
             {{ $t("page.team.card.myteam.display_name_hint") }}
           </p>
         </div>
-
         <!-- Team Invite URL -->
         <div class="flex items-center justify-between">
           <label class="text-sm font-medium">
@@ -113,15 +112,15 @@
   </GenericCard>
 </template>
 <script setup lang="ts">
-  import { ref, computed, watch, nextTick, type WatchStopHandle } from "vue";
+  import { computed, nextTick, ref, watch, type WatchStopHandle } from "vue";
   import { useI18n } from "vue-i18n";
-  import type { CreateTeamResponse, LeaveTeamResponse } from "@/types/team";
-  // Team functions moved to Cloudflare Workers - TODO: Implement replacement
-  import { useTeamStoreWithSupabase } from "@/stores/useTeamStore";
-  import { useSystemStoreWithSupabase } from "@/stores/useSystemStore";
-  import { useTarkovStore } from "@/stores/tarkov";
   import GenericCard from "@/components/ui/GenericCard.vue";
   import { useEdgeFunctions } from "@/composables/api/useEdgeFunctions";
+  import { useSystemStoreWithSupabase } from "@/stores/useSystemStore";
+  import { useTarkovStore } from "@/stores/useTarkov";
+  // Team functions moved to Cloudflare Workers - TODO: Implement replacement
+  import { useTeamStoreWithSupabase } from "@/stores/useTeamStore";
+  import type { CreateTeamResponse, LeaveTeamResponse } from "@/types/team";
   const { t } = useI18n({ useScope: "global" });
   const { teamStore } = useTeamStoreWithSupabase();
   const { systemStore } = useSystemStoreWithSupabase();
@@ -131,25 +130,20 @@
   const { createTeam, leaveTeam } = useEdgeFunctions();
   const isLoggedIn = computed(() => $supabase.user.loggedIn);
   const linkVisible = ref(false);
-
   // Display name management
   const displayName = ref(tarkovStore.getDisplayName() || "");
   const initialDisplayName = ref(tarkovStore.getDisplayName() || "");
-
   const displayNameChanged = computed(() => {
     return displayName.value !== initialDisplayName.value && displayName.value.trim() !== "";
   });
-
   const saveDisplayName = () => {
     if (displayName.value.trim() === "") return;
-
     const trimmedName = displayName.value.trim().substring(0, 15);
     tarkovStore.setDisplayName(trimmedName);
     initialDisplayName.value = trimmedName;
     displayName.value = trimmedName;
     showNotification(t("page.team.card.myteam.display_name_saved"));
   };
-
   // Watch for changes to the store's display name (e.g., from sync)
   watch(
     () => tarkovStore.getDisplayName(),
@@ -187,16 +181,13 @@
       "Team";
     return `${displayName || fallbackName}-${generateRandomName(4)}`;
   };
-
   const buildTeamPassword = () => generateRandomName(12);
-
   interface TeamFunctionPayload {
     name?: string;
     password?: string;
     maxMembers?: number;
     teamId?: string;
   }
-
   const callTeamFunction = async (
     functionName: string,
     payload: TeamFunctionPayload = {}
@@ -355,7 +346,6 @@
       console.warn("[MyTeam] Clipboard API is not available");
       return;
     }
-
     if (teamUrl.value) {
       try {
         await navigator.clipboard.writeText(teamUrl.value);
@@ -372,7 +362,6 @@
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const code = (teamStore.$state as any).password || (teamStore.$state as any).join_code;
     if (!teamId || !code) return "";
-
     // Use Nuxt-safe route composables instead of window.location
     // This works during SSR and client-side
     if (import.meta.client) {

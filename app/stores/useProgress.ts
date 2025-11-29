@@ -1,13 +1,13 @@
-import { computed } from "vue";
 import { defineStore } from "pinia";
-import { useTarkovStore } from "~/stores/tarkov";
-import { usePreferencesStore } from "~/stores/preferences";
-import { useMetadataStore } from "~/stores/metadata";
+import { computed } from "vue";
+import { GAME_EDITIONS, GAME_MODES, SPECIAL_STATIONS } from "@/utils/constants";
 import { useTeammateStores } from "./useTeamStore";
-import type { Task } from "~/types/tarkov";
 import type { Store } from "pinia";
-import type { UserState, UserProgressData } from "~/shared_state";
-import { GAME_MODES, GAME_EDITIONS, SPECIAL_STATIONS } from "@/utils/constants";
+import type { UserProgressData, UserState } from "~/stores/progressState";
+import type { Task } from "~/types/tarkov";
+import { useMetadataStore } from "~/stores/useMetadata";
+import { usePreferencesStore } from "~/stores/usePreferences";
+import { useTarkovStore } from "~/stores/useTarkov";
 function getGameModeData(store: Store<string, UserState> | undefined): UserProgressData {
   if (!store) return {} as UserProgressData;
   const currentGameMode = store.$state.currentGameMode || GAME_MODES.PVP;
@@ -42,21 +42,17 @@ export const useProgressStore = defineStore("progress", () => {
   const preferencesStore = usePreferencesStore();
   const metadataStore = useMetadataStore();
   const { teammateStores } = useTeammateStores();
-
   // Get the tarkov store to source "self" data directly from it
   const tarkovStore = useTarkovStore();
-
   const teamStores = computed(() => {
     const stores: TeamStoresMap = {};
     // Source the "self" key directly from useTarkovStore() instead of maintaining local state
     stores["self"] = tarkovStore as Store<string, UserState>;
-
     for (const teammate of Object.keys(teammateStores.value)) {
       if (teammateStores.value[teammate]) {
         stores[teammate] = teammateStores.value[teammate];
       }
     }
-
     return stores;
   });
   const visibleTeamStores = computed(() => {
@@ -245,16 +241,13 @@ export const useProgressStore = defineStore("progress", () => {
     }
     return levels;
   });
-
   const moduleCompletions = computed(() => {
     const completions: CompletionsMap = {};
     if (!metadataStore.hideoutStations.length || !visibleTeamStores.value) return {};
-
     // Collect all module IDs from all stations
     const allModuleIds = metadataStore.hideoutStations.flatMap(
       (station) => station.levels?.map((level) => level.id) || []
     );
-
     for (const moduleId of allModuleIds) {
       completions[moduleId] = {};
       for (const teamId of Object.keys(visibleTeamStores.value)) {
@@ -265,17 +258,14 @@ export const useProgressStore = defineStore("progress", () => {
     }
     return completions;
   });
-
   const modulePartCompletions = computed(() => {
     const completions: CompletionsMap = {};
     if (!metadataStore.hideoutStations.length || !visibleTeamStores.value) return {};
-
     // Collect all part/requirement IDs from all station levels
     const allPartIds = metadataStore.hideoutStations.flatMap(
       (station) =>
         station.levels?.flatMap((level) => level.itemRequirements?.map((req) => req.id) || []) || []
     );
-
     for (const partId of allPartIds) {
       completions[partId] = {};
       for (const teamId of Object.keys(visibleTeamStores.value)) {
@@ -286,7 +276,6 @@ export const useProgressStore = defineStore("progress", () => {
     }
     return completions;
   });
-
   const getTeamIndex = (teamId: string): string => {
     const { $supabase } = useNuxtApp();
     return teamId === $supabase.user?.id ? "self" : teamId;
@@ -296,7 +285,6 @@ export const useProgressStore = defineStore("progress", () => {
     const store = teamStores.value[storeKey];
     const currentData = getGameModeData(store);
     const displayNameFromStore = currentData?.displayName;
-
     if (!displayNameFromStore) {
       return teamId.substring(0, 6);
     }
@@ -316,7 +304,6 @@ export const useProgressStore = defineStore("progress", () => {
   const getTeammateStore = (teamId: string): Store<string, UserState> | null => {
     return teammateStores.value[teamId] || null;
   };
-
   const hasCompletedTask = (teamId: string, taskId: string): boolean => {
     const storeKey = getTeamIndex(teamId);
     const store = teamStores.value[storeKey];
@@ -324,7 +311,6 @@ export const useProgressStore = defineStore("progress", () => {
     const taskCompletion = currentData?.taskCompletions?.[taskId];
     return taskCompletion?.complete === true;
   };
-
   const getTaskStatus = (teamId: string, taskId: string): "completed" | "failed" | "incomplete" => {
     const storeKey = getTeamIndex(teamId);
     const store = teamStores.value[storeKey];
@@ -360,7 +346,6 @@ export const useProgressStore = defineStore("progress", () => {
         return 0;
     }
   };
-
   return {
     teamStores,
     visibleTeamStores,

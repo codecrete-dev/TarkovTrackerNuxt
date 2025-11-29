@@ -7,7 +7,6 @@
     >
       {{ getEditionName(tarkovStore.gameEdition) }}
     </button>
-
     <!-- Faction Toggle -->
     <div class="border-primary-800/50 flex w-full overflow-hidden rounded-md border">
       <button
@@ -26,21 +25,18 @@
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
-  import { useTarkovStore } from "@/stores/tarkov";
-  import { getEditionName, PMC_FACTIONS } from "@/utils/constants";
   import { useBreakpoints } from "@vueuse/core";
-  import { useRouter } from "vue-router";
   import { computed } from "vue";
-
+  import { useRouter } from "vue-router";
+  import { useTarkovStore } from "@/stores/useTarkov";
+  import { getEditionName, PMC_FACTIONS } from "@/utils/constants";
   defineProps({
     isCollapsed: {
       type: Boolean,
       required: true,
     },
   });
-
   const tarkovStore = useTarkovStore();
   const factions = PMC_FACTIONS;
   const router = useRouter();
@@ -49,11 +45,9 @@
     md: 960,
   });
   const mdAndDown = breakpoints.smaller("md");
-
   function navigateToSettings() {
     router.push("/settings");
   }
-
   const currentFaction = computed(() => tarkovStore.getPMCFaction());
   function setFaction(faction: "USEC" | "BEAR") {
     if (faction !== currentFaction.value) {

@@ -1,5 +1,4 @@
-import { useEdgeCache, createTarkovFetcher } from "~/server/utils/useEdgeCache";
-
+import { createTarkovFetcher, edgeCache } from "~/server/utils/edgeCache";
 const TARKOV_HIDEOUT_QUERY = `
   query TarkovDataHideout($gameMode: GameMode) {
     hideoutStations(gameMode: $gameMode) {
@@ -92,30 +91,22 @@ const TARKOV_HIDEOUT_QUERY = `
     }
   }
 `;
-
 // Valid game modes
 const VALID_GAME_MODES = ["regular", "pve"] as const;
-
 // Cache TTL: 12 hours in seconds
 const CACHE_TTL = 43200;
-
 export default defineEventHandler(async (event) => {
   const query = getQuery(event);
-
   // Validate and sanitize inputs
   let gameMode = (query.gameMode as string)?.toLowerCase() || "regular";
-
   // Ensure valid game mode
   if (!VALID_GAME_MODES.includes(gameMode as (typeof VALID_GAME_MODES)[number])) {
     gameMode = "regular";
   }
-
   // Create cache key from parameters
   const cacheKey = `hideout-${gameMode}`;
-
   // Create fetcher function for tarkov.dev API
   const fetcher = createTarkovFetcher(TARKOV_HIDEOUT_QUERY, { gameMode });
-
   // Use the shared edge cache utility
-  return await useEdgeCache(event, cacheKey, fetcher, CACHE_TTL, { cacheKeyPrefix: "tarkov" });
+  return await edgeCache(event, cacheKey, fetcher, CACHE_TTL, { cacheKeyPrefix: "tarkov" });
 });

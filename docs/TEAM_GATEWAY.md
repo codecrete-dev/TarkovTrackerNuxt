@@ -29,6 +29,10 @@ Goal: front-door the team mutations (create/join/leave/kick) to rate-limit abuse
   - Body: forwarded to Supabase Edge Function unchanged.
 - `GET /health` for uptime checks.
 
+## Operational notes (2025-11-28)
+- If Supabase is missing the `user_system` table, the upstream `team-leave` function used to return 500, which surfaced as a 500 here. The function now logs and continues when that table is absent, but **the real fix is to apply migration `20251128093000_create_user_system_table.sql` and redeploy `team-leave`**.
+- Gateway config/secrets unchanged; only Supabase needs the migration + function redeploy.
+
 ## Rate limits (KV buckets)
 - create: 10 / hour / ip+user
 - join: 30 / 10 min / ip+user

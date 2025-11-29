@@ -34,7 +34,6 @@
           </div>
         </div>
       </div>
-
       <!-- Task progress and actions -->
       <div
         class="flex items-center justify-between border-t border-gray-200 pt-2 dark:border-gray-700"
@@ -95,9 +94,9 @@
   // Team member management moved to Cloudflare Workers - TODO: Implement replacement
   import { computed, ref } from "vue";
   import { useI18n } from "vue-i18n";
-  import { usePreferencesStore } from "@/stores/preferences";
-  import { useProgressStore } from "@/stores/progress";
-  import { useMetadataStore } from "@/stores/metadata";
+  import { useMetadataStore } from "@/stores/useMetadata";
+  import { usePreferencesStore } from "@/stores/usePreferences";
+  import { useProgressStore } from "@/stores/useProgress";
   import { useTeamStoreWithSupabase } from "@/stores/useTeamStore";
   const { $supabase } = useNuxtApp();
   const toast = useToast();
@@ -149,7 +148,6 @@
       // TODO: Implement Cloudflare Workers integration for kicking team members
       console.log("TODO: Implement Cloudflare Workers for kickTeammate function");
       throw new Error("Team member kicking not yet implemented with Cloudflare Workers");
-
       // Placeholder for future implementation:
       // const session = await $supabase.client.auth.getSession();
       // if (!session.data.session) {
@@ -168,7 +166,7 @@
     } catch (error) {
       const backendMsg = error?.message || error?.data?.message || error?.toString();
       const message = backendMsg || t("page.team.card.manageteam.membercard.kick_error");
-      console.error("[TeammemberCard.vue] Error kicking teammate:", error);
+      console.error("[TeamMemberCard.vue] Error kicking teammate:", error);
       toast.add({ title: message, color: "error" });
     }
     kickingTeammate.value = false;

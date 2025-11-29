@@ -1,4 +1,4 @@
-import { createClient, type User, type SupabaseClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient, type User } from "@supabase/supabase-js";
 import { reactive } from "vue";
 type SupabaseUser = {
   id: string | null;
@@ -15,7 +15,6 @@ type SupabaseUser = {
 export default defineNuxtPlugin(() => {
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
   const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
   // Build a safe stub so components can still render in environments without Supabase env vars
   const buildStub = () => {
     const stubUser = reactive<SupabaseUser>({
@@ -30,7 +29,6 @@ export default defineNuxtPlugin(() => {
       createdAt: null,
       provider: null,
     });
-
     // Extremely small surface area stub — only the bits we call in-app
     const noopPromise = async () => ({}) as unknown as Promise<unknown>;
     const stubClient = {
@@ -43,7 +41,6 @@ export default defineNuxtPlugin(() => {
         signOut: async () => ({}),
       },
     } as unknown as SupabaseClient;
-
     return {
       client: stubClient,
       user: stubUser,
@@ -53,7 +50,6 @@ export default defineNuxtPlugin(() => {
       signOut: async () => {},
     };
   };
-
   if (!supabaseUrl || !supabaseKey) {
     console.error("[Supabase] Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY");
     // Fail fast in production to avoid silent bad deploys
@@ -63,7 +59,6 @@ export default defineNuxtPlugin(() => {
     const stub = buildStub();
     return { provide: { supabase: stub } };
   }
-
   const supabase = createClient(supabaseUrl, supabaseKey);
   const user = reactive<SupabaseUser>({
     id: null,
@@ -161,7 +156,6 @@ export default defineNuxtPlugin(() => {
       // Keep UI preferences (user store) but you may want to clear user-specific data
       // localStorage.removeItem("user"); // Uncomment if user data should also be cleared
     }
-
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
   };

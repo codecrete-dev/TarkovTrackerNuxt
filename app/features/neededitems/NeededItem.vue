@@ -31,10 +31,10 @@
   </template>
 </template>
 <script setup>
-  import { defineAsyncComponent, computed, provide } from "vue";
-  import { useProgressStore } from "@/stores/progress";
-  import { useMetadataStore } from "@/stores/metadata";
-  import { useTarkovStore } from "@/stores/tarkov";
+  import { computed, defineAsyncComponent, provide } from "vue";
+  import { useMetadataStore } from "@/stores/useMetadata";
+  import { useProgressStore } from "@/stores/useProgress";
+  import { useTarkovStore } from "@/stores/useTarkov";
   const NeededItemMediumCard = defineAsyncComponent(
     () => import("@/features/neededitems/NeededItemMediumCard")
   );
@@ -65,7 +65,6 @@
       if (currentCount.value > 0) {
         const newCount = currentCount.value - 1;
         tarkovStore.setObjectiveCount(props.need.id, newCount);
-
         // If we drop below needed count and objective was complete, uncomplete it
         if (newCount < neededCount.value && tarkovStore.isTaskObjectiveComplete(props.need.id)) {
           tarkovStore.setTaskObjectiveUncomplete(props.need.id);
@@ -75,7 +74,6 @@
       if (currentCount.value > 0) {
         const newCount = currentCount.value - 1;
         tarkovStore.setHideoutPartCount(props.need.id, newCount);
-
         // If we drop below needed count and module was complete, uncomplete it
         // Note: Hideout modules are complex, usually parts contribute to a module.
         // If this is a part, we might want to uncomplete the part?
@@ -91,7 +89,6 @@
       if (currentCount.value < neededCount.value) {
         const newCount = currentCount.value + 1;
         tarkovStore.setObjectiveCount(props.need.id, newCount);
-
         // If we reach needed count, mark objective as complete
         if (newCount >= neededCount.value && !tarkovStore.isTaskObjectiveComplete(props.need.id)) {
           tarkovStore.setTaskObjectiveComplete(props.need.id);
@@ -101,7 +98,6 @@
       if (currentCount.value < neededCount.value) {
         const newCount = currentCount.value + 1;
         tarkovStore.setHideoutPartCount(props.need.id, newCount);
-
         // If we reach needed count, mark part as complete
         if (newCount >= neededCount.value && !tarkovStore.isHideoutPartComplete(props.need.id)) {
           tarkovStore.setHideoutPartComplete(props.need.id);

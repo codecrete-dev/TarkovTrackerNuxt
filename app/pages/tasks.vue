@@ -63,18 +63,18 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { computed, watch, ref } from "vue";
   import { storeToRefs } from "pinia";
+  import { computed, ref, watch } from "vue";
   import { useI18n } from "vue-i18n";
-  import { usePreferencesStore } from "@/stores/preferences";
-  import { useMetadataStore } from "@/stores/metadata";
-  import { useProgressStore } from "@/stores/progress";
-  import { useTarkovStore } from "@/stores/tarkov";
   import { useTaskFiltering } from "@/composables/useTaskFiltering";
-  import type { Task, TaskObjective } from "@/types/tarkov";
   import TaskCard from "@/features/tasks/TaskCard.vue";
-  import TaskLoadingState from "@/features/tasks/TaskLoadingState.vue";
   import TaskEmptyState from "@/features/tasks/TaskEmptyState.vue";
+  import TaskLoadingState from "@/features/tasks/TaskLoadingState.vue";
+  import { useMetadataStore } from "@/stores/useMetadata";
+  import { usePreferencesStore } from "@/stores/usePreferences";
+  import { useProgressStore } from "@/stores/useProgress";
+  import { useTarkovStore } from "@/stores/useTarkov";
+  import type { Task, TaskObjective } from "@/types/tarkov";
   const { t } = useI18n({ useScope: "global" });
   const preferencesStore = usePreferencesStore();
   const {
@@ -189,7 +189,6 @@
       taskName: event.taskName,
       action: event.action,
     };
-
     if (event.undoKey) {
       updateTaskStatus(event.undoKey, event.taskName, false);
     } else if (event.statusKey) {

@@ -1,7 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import { mount } from "@vue/test-utils";
-import AuthButtons from "../AuthButtons.vue";
-
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import AuthButtons from "@/features/auth/AuthButtons.vue";
 // Mock i18n
 const mockI18n = {
   t: (key: string) => {
@@ -15,7 +14,6 @@ const mockI18n = {
     return translations[key] || key;
   },
 };
-
 // Mock Supabase
 vi.mock("@/plugins/supabase.client", () => ({
   default: {
@@ -27,7 +25,6 @@ vi.mock("@/plugins/supabase.client", () => ({
     },
   },
 }));
-
 // Mock Nuxt app
 vi.mock("#app", () => ({
   useNuxtApp: () => ({
@@ -43,7 +40,6 @@ vi.mock("#app", () => ({
     $i18n: mockI18n,
   }),
 }));
-
 // Mock router
 const mockPush = vi.fn();
 vi.mock("vue-router", () => ({
@@ -51,14 +47,12 @@ vi.mock("vue-router", () => ({
     push: mockPush,
   }),
 }));
-
 // Mock DataMigrationService
 vi.mock("@/utils/DataMigrationService", () => ({
   default: {
     hasLocalData: vi.fn(() => false),
   },
 }));
-
 // Mock window.open
 Object.defineProperty(window, "open", {
   writable: true,
@@ -67,7 +61,6 @@ Object.defineProperty(window, "open", {
     close: vi.fn(),
   })),
 });
-
 // Mock window location
 Object.defineProperty(window, "location", {
   writable: true,
@@ -75,12 +68,10 @@ Object.defineProperty(window, "location", {
     origin: "http://localhost:3000",
   },
 });
-
 describe("AuthButtons", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
-
   it("renders auth buttons correctly", () => {
     const wrapper = mount(AuthButtons, {
       global: {
@@ -96,14 +87,12 @@ describe("AuthButtons", () => {
         },
       },
     });
-
     // Check that buttons with correct text are rendered
     const buttons = wrapper.findAll("button");
     expect(buttons).toHaveLength(2);
     expect(wrapper.text()).toContain("Continue with Twitch");
     expect(wrapper.text()).toContain("Continue with Discord");
   });
-
   it("handles Twitch button click", async () => {
     const wrapper = mount(AuthButtons, {
       global: {
@@ -119,17 +108,14 @@ describe("AuthButtons", () => {
         },
       },
     });
-
     // Find the first button (Twitch) by its text content
     const twitchButton = wrapper.find("button");
     expect(twitchButton.exists()).toBe(true);
     expect(twitchButton.text()).toContain("Continue with Twitch");
-
     // Just verify we can click without errors
     await twitchButton.trigger("click");
     expect(wrapper.vm).toBeTruthy();
   });
-
   it("handles Discord button click", async () => {
     const wrapper = mount(AuthButtons, {
       global: {
@@ -145,21 +131,17 @@ describe("AuthButtons", () => {
         },
       },
     });
-
     // Find the buttons and get the second one (Discord)
     const buttons = wrapper.findAll("button");
     expect(buttons).toHaveLength(2);
-
     const discordButton = buttons[1];
     if (discordButton) {
       expect(discordButton.text()).toContain("Continue with Discord");
-
       // Just verify we can click without errors
       await discordButton.trigger("click");
       expect(wrapper.vm).toBeTruthy();
     }
   });
-
   it("renders with correct styling classes", () => {
     const wrapper = mount(AuthButtons, {
       global: {
@@ -180,14 +162,11 @@ describe("AuthButtons", () => {
         },
       },
     });
-
     const buttons = wrapper.findAll("button");
     expect(buttons).toHaveLength(2);
-
     // Check that the component renders without errors
     expect(wrapper.vm).toBeTruthy();
   });
-
   it("has initial loading states set to false", () => {
     const wrapper = mount(AuthButtons, {
       global: {
@@ -203,7 +182,6 @@ describe("AuthButtons", () => {
         },
       },
     });
-
     // Access component's internal state
     const component = wrapper.vm as unknown as {
       loading: { twitch: boolean; discord: boolean };

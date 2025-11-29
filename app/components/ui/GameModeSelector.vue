@@ -30,16 +30,12 @@
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
   import { computed } from "vue";
-  import { useTarkovStore } from "@/stores/tarkov";
+  import { useTarkovStore } from "@/stores/useTarkov";
   import { GAME_MODE_OPTIONS, type GameMode } from "@/utils/constants";
-
   const store = useTarkovStore();
-
   const gameModeOptions = GAME_MODE_OPTIONS;
-
   const selectedGameMode = computed({
     get() {
       return store.getCurrentGameMode();
@@ -48,7 +44,6 @@
       store.switchGameMode(newMode);
     },
   });
-
   const currentModeIcon = computed(() => {
     const currentMode = store.getCurrentGameMode();
     return (
@@ -56,7 +51,6 @@
     );
   });
 </script>
-
 <style scoped>
   /* No additional styles needed for settings page version */
 </style>

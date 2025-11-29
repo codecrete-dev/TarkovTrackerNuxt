@@ -88,7 +88,9 @@
         </div>
         <!-- Legal Links Section -->
         <div class="flex flex-col items-center gap-1">
-          <router-link to="/terms" target="_blank" class="footer-link">Terms</router-link>
+          <router-link to="/terms-of-service" target="_blank" class="footer-link">
+            Terms
+          </router-link>
           <router-link to="/privacy" target="_blank" class="footer-link">Privacy</router-link>
         </div>
       </div>

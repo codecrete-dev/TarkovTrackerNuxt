@@ -77,11 +77,11 @@
   </div>
 </template>
 <script setup>
-  import { defineAsyncComponent, computed, inject } from "vue";
-  import { useTarkovStore } from "@/stores/tarkov";
-  import ItemCountControls from "./components/ItemCountControls.vue";
-  import RequirementInfo from "./components/RequirementInfo.vue";
-  import TeamNeedsDisplay from "./components/TeamNeedsDisplay.vue";
+  import { computed, defineAsyncComponent, inject } from "vue";
+  import { useTarkovStore } from "@/stores/useTarkov";
+  import ItemCountControls from "./ItemCountControls.vue";
+  import RequirementInfo from "./RequirementInfo.vue";
+  import TeamNeedsDisplay from "./TeamNeedsDisplay.vue";
   const TaskLink = defineAsyncComponent(() => import("@/features/tasks/TaskLink"));
   const StationLink = defineAsyncComponent(() => import("@/features/hideout/StationLink"));
   const props = defineProps({

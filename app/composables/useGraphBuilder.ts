@@ -1,22 +1,22 @@
-import {
-  createGraph,
-  getPredecessors,
-  getSuccessors,
-  getParents,
-  getChildren,
-  safeAddNode,
-  safeAddEdge,
-} from "@/utils/graphHelpers";
 import type {
+  HideoutModule,
+  HideoutStation,
+  NeededItemHideoutModule,
+  NeededItemTaskObjective,
+  ObjectiveGPSInfo,
+  ObjectiveMapInfo,
   Task,
   TaskRequirement,
-  NeededItemTaskObjective,
-  ObjectiveMapInfo,
-  ObjectiveGPSInfo,
-  HideoutStation,
-  HideoutModule,
-  NeededItemHideoutModule,
 } from "@/types/tarkov";
+import {
+  createGraph,
+  getChildren,
+  getParents,
+  getPredecessors,
+  getSuccessors,
+  safeAddEdge,
+  safeAddNode,
+} from "@/utils/graphHelpers";
 import type { AbstractGraph } from "graphology-types";
 /**
  * Composable for building task and hideout dependency graphs

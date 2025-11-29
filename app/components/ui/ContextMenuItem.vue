@@ -7,18 +7,15 @@
     <span>{{ label }}</span>
   </div>
 </template>
-
 <script setup lang="ts">
   interface Props {
     label: string;
     icon?: string;
   }
-
   defineProps<Props>();
   const emit = defineEmits<{
     click: [];
   }>();
-
   const handleClick = () => {
     emit("click");
   };
