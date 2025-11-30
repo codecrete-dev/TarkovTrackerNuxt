@@ -79,9 +79,7 @@
       <div class="footer-divider" />
       <!-- Bottom Row: Copyright & Attribution -->
       <div class="footer-bottom">
-        <p class="copyright">
-          TarkovTracker &copy; 2020–{{ new Date().getFullYear() }}
-        </p>
+        <p class="copyright">TarkovTracker &copy; 2020–{{ new Date().getFullYear() }}</p>
         <p class="attribution">
           {{ t('footer.game_attribution') }}
         </p>
@@ -90,182 +88,182 @@
   </footer>
 </template>
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n';
-const { t } = useI18n({ useScope: 'global' });
+  import { useI18n } from 'vue-i18n';
+  const { t } = useI18n({ useScope: 'global' });
 </script>
 <style lang="scss" scoped>
-// Brand colors
-$discord-color: #5865f2;
-$discord-hover: #4752c4;
-$github-color: #f0f6fc;
-$github-hover: #c9d1d9;
-.footer {
-  position: relative;
-  width: 100%;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.3));
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 1.25rem 1.5rem;
-}
-.footer-container {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-.footer-main {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  gap: 2rem;
-  @media (max-width: 640px) {
-    grid-template-columns: 1fr;
-    gap: 1.25rem;
+  // Brand colors
+  $discord-color: #5865f2;
+  $discord-hover: #4752c4;
+  $github-color: #f0f6fc;
+  $github-hover: #c9d1d9;
+  .footer {
+    position: relative;
+    width: 100%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.3));
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 1.25rem 1.5rem;
+  }
+  .footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .footer-main {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 2rem;
+    @media (max-width: 640px) {
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+      text-align: center;
+    }
+  }
+  .footer-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    &:first-child {
+      align-items: flex-start;
+      @media (max-width: 640px) {
+        align-items: center;
+      }
+    }
+    &:last-child {
+      align-items: flex-end;
+      @media (max-width: 640px) {
+        align-items: center;
+      }
+    }
+  }
+  .section-label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.55);
+  }
+  .link-group {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+  }
+  .icon-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+    &--discord {
+      color: $discord-color;
+      background: rgba($discord-color, 0.15);
+      &:hover {
+        color: white;
+        background: $discord-hover;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba($discord-color, 0.4);
+      }
+    }
+    &--github {
+      color: $github-color;
+      background: rgba(255, 255, 255, 0.1);
+      &:hover {
+        color: #0d1117;
+        background: $github-hover;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+      }
+    }
+  }
+  .support-section {
+    align-items: center;
+  }
+  .support-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #ffffff;
+    background: var(--color-success-600);
+    border: 1px solid var(--color-success-500);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: all 0.15s ease;
+    text-decoration: none;
+    .heart-icon {
+      color: #ef4444;
+    }
+    &:hover {
+      background: var(--color-success-500);
+      border-color: var(--color-success-400);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    }
+    &:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+  }
+  .support-tagline {
+    font-size: 0.8125rem;
+    color: rgba(255, 255, 255, 0.65);
+    font-style: italic;
+    margin: 0.375rem 0 0 0;
+  }
+  .legal-links {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .text-link {
+    font-size: 0.8125rem;
+    color: rgb(var(--color-primary-400));
+    text-decoration: underline;
+    text-decoration-color: rgba(var(--color-primary-400), 0.4);
+    text-underline-offset: 2px;
+    transition: all 0.2s ease;
+    &:hover {
+      color: rgb(var(--color-primary-300));
+      text-decoration-color: rgb(var(--color-primary-300));
+    }
+  }
+  .divider {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.875rem;
+  }
+  .footer-divider {
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      transparent,
+      rgba(255, 255, 255, 0.1) 20%,
+      rgba(255, 255, 255, 0.1) 80%,
+      transparent
+    );
+    margin: 1rem 0;
+  }
+  .footer-bottom {
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
   }
-}
-.footer-section {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  &:first-child {
-    align-items: flex-start;
-    @media (max-width: 640px) {
-      align-items: center;
-    }
+  .copyright {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #bfbfbf;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
-  &:last-child {
-    align-items: flex-end;
-    @media (max-width: 640px) {
-      align-items: center;
-    }
+  .attribution {
+    font-size: 0.6875rem;
+    color: rgba(255, 255, 255, 0.45);
+    margin: 0;
+    line-height: 1.5;
   }
-}
-.section-label {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: rgba(255, 255, 255, 0.55);
-}
-.link-group {
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-}
-.icon-link {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 0.5rem;
-  transition: all 0.2s ease;
-  &--discord {
-    color: $discord-color;
-    background: rgba($discord-color, 0.15);
-    &:hover {
-      color: white;
-      background: $discord-hover;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba($discord-color, 0.4);
-    }
-  }
-  &--github {
-    color: $github-color;
-    background: rgba(255, 255, 255, 0.1);
-    &:hover {
-      color: #0d1117;
-      background: $github-hover;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
-    }
-  }
-}
-.support-section {
-  align-items: center;
-}
-.support-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.625rem 1.5rem;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #ffffff;
-  background: var(--color-success-600);
-  border: 1px solid var(--color-success-500);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  transition: all 0.15s ease;
-  text-decoration: none;
-  .heart-icon {
-    color: #ef4444;
-  }
-  &:hover {
-    background: var(--color-success-500);
-    border-color: var(--color-success-400);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-  }
-  &:active {
-    transform: translateY(0);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  }
-}
-.support-tagline {
-  font-size: 0.8125rem;
-  color: rgba(255, 255, 255, 0.65);
-  font-style: italic;
-  margin: 0.375rem 0 0 0;
-}
-.legal-links {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.text-link {
-  font-size: 0.8125rem;
-  color: rgb(var(--color-primary-400));
-  text-decoration: underline;
-  text-decoration-color: rgba(var(--color-primary-400), 0.4);
-  text-underline-offset: 2px;
-  transition: all 0.2s ease;
-  &:hover {
-    color: rgb(var(--color-primary-300));
-    text-decoration-color: rgb(var(--color-primary-300));
-  }
-}
-.divider {
-  color: rgba(255, 255, 255, 0.4);
-  font-size: 0.875rem;
-}
-.footer-divider {
-  height: 1px;
-  background: linear-gradient(
-    to right,
-    transparent,
-    rgba(255, 255, 255, 0.1) 20%,
-    rgba(255, 255, 255, 0.1) 80%,
-    transparent
-  );
-  margin: 1rem 0;
-}
-.footer-bottom {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  gap: 0.375rem;
-}
-.copyright {
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: #bfbfbf;
-  margin: 0;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-.attribution {
-  font-size: 0.6875rem;
-  color: rgba(255, 255, 255, 0.45);
-  margin: 0;
-  line-height: 1.5;
-}
 </style>

@@ -35,9 +35,9 @@
 </template>
 <script setup>
   import { computed, defineAsyncComponent, provide } from 'vue';
-import { useMetadataStore } from '@/stores/useMetadata';
-import { useProgressStore } from '@/stores/useProgress';
-import { useTarkovStore } from '@/stores/useTarkov';
+  import { useMetadataStore } from '@/stores/useMetadata';
+  import { useProgressStore } from '@/stores/useProgress';
+  import { useTarkovStore } from '@/stores/useTarkov';
   const NeededItemMediumCard = defineAsyncComponent(
     () => import('@/features/neededitems/NeededItemMediumCard')
   );
@@ -235,8 +235,7 @@ import { useTarkovStore } from '@/stores/useTarkov';
       // Only consider the need "completed" when the parent TASK is completed (turned in)
       // Not when just the objective is marked complete - that should still allow adjustments
       return (
-        progressStore.tasksCompletions?.[props.need.taskId]?.['self'] ||
-        alternativeTaskCompleted
+        progressStore.tasksCompletions?.[props.need.taskId]?.['self'] || alternativeTaskCompleted
       );
     } else if (props.need.needType == 'hideoutModule') {
       // Only consider the need "completed" when the parent MODULE is built

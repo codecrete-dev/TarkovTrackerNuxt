@@ -243,20 +243,20 @@
   </GenericCard>
 </template>
 <script setup lang="ts">
-import { computed, defineAsyncComponent } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useProgressStore } from '@/stores/useProgress';
-import { useTarkovStore } from '@/stores/useTarkov';
-import type {
-  HideoutLevel,
-  HideoutStation,
-  ItemRequirement,
-  SkillRequirement,
-  StationLevelRequirement,
-  TraderRequirement,
-} from '@/types/tarkov';
-import { SPECIAL_STATIONS } from '@/utils/constants';
-import { useToast } from '#imports';
+  import { computed, defineAsyncComponent } from 'vue';
+  import { useI18n } from 'vue-i18n';
+  import { useProgressStore } from '@/stores/useProgress';
+  import { useTarkovStore } from '@/stores/useTarkov';
+  import type {
+    HideoutLevel,
+    HideoutStation,
+    ItemRequirement,
+    SkillRequirement,
+    StationLevelRequirement,
+    TraderRequirement,
+  } from '@/types/tarkov';
+  import { SPECIAL_STATIONS } from '@/utils/constants';
+  import { useToast } from '#imports';
   const GenericCard = defineAsyncComponent(() => import('@/components/ui/GenericCard.vue'));
   const HideoutRequirement = defineAsyncComponent(() => import('./HideoutRequirement.vue'));
   const props = defineProps<{ station: HideoutStation }>();
@@ -310,7 +310,8 @@ import { useToast } from '#imports';
       (tarkovStore.getCurrentProgressData?.() || {}).skills ||
       // progressStore currently stores skills under current progress data; fallback to empty
       {};
-    const currentLevel = currentSkills?.[requirement.name] ?? tarkovStore.getSkillLevel(requirement.name);
+    const currentLevel =
+      currentSkills?.[requirement.name] ?? tarkovStore.getSkillLevel(requirement.name);
     return currentLevel >= requirement.level;
   };
   const isTraderReqMet = (requirement: TraderRequirement) => {
@@ -369,7 +370,8 @@ import { useToast } from '#imports';
   const currentLevel = computed<HideoutLevel | null>(() => {
     return (
       props.station.levels.find(
-        (level: HideoutLevel) => level.level === progressStore.hideoutLevels?.[props.station.id]?.self
+        (level: HideoutLevel) =>
+          level.level === progressStore.hideoutLevels?.[props.station.id]?.self
       ) || null
     );
   });

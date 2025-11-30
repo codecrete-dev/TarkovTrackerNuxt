@@ -22,11 +22,12 @@ This analysis covers the TarkovTrackerNuxt codebase. Several critical and high-p
 
 Multiple team-related features are stubbed out with TODO comments:
 
-*   `TeamMemberCard.vue`: Kicking members (Cloudflare integration needed)
-*   `TeamInvite.vue`: Joining teams (Supabase logic needed)
-*   `MyTeam.vue`: General team functions replacement
+- `TeamMemberCard.vue`: Kicking members (Cloudflare integration needed)
+- `TeamInvite.vue`: Joining teams (Supabase logic needed)
+- `MyTeam.vue`: General team functions replacement
 
 **Plan:**
+
 1.  Verify Cloudflare Workers endpoints for team management (`team-kick`, `team-join`, etc.).
 2.  Implement frontend integration in `app/features/team/` components to call these endpoints.
 3.  Remove TODOs and console warnings.
@@ -47,6 +48,7 @@ debouncedSync(JSON.parse(JSON.stringify(newState)));
 **Impact:** Every state change triggers a full JSON serialization of the entire user progress state. With ~250 tasks and hideout modules, this creates significant memory pressure.
 
 **Plan:**
+
 1.  Implement dirty field tracking or a more efficient diffing mechanism.
 2.  Only sync changed fields to Supabase.
 
@@ -58,6 +60,7 @@ debouncedSync(JSON.parse(JSON.stringify(newState)));
 **Status:** A `logger` utility has been introduced, and many logs are now guarded by `import.meta.dev`. However, some `console.log` and `console.warn` statements remain in production code paths (e.g., `persist` serializer in `useTarkov.ts`).
 
 **Plan:**
+
 1.  Audit `app/stores/useTarkov.ts` and replace remaining `console` calls with `logger`.
 2.  Ensure `logger` properly suppresses debug logs in production.
 
@@ -76,6 +79,7 @@ const isSkillReqMet = (_requirement) => {
 ```
 
 **Plan:**
+
 1.  Add `skills` to `UserProgressData` interface.
 2.  Implement skill level tracking in `useProgressStore` or `useTarkovStore`.
 3.  Update `isSkillReqMet` to check actual skill levels.
@@ -116,11 +120,11 @@ const isSkillReqMet = (_requirement) => {
 
 ## 4. Low Priority Issues (Cleanup)
 
-*   **Commented-Out Code:** Remove legacy code in `useTarkov.ts` and `TeamInvite.vue`.
-*   **Magic Numbers:** Move constants (e.g., cache TTLs, max lengths) to `constants.ts`.
-*   **Inconsistent Error Messages:** Standardize error logging format.
-*   **Async Components:** Optimize usage of `defineAsyncComponent` in `TaskCard.vue`.
-*   **i18n Types:** Add type safety for translation keys.
+- **Commented-Out Code:** Remove legacy code in `useTarkov.ts` and `TeamInvite.vue`.
+- **Magic Numbers:** Move constants (e.g., cache TTLs, max lengths) to `constants.ts`.
+- **Inconsistent Error Messages:** Standardize error logging format.
+- **Async Components:** Optimize usage of `defineAsyncComponent` in `TaskCard.vue`.
+- **i18n Types:** Add type safety for translation keys.
 
 ---
 

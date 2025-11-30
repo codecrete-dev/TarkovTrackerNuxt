@@ -327,8 +327,14 @@ if (import.meta.client) {
                   .from('user_preferences')
                   .select('*')
                   .eq('user_id', $supabase.user.id)
-                  .single();
-                if (data && !error) {
+                  .maybeSingle();
+                if (error && error.code !== 'PGRST116') {
+                  logger.error(
+                    '[PreferencesStore] Error loading preferences from Supabase:',
+                    error
+                  );
+                }
+                if (data) {
                   logger.debug('[PreferencesStore] Loading preferences from Supabase:', data);
                   // Update store with server data
                   Object.keys(data).forEach((key) => {

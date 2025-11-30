@@ -32,8 +32,8 @@
 </template>
 <script setup lang="ts">
   import { useBreakpoints } from '@vueuse/core';
-import { computed, defineAsyncComponent } from 'vue';
-import { useAppStore } from '@/stores/useApp';
+  import { computed, defineAsyncComponent } from 'vue';
+  import { useAppStore } from '@/stores/useApp';
   const appStore = useAppStore();
   // Define breakpoints (matching Vuetify's md breakpoint at 960px)
   const breakpoints = useBreakpoints({

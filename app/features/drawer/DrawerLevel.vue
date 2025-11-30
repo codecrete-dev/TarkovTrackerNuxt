@@ -82,10 +82,10 @@
   </div>
 </template>
 <script setup>
-import { computed, nextTick, ref } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useMetadataStore } from '@/stores/useMetadata';
-import { useTarkovStore } from '@/stores/useTarkov';
+  import { computed, nextTick, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
+  import { useMetadataStore } from '@/stores/useMetadata';
+  import { useTarkovStore } from '@/stores/useTarkov';
   const { t } = useI18n({ useScope: 'global' });
   defineProps({
     isCollapsed: {

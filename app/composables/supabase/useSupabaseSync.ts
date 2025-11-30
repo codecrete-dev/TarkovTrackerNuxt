@@ -1,4 +1,4 @@
-import { getCurrentInstance, onUnmounted, ref, watch } from 'vue';
+import { getCurrentInstance, onUnmounted, ref, toRaw, watch } from 'vue';
 import { debounce } from '@/utils/debounce';
 import type { Store } from 'pinia';
 import type { UserProgressData } from '~/stores/progressState';
@@ -90,16 +90,23 @@ export function useSupabaseSync({
     }
   };
   const snapshotState = (state: unknown) => {
-    if (typeof structuredClone === 'function') {
-      return structuredClone(state);
+    try {
+      // Avoid cloning Vue proxies directly
+      const raw = typeof state === 'object' ? toRaw(state) : state;
+      if (typeof structuredClone === 'function') {
+        return structuredClone(raw);
+      }
+      if (Array.isArray(raw)) return raw.slice();
+      if (raw && typeof raw === 'object') return { ...(raw as Record<string, unknown>) };
+      return raw;
+    } catch {
+      // Fallback to JSON clone as last resort
+      try {
+        return JSON.parse(JSON.stringify(state));
+      } catch {
+        return state;
+      }
     }
-    if (Array.isArray(state)) {
-      return state.slice();
-    }
-    if (state && typeof state === 'object') {
-      return { ...(state as Record<string, unknown>) };
-    }
-    return state;
   };
   const debouncedSync = debounce(syncToSupabase, debounceMs);
   const unwatch = watch(

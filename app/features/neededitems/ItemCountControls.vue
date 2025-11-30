@@ -1,17 +1,19 @@
 <template>
   <div class="flex items-center gap-2">
     <!-- Counter controls group with background -->
-    <div class="flex items-center rounded-lg bg-surface-700 border border-white/20 shadow-sm">
+    <div class="bg-surface-700 flex items-center rounded-lg border border-white/20 shadow-sm">
       <!-- Decrease button -->
       <button
-        class="flex items-center justify-center w-9 h-9 rounded-l-lg text-surface-200 hover:bg-surface-600 hover:text-white active:bg-surface-500 transition-colors"
+        class="text-surface-200 hover:bg-surface-600 active:bg-surface-500 flex h-9 w-9 items-center justify-center rounded-l-lg transition-colors hover:text-white"
         title="Decrease count"
         @click="$emit('decrease')"
       >
         <UIcon name="i-mdi-minus" class="h-5 w-5" />
       </button>
       <!-- Editable count display -->
-      <div class="min-w-[80px] h-9 border-x border-white/20 bg-surface-800 flex items-center justify-center">
+      <div
+        class="bg-surface-800 flex h-9 min-w-[80px] items-center justify-center border-x border-white/20"
+      >
         <template v-if="isEditing">
           <input
             ref="inputRef"
@@ -19,7 +21,7 @@
             type="number"
             :min="0"
             :max="neededCount"
-            class="w-full h-full bg-surface-900 px-2 text-center text-sm font-semibold text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-inset"
+            class="bg-surface-900 focus:ring-primary-500 h-full w-full px-2 text-center text-sm font-semibold text-white focus:ring-2 focus:outline-none focus:ring-inset"
             @blur="submitEdit"
             @keydown.enter="submitEdit"
             @keydown.escape="cancelEdit"
@@ -27,7 +29,7 @@
         </template>
         <template v-else>
           <button
-            class="w-full h-full cursor-pointer px-3 text-sm font-semibold text-white hover:bg-surface-600 transition-colors"
+            class="hover:bg-surface-600 h-full w-full cursor-pointer px-3 text-sm font-semibold text-white transition-colors"
             title="Click to enter value"
             @click="startEditing"
           >
@@ -37,7 +39,7 @@
       </div>
       <!-- Increase button -->
       <button
-        class="flex items-center justify-center w-9 h-9 rounded-r-lg text-surface-200 hover:bg-surface-600 hover:text-white active:bg-surface-500 transition-colors"
+        class="text-surface-200 hover:bg-surface-600 active:bg-surface-500 flex h-9 w-9 items-center justify-center rounded-r-lg transition-colors hover:text-white"
         title="Increase count"
         @click="$emit('increase')"
       >
@@ -46,10 +48,12 @@
     </div>
     <!-- Mark as 100% complete button - separated with more spacing -->
     <button
-      class="flex items-center justify-center w-9 h-9 rounded-lg border transition-colors"
-      :class="currentCount >= neededCount
-        ? 'bg-success-600 border-success-500 text-white hover:bg-success-500'
-        : 'bg-surface-700 border-white/20 text-surface-200 hover:bg-surface-600 hover:text-white'"
+      class="flex h-9 w-9 items-center justify-center rounded-lg border transition-colors"
+      :class="
+        currentCount >= neededCount
+          ? 'bg-success-600 border-success-500 hover:bg-success-500 text-white'
+          : 'bg-surface-700 text-surface-200 hover:bg-surface-600 border-white/20 hover:text-white'
+      "
       :title="currentCount >= neededCount ? 'Already complete' : 'Mark as 100% complete'"
       @click="$emit('toggle')"
     >
@@ -92,9 +96,12 @@
     isEditing.value = false;
   };
   // Close editing if currentCount changes externally
-  watch(() => props.currentCount, () => {
-    if (isEditing.value) {
-      isEditing.value = false;
+  watch(
+    () => props.currentCount,
+    () => {
+      if (isEditing.value) {
+        isEditing.value = false;
+      }
     }
-  });
+  );
 </script>

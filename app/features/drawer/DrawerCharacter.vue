@@ -27,9 +27,9 @@
 </template>
 <script setup lang="ts">
   import { computed } from 'vue';
-import { useRouter } from 'vue-router';
-import { useTarkovStore } from '@/stores/useTarkov';
-import { getEditionName, PMC_FACTIONS } from '@/utils/constants';
+  import { useRouter } from 'vue-router';
+  import { useTarkovStore } from '@/stores/useTarkov';
+  import { getEditionName, PMC_FACTIONS } from '@/utils/constants';
   defineProps({
     isCollapsed: {
       type: Boolean,

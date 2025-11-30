@@ -345,14 +345,18 @@ export const useMetadataStore = defineStore('metadata', {
             this.languageCode
           );
           if (cached) {
-            logger.debug(`[MetadataStore] Hideout loaded from cache: ${this.languageCode}-${apiGameMode}`);
+            logger.debug(
+              `[MetadataStore] Hideout loaded from cache: ${this.languageCode}-${apiGameMode}`
+            );
             this.processHideoutData(cached);
             this.hideoutLoading = false;
             return;
           }
         }
         // Step 2: Fetch from server API
-        logger.debug(`[MetadataStore] Fetching hideout from server: ${this.languageCode}-${apiGameMode}`);
+        logger.debug(
+          `[MetadataStore] Fetching hideout from server: ${this.languageCode}-${apiGameMode}`
+        );
         const response = (await $fetch<{
           data: TarkovHideoutQueryResult;
         }>('/api/tarkov/hideout', {

@@ -81,7 +81,7 @@
             <UIcon name="i-mdi-translate" class="text-surface-300 h-4 w-4" />
           </template>
           <template #default>
-            <span class="text-xs font-medium uppercase text-white/80">{{ locale }}</span>
+            <span class="text-xs font-medium text-white/80 uppercase">{{ locale }}</span>
           </template>
           <template #trailing>
             <UIcon name="i-mdi-chevron-down" class="text-surface-400 h-3 w-3" />
@@ -93,15 +93,15 @@
 </template>
 <script setup lang="ts">
   import { useWindowSize } from '@vueuse/core';
-import { storeToRefs } from 'pinia';
-import { computed, onMounted, onUnmounted, ref } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useRoute } from 'vue-router';
-import { useAppStore } from '@/stores/useApp';
-import { useMetadataStore } from '@/stores/useMetadata';
-import { usePreferencesStore } from '@/stores/usePreferences';
-import { useTarkovStore } from '@/stores/useTarkov';
-import { GAME_MODES, type GameMode } from '@/utils/constants';
+  import { storeToRefs } from 'pinia';
+  import { computed, onMounted, onUnmounted, ref } from 'vue';
+  import { useI18n } from 'vue-i18n';
+  import { useRoute } from 'vue-router';
+  import { useAppStore } from '@/stores/useApp';
+  import { useMetadataStore } from '@/stores/useMetadata';
+  import { usePreferencesStore } from '@/stores/usePreferences';
+  import { useTarkovStore } from '@/stores/useTarkov';
+  import { GAME_MODES, type GameMode } from '@/utils/constants';
   const { t } = useI18n({ useScope: 'global' });
   const appStore = useAppStore();
   const tarkovStore = useTarkovStore();

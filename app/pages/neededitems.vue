@@ -91,12 +91,12 @@
 </template>
 <script setup lang="ts">
   import { storeToRefs } from 'pinia';
-import { computed, ref, watch } from 'vue';
-import { useInfiniteScroll } from '@/composables/useInfiniteScroll';
-import NeededItem from '@/features/neededitems/NeededItem.vue';
-import { useMetadataStore } from '@/stores/useMetadata';
-import { useProgressStore } from '@/stores/useProgress';
-import type { NeededItemHideoutModule, NeededItemTaskObjective } from '@/types/tarkov';
+  import { computed, ref, watch } from 'vue';
+  import { useInfiniteScroll } from '@/composables/useInfiniteScroll';
+  import NeededItem from '@/features/neededitems/NeededItem.vue';
+  import { useMetadataStore } from '@/stores/useMetadata';
+  import { useProgressStore } from '@/stores/useProgress';
+  import type { NeededItemHideoutModule, NeededItemTaskObjective } from '@/types/tarkov';
   const inputUi = {
     base: 'w-full',
     input:

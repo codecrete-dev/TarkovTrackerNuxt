@@ -121,8 +121,11 @@
                       />
                     </div>
                     <!-- Show static count for completed parent items (Completed tab) -->
-                    <div v-else-if="isParentCompleted" class="mx-2 mt-2 mb-2 flex h-full items-center justify-center self-stretch">
-                      <span class="text-sm font-semibold text-success-400">
+                    <div
+                      v-else-if="isParentCompleted"
+                      class="mx-2 mt-2 mb-2 flex h-full items-center justify-center self-stretch"
+                    >
+                      <span class="text-success-400 text-sm font-semibold">
                         {{ currentCount.toLocaleString() }}/{{ neededCount.toLocaleString() }}
                       </span>
                     </div>
@@ -166,8 +169,11 @@
                 />
               </div>
               <!-- Show static count for completed parent items (Completed tab) -->
-              <div v-else-if="isParentCompleted" class="mr-2 flex items-center justify-center self-center">
-                <span class="text-sm font-semibold text-success-400">
+              <div
+                v-else-if="isParentCompleted"
+                class="mr-2 flex items-center justify-center self-center"
+              >
+                <span class="text-success-400 text-sm font-semibold">
                   {{ currentCount.toLocaleString() }}/{{ neededCount.toLocaleString() }}
                 </span>
               </div>
@@ -184,11 +190,11 @@
 </template>
 <script setup>
   import { useBreakpoints } from '@vueuse/core';
-import { computed, defineAsyncComponent, inject, onMounted, onUnmounted, ref } from 'vue';
-import { useTarkovStore } from '@/stores/useTarkov';
-import ItemCountControls from './ItemCountControls.vue';
-import RequirementInfo from './RequirementInfo.vue';
-import TeamNeedsDisplay from './TeamNeedsDisplay.vue';
+  import { computed, defineAsyncComponent, inject, onMounted, onUnmounted, ref } from 'vue';
+  import { useTarkovStore } from '@/stores/useTarkov';
+  import ItemCountControls from './ItemCountControls.vue';
+  import RequirementInfo from './RequirementInfo.vue';
+  import TeamNeedsDisplay from './TeamNeedsDisplay.vue';
   const TaskLink = defineAsyncComponent(() => import('@/features/tasks/TaskLink'));
   const StationLink = defineAsyncComponent(() => import('@/features/hideout/StationLink'));
   const props = defineProps({

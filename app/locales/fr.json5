@@ -422,7 +422,7 @@
     support_tagline: 'Aidez à garder TarkovTracker gratuit et à jour',
     terms_of_service: "Conditions d'utilisation",
     privacy_policy: 'Politique de confidentialité',
-    game_attribution: 'Le contenu et les matériaux du jeu sont des marques déposées et des droits d\'auteur de Battlestate Games et de ses concédants. Tous droits réservés.',
+    game_attribution: "Le contenu et les matériaux du jeu sont des marques déposées et des droits d'auteur de Battlestate Games et de ses concédants. Tous droits réservés.",
     support: 'Support',
     contributors: 'Contributeurs',
     changelog: 'Journal des modifications',
