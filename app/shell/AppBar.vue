@@ -185,7 +185,8 @@ import { GAME_MODES, type GameMode } from '@/utils/constants';
       console.log('[AppBar] Setting locale to:', newLocale);
       // Update metadata store and refetch data with new language
       metadataStore.updateLanguageAndGameMode(newLocale);
-      metadataStore.fetchAllData(true).catch(console.error);
+      // Use cached data if available (forceRefresh = false)
+      metadataStore.fetchAllData(false).catch(console.error);
     },
   });
 </script>

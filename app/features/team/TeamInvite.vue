@@ -46,11 +46,39 @@
   const declined = ref(false);
   const accepting = ref(false);
   const acceptInvite = async () => {
-    // TODO: Implement Supabase team joining logic
-    console.warn('Team joining not yet implemented for Supabase');
-    toast.add({
-      title: 'Team joining is currently disabled during migration.',
-      color: 'warning',
-    });
+    if (!route.query.team || !route.query.code) return;
+    accepting.value = true;
+    const { $supabase } = useNuxtApp();
+    try {
+      const { data, error } = await $supabase.client.functions.invoke('team-join', {
+        body: {
+          team_id: route.query.team,
+          join_code: route.query.code,
+        },
+      });
+      if (error) {
+        throw error;
+      }
+      if (data?.success) {
+        toast.add({
+          title: 'Joined team successfully!',
+          color: 'success',
+        });
+        // Refresh page to update state
+        window.location.reload();
+      } else {
+        throw new Error(data?.message || 'Failed to join team');
+      }
+    } catch (err) {
+      const error = err as Error & { data?: { message?: string } };
+      const message = error?.message || error?.data?.message || String(err);
+      console.error('[TeamInvite.vue] Error joining team:', error);
+      toast.add({
+        title: message,
+        color: 'error',
+      });
+    } finally {
+      accepting.value = false;
+    }
   };
 </script>

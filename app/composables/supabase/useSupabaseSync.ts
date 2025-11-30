@@ -96,7 +96,11 @@ export function useSupabaseSync({
       if (import.meta.dev) {
         console.log(`[Sync] Store state changed for ${table}, triggering debounced sync`);
       }
-      debouncedSync(JSON.parse(JSON.stringify(newState)));
+      // Use structuredClone if available for better performance, otherwise fallback to JSON parse/stringify
+      const clonedState = typeof structuredClone === 'function' 
+        ? structuredClone(newState) 
+        : JSON.parse(JSON.stringify(newState));
+      debouncedSync(clonedState);
     },
     { deep: true }
   );

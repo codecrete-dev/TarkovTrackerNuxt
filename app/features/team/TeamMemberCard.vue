@@ -91,7 +91,6 @@
   </UCard>
 </template>
 <script setup lang="ts">
-  // Team member management moved to Cloudflare Workers - TODO: Implement replacement
   import { computed, ref } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useMetadataStore } from '@/stores/useMetadata';
@@ -140,31 +139,28 @@
     if (!props.teammember) return;
     kickingTeammate.value = true;
     try {
-      // TODO: Implement Cloudflare Workers integration for kicking team members
-      console.log('TODO: Implement Cloudflare Workers for kickTeammate function');
-      throw new Error('Team member kicking not yet implemented with Cloudflare Workers');
-      // Placeholder for future implementation:
-      // const session = await $supabase.client.auth.getSession();
-      // if (!session.data.session) {
-      //   throw new Error('User not authenticated');
-      // }
-      // const response = await fetch('/api/team/kick', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Authorization': `Bearer ${session.data.session.access_token}`,
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({ kicked: props.teammember }),
-      // });
-      // const result = await response.json();
-      // ... handle response
+      const { data, error } = await $supabase.client.functions.invoke('team-kick', {
+        body: { kicked: props.teammember },
+      });
+      if (error) {
+        throw error;
+      }
+      if (data?.success) {
+        toast.add({
+          title: t('page.team.card.manageteam.membercard.kick_success'),
+          color: 'success',
+        });
+      } else {
+        throw new Error(data?.message || 'Failed to kick team member');
+      }
     } catch (err) {
       const error = err as Error & { data?: { message?: string } };
       const backendMsg = error?.message || error?.data?.message || String(err);
       const message = backendMsg || t('page.team.card.manageteam.membercard.kick_error');
       console.error('[TeamMemberCard.vue] Error kicking teammate:', error);
       toast.add({ title: message, color: 'error' });
+    } finally {
+      kickingTeammate.value = false;
     }
-    kickingTeammate.value = false;
   };
 </script>

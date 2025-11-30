@@ -17,7 +17,28 @@ const messages = {
 // Explicitly type the combined messages structure
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AppMessages = LocaleMessages<any>;
-const languageCode = navigator.language.split(/[-_]/)[0];
+
+// Get initial locale from localStorage preference or navigator language
+function getInitialLocale(): string {
+  // Check for saved locale preference in localStorage
+  if (typeof window !== 'undefined' && localStorage) {
+    try {
+      const savedPrefs = localStorage.getItem('preferences');
+      if (savedPrefs) {
+        const prefs = JSON.parse(savedPrefs);
+        if (prefs.localeOverride) {
+          return prefs.localeOverride;
+        }
+      }
+    } catch (error) {
+      console.warn('[i18n] Failed to read locale from localStorage:', error);
+    }
+  }
+  // Fallback to browser language
+  return navigator.language.split(/[-_]/)[0];
+}
+
+const languageCode = getInitialLocale();
 const typedMessages = messages as AppMessages;
 export const i18n: I18n<
   AppMessages,

@@ -37,7 +37,7 @@ const tarkovActions = {
         };
         await $supabase.client.from('user_progress').upsert(completeState);
       } catch (error) {
-        console.error('Error syncing gamemode to backend:', error);
+        logger.error('Error syncing gamemode to backend:', error);
       }
     }
   },
@@ -63,7 +63,7 @@ const tarkovActions = {
             pve_data: migratedData.pve,
           });
         } catch (error) {
-          console.error('Error saving migrated data to Supabase:', error);
+          logger.error('Error saving migrated data to Supabase:', error);
         }
       }
     }
@@ -71,7 +71,7 @@ const tarkovActions = {
   async resetOnlineProfile(this: TarkovStoreInstance) {
     const { $supabase } = useNuxtApp();
     if (!$supabase.user.loggedIn || !$supabase.user.id) {
-      console.error('User not logged in. Cannot reset online profile.');
+      logger.error('User not logged in. Cannot reset online profile.');
       return;
     }
     try {
@@ -86,7 +86,7 @@ const tarkovActions = {
       localStorage.clear();
       this.$patch(JSON.parse(JSON.stringify(defaultState)));
     } catch (error) {
-      console.error('Error resetting online profile:', error);
+      logger.error('Error resetting online profile:', error);
     }
   },
   async resetCurrentGameModeData(this: TarkovStoreInstance) {
@@ -130,7 +130,7 @@ const tarkovActions = {
       }
       logger.debug('[TarkovStore] PvP data reset complete');
     } catch (error) {
-      console.error('[TarkovStore] Error resetting PvP data:', error);
+      logger.error('[TarkovStore] Error resetting PvP data:', error);
       // Resume sync even on error
       const controller = getSyncController();
       if (controller) {
@@ -169,7 +169,7 @@ const tarkovActions = {
       }
       logger.debug('[TarkovStore] PvE data reset complete');
     } catch (error) {
-      console.error('[TarkovStore] Error resetting PvE data:', error);
+      logger.error('[TarkovStore] Error resetting PvE data:', error);
       // Resume sync even on error
       const controller = getSyncController();
       if (controller) {
@@ -212,7 +212,7 @@ const tarkovActions = {
       }
       logger.debug('[TarkovStore] All data reset complete');
     } catch (error) {
-      console.error('[TarkovStore] Error resetting all data:', error);
+      logger.error('[TarkovStore] Error resetting all data:', error);
       // Resume sync even on error
       const controller = getSyncController();
       if (controller) {
@@ -264,7 +264,7 @@ export const useTarkovStore = defineStore('swapTarkov', {
           const parsed = JSON.parse(value);
           // Old format without wrapper (migrate)
           if (!parsed._userId && !parsed.data) {
-            console.log('[TarkovStore] Migrating old localStorage format');
+            if (import.meta.dev) logger.debug('[TarkovStore] Migrating old localStorage format');
             return parsed as UserState;
           }
           // New format with wrapper - validate userId
@@ -281,7 +281,7 @@ export const useTarkovStore = defineStore('swapTarkov', {
           }
           // If user is logged in and stored userId doesn't match, return default state
           if (currentUserId && storedUserId && storedUserId !== currentUserId) {
-            console.warn(
+            logger.warn(
               `[TarkovStore] localStorage userId mismatch! ` +
                 `Stored: ${storedUserId}, Current: ${currentUserId}. ` +
                 `Backing up and clearing localStorage to prevent data corruption.`
@@ -291,10 +291,10 @@ export const useTarkovStore = defineStore('swapTarkov', {
               try {
                 const backupKey = `progress_backup_${storedUserId}_${Date.now()}`;
                 localStorage.setItem(backupKey, value);
-                console.log(`[TarkovStore] Data backed up to ${backupKey}`);
+                if (import.meta.dev) logger.debug(`[TarkovStore] Data backed up to ${backupKey}`);
                 localStorage.removeItem('progress');
               } catch (e) {
-                console.error('[TarkovStore] Error backing up/clearing localStorage:', e);
+                logger.error('[TarkovStore] Error backing up/clearing localStorage:', e);
               }
             }
             return JSON.parse(JSON.stringify(defaultState)) as UserState;
@@ -302,7 +302,7 @@ export const useTarkovStore = defineStore('swapTarkov', {
           // UserId matches or user not logged in - safe to restore
           return parsed.data as UserState;
         } catch (e) {
-          console.error('[TarkovStore] Error deserializing localStorage:', e);
+          logger.error('[TarkovStore] Error deserializing localStorage:', e);
           return JSON.parse(JSON.stringify(defaultState)) as UserState;
         }
       },
@@ -358,7 +358,7 @@ export async function initializeTarkovSync() {
       });
       // Handle query errors (but not "no rows" which is expected for new users)
       if (error && error.code !== 'PGRST116') {
-        console.error('[TarkovStore] Error loading data from Supabase:', error);
+        logger.error('[TarkovStore] Error loading data from Supabase:', error);
         return;
       }
       // If Supabase has ANY data (even if "empty"), use it as source of truth

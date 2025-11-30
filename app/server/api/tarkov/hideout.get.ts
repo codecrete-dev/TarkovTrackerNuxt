@@ -1,7 +1,8 @@
 import { createTarkovFetcher, edgeCache } from '~/server/utils/edgeCache';
+import { API_SUPPORTED_LANGUAGES } from '~/utils/constants';
 const TARKOV_HIDEOUT_QUERY = `
-  query TarkovDataHideout($gameMode: GameMode) {
-    hideoutStations(gameMode: $gameMode) {
+  query TarkovDataHideout($lang: LanguageCode, $gameMode: GameMode) {
+    hideoutStations(lang: $lang, gameMode: $gameMode) {
       id
       name
       normalizedName
@@ -98,15 +99,20 @@ const CACHE_TTL = 43200;
 export default defineEventHandler(async (event) => {
   const query = getQuery(event);
   // Validate and sanitize inputs
+  let lang = (query.lang as string)?.toLowerCase() || 'en';
   let gameMode = (query.gameMode as string)?.toLowerCase() || 'regular';
+  // Ensure valid language (fallback to English if unsupported)
+  if (!API_SUPPORTED_LANGUAGES.includes(lang as (typeof API_SUPPORTED_LANGUAGES)[number])) {
+    lang = 'en';
+  }
   // Ensure valid game mode
   if (!VALID_GAME_MODES.includes(gameMode as (typeof VALID_GAME_MODES)[number])) {
     gameMode = 'regular';
   }
-  // Create cache key from parameters
-  const cacheKey = `hideout-${gameMode}`;
+  // Create cache key from parameters (include language for localized data)
+  const cacheKey = `hideout-${lang}-${gameMode}`;
   // Create fetcher function for tarkov.dev API
-  const fetcher = createTarkovFetcher(TARKOV_HIDEOUT_QUERY, { gameMode });
+  const fetcher = createTarkovFetcher(TARKOV_HIDEOUT_QUERY, { lang, gameMode });
   // Use the shared edge cache utility
   return await edgeCache(event, cacheKey, fetcher, CACHE_TTL, { cacheKeyPrefix: 'tarkov' });
 });

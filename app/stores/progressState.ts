@@ -49,6 +49,7 @@ export interface UserProgressData {
   hideoutParts: { [objectiveId: string]: HideoutPart };
   hideoutModules: { [hideoutId: string]: HideoutModule };
   traders: { [traderId: string]: TraderProgress };
+  skills: { [skillName: string]: number };
 }
 export interface UserState {
   currentGameMode: GameMode;
@@ -65,6 +66,7 @@ const defaultProgressData: UserProgressData = {
   hideoutParts: {},
   hideoutModules: {},
   traders: {},
+  skills: {},
 };
 export const defaultState: UserState = {
   currentGameMode: GAME_MODES.PVP,
@@ -117,6 +119,7 @@ export function migrateToGameModeStructure(legacyData: unknown): UserState {
       hideoutParts: (data.hideoutParts as UserProgressData['hideoutParts']) || {},
       hideoutModules: (data.hideoutModules as UserProgressData['hideoutModules']) || {},
       traders: (data.traders as UserProgressData['traders']) || {},
+      skills: (data.skills as UserProgressData['skills']) || {},
     };
     return {
       currentGameMode: data.currentGameMode as GameMode,
@@ -136,6 +139,7 @@ export function migrateToGameModeStructure(legacyData: unknown): UserState {
     hideoutParts: (data.hideoutParts as UserProgressData['hideoutParts']) || {},
     hideoutModules: (data.hideoutModules as UserProgressData['hideoutModules']) || {},
     traders: (data.traders as UserProgressData['traders']) || {},
+    skills: (data.skills as UserProgressData['skills']) || {},
   };
   return {
     currentGameMode: GAME_MODES.PVP, // Default to PvP for existing users
@@ -167,6 +171,7 @@ const getCurrentData = (state: UserState): UserProgressData => {
       hideoutParts: {},
       hideoutModules: {},
       traders: {},
+      skills: {},
     };
   }
   return state[state.currentGameMode];
@@ -202,6 +207,8 @@ export const getters = {
     getCurrentData(state)?.traders?.[traderId]?.level ?? 1,
   getTraderReputation: (state: UserState) => (traderId: string) =>
     getCurrentData(state)?.traders?.[traderId]?.reputation ?? 0,
+  getSkillLevel: (state: UserState) => (skillName: string) =>
+    getCurrentData(state)?.skills?.[skillName] ?? 0,
 } as const satisfies _GettersTree<UserState>;
 // Helper functions for common operations
 const createCompletion = (complete: boolean, failed = false) => ({
@@ -330,6 +337,9 @@ export const actions = {
   },
   setTraderReputation(this: UserState, traderId: string, reputation: number) {
     updateObjective(this, 'traders', traderId, { reputation: reputation });
+  },
+  setSkillLevel(this: UserState, skillName: string, level: number) {
+    updateObjective(this, 'skills', skillName, { level: level });
   },
 } as const;
 export type UserActions = typeof actions;

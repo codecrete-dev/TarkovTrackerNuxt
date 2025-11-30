@@ -10,7 +10,24 @@ export function markI18nReady() {
   i18nReady = true;
 }
 /**
- * Safely gets the current locale from i18n, falling back to 'en' if not in component context
+ * Get saved locale from localStorage
+ */
+function getSavedLocale(): string | null {
+  if (typeof window !== 'undefined' && localStorage) {
+    try {
+      const savedPrefs = localStorage.getItem('preferences');
+      if (savedPrefs) {
+        const prefs = JSON.parse(savedPrefs);
+        return prefs.localeOverride || null;
+      }
+    } catch (error) {
+      console.warn('[i18nHelpers] Failed to read locale from localStorage:', error);
+    }
+  }
+  return null;
+}
+/**
+ * Safely gets the current locale from i18n, falling back to saved preference or browser language
  */
 export function useSafeLocale() {
   const instance = getCurrentInstance();
@@ -27,7 +44,16 @@ export function useSafeLocale() {
       logger.warn('[useSafeLocale] Could not access i18n context:', error);
     }
   }
-  // Fallback to browser language or English if not in component context or i18n not ready
+  // When i18n is ready but no component context (e.g., plugin initialization),
+  // read from localStorage preference first, then fallback to browser language
+  if (i18nReady) {
+    const savedLocale = getSavedLocale();
+    if (savedLocale) {
+      logger.debug('[useSafeLocale] Using saved locale:', savedLocale);
+      return computed(() => savedLocale);
+    }
+  }
+  // Final fallback to browser language or English if i18n not ready
   const browserLang = getBrowserLanguage();
   return computed(() => browserLang);
 }

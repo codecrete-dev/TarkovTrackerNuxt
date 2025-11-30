@@ -118,7 +118,6 @@
   import { useEdgeFunctions } from '@/composables/api/useEdgeFunctions';
   import { useSystemStoreWithSupabase } from '@/stores/useSystemStore';
   import { useTarkovStore } from '@/stores/useTarkov';
-  // Team functions moved to Cloudflare Workers - TODO: Implement replacement
   import { useTeamStoreWithSupabase } from '@/stores/useTeamStore';
   import type { CreateTeamResponse, LeaveTeamResponse } from '@/types/team';
   import { LIMITS } from '@/utils/constants';

@@ -337,26 +337,27 @@ export const useMetadataStore = defineStore('metadata', {
           API_GAME_MODES[this.currentGameMode as keyof typeof API_GAME_MODES] ||
           API_GAME_MODES[GAME_MODES.PVP];
         // Step 1: Check IndexedDB cache (unless forcing refresh)
-        // Hideout data is not language-specific
+        // Hideout data IS language-specific (station names, descriptions, item names, etc.)
         if (!forceRefresh && typeof window !== 'undefined') {
           const cached = await getCachedData<TarkovHideoutQueryResult>(
             'hideout' as CacheType,
             apiGameMode,
-            'en'
+            this.languageCode
           );
           if (cached) {
-            logger.debug(`[MetadataStore] Hideout loaded from cache: ${apiGameMode}`);
+            logger.debug(`[MetadataStore] Hideout loaded from cache: ${this.languageCode}-${apiGameMode}`);
             this.processHideoutData(cached);
             this.hideoutLoading = false;
             return;
           }
         }
         // Step 2: Fetch from server API
-        logger.debug(`[MetadataStore] Fetching hideout from server: ${apiGameMode}`);
+        logger.debug(`[MetadataStore] Fetching hideout from server: ${this.languageCode}-${apiGameMode}`);
         const response = (await $fetch<{
           data: TarkovHideoutQueryResult;
         }>('/api/tarkov/hideout', {
           query: {
+            lang: this.languageCode,
             gameMode: apiGameMode,
           },
         })) as { data: TarkovHideoutQueryResult; error?: unknown };
@@ -370,7 +371,7 @@ export const useMetadataStore = defineStore('metadata', {
             setCachedData(
               'hideout' as CacheType,
               apiGameMode,
-              'en',
+              this.languageCode,
               response.data,
               CACHE_CONFIG.DEFAULT_TTL
             ).catch(console.error);

@@ -302,10 +302,10 @@ import { SPECIAL_STATIONS } from '@/utils/constants';
     const currentStationLevel = progressStore.hideoutLevels?.[requirement.station.id]?.self || 0;
     return currentStationLevel >= requirement.level;
   };
-  const isSkillReqMet = (_requirement) => {
-    // TODO: Implement skill level tracking in user state
-    // For now, return true to avoid blocking upgrades based on untracked skills
-    return true;
+  const isSkillReqMet = (requirement) => {
+    if (!requirement?.name || typeof requirement?.level !== 'number') return true;
+    const currentLevel = tarkovStore.getSkillLevel(requirement.name);
+    return currentLevel >= requirement.level;
   };
   const isTraderReqMet = (requirement) => {
     // Check user's current trader loyalty level against requirement
