@@ -169,6 +169,9 @@
         neededby: 'Needed by: {names}',
       },
     },
+    traders: {
+      title: 'Traders',
+    },
     hideout: {
       title: 'Hideout',
       loading: 'Loading hideout data',

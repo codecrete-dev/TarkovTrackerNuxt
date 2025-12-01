@@ -151,6 +151,9 @@
         differentfaction: "Cette quête n'est pas disponible pour votre faction",
       },
     },
+    traders: {
+      title: 'Marchands',
+    },
     hideout: {
       title: 'Planque',
       loading: 'Chargement des données de la planque',

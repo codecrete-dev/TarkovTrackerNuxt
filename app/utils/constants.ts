@@ -188,3 +188,22 @@ export const CACHE_CONSTANTS = {
   DEFAULT_TTL_HOURS: 12,
   MAX_TTL_HOURS: 24,
 } as const;
+// Trader display order (matches in-game order)
+// Uses normalizedName for language-independent, stable identification
+export const TRADER_ORDER = [
+  'prapor',
+  'therapist',
+  'fence',
+  'skier',
+  'peacekeeper',
+  'mechanic',
+  'ragman',
+  'jaeger',
+  'lightkeeper',
+  'btr-driver',
+  'ref',
+  'mr-kerman', // Arena trader
+  'taran', // Arena trader
+  'voevoda', // Arena trader
+  'radio-station', // Radio operator
+] as const;

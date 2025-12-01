@@ -1,13 +1,5 @@
 <template>
   <div class="container mx-auto space-y-6 p-4">
-    <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
-      <div>
-        <h1 class="text-2xl font-bold text-white">Traders</h1>
-        <p class="text-surface-400 mt-1 text-sm">
-          Configure your Loyalty Level and Reputation for {{ gameMode }} mode
-        </p>
-      </div>
-    </div>
     <div v-if="loading" class="flex justify-center p-12">
       <UIcon name="i-heroicons-arrow-path" class="text-primary-500 animate-spin text-4xl" />
     </div>
@@ -26,23 +18,12 @@
 </template>
 <script setup lang="ts">
   import { storeToRefs } from 'pinia';
-  import { computed } from 'vue';
-  import TraderCard from '@/features/traders/TraderCard.vue';
-  import { useMetadataStore } from '@/stores/useMetadata';
-  import { useTarkovStore } from '@/stores/useTarkov';
+import TraderCard from '@/features/traders/TraderCard.vue';
+import { useMetadataStore } from '@/stores/useMetadata';
+import { useTarkovStore } from '@/stores/useTarkov';
   const tarkovStore = useTarkovStore();
   const metadataStore = useMetadataStore();
-  const { sortedTraders: traders, loading } = storeToRefs(metadataStore);
-  const gameMode = computed(() => {
-    const mode = tarkovStore.getCurrentGameMode();
-    return mode === 'pvp' ? 'PvP' : 'PvE';
-  });
-  const sortedTraders = computed(() => {
-    if (!traders.value) return [];
-    // Filter out internal/system traders if they appear in the list
-    // Keeping Fence, Lightkeeper, etc.
-    return traders.value.filter((t) => t.name && !['System', 'Unheard'].includes(t.name));
-  });
+  const { sortedTraders, loading } = storeToRefs(metadataStore);
   const updateLevel = (traderId: string, level: number) => {
     tarkovStore.setTraderLevel(traderId, level);
   };

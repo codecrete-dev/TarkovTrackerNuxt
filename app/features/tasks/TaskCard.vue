@@ -73,16 +73,16 @@
 </template>
 <script setup lang="ts">
   import { computed, defineAsyncComponent, ref } from 'vue';
-  import ContextMenu from '@/components/ui/ContextMenu.vue';
-  import ContextMenuItem from '@/components/ui/ContextMenuItem.vue';
-  import { useSharedBreakpoints } from '@/composables/useSharedBreakpoints';
-  import { useMetadataStore } from '@/stores/useMetadata';
-  import { usePreferencesStore } from '@/stores/usePreferences';
-  import { useProgressStore } from '@/stores/useProgress';
-  import { useTarkovStore } from '@/stores/useTarkov';
-  import type { Task, TaskObjective } from '@/types/tarkov';
-  import TaskActions from './TaskActions.vue';
-  import TaskInfo from './TaskInfo.vue';
+import ContextMenu from '@/components/ui/ContextMenu.vue';
+import ContextMenuItem from '@/components/ui/ContextMenuItem.vue';
+import { useSharedBreakpoints } from '@/composables/useSharedBreakpoints';
+import { useMetadataStore } from '@/stores/useMetadata';
+import { usePreferencesStore } from '@/stores/usePreferences';
+import { useProgressStore } from '@/stores/useProgress';
+import { useTarkovStore } from '@/stores/useTarkov';
+import type { Task, TaskObjective } from '@/types/tarkov';
+import TaskActions from './TaskActions.vue';
+import TaskInfo from './TaskInfo.vue';
   // Conditionally rendered components - lazy load
   const QuestKeys = defineAsyncComponent(() => import('./QuestKeys.vue'));
   const QuestObjectives = defineAsyncComponent(() => import('./QuestObjectives.vue'));
@@ -179,7 +179,22 @@
     objectives: TaskObjective[],
     action: 'setTaskObjectiveComplete' | 'setTaskObjectiveUncomplete'
   ) => {
-    objectives.forEach((o) => tarkovStore[action](o.id));
+    objectives.forEach((o) => {
+      if (action === 'setTaskObjectiveComplete') {
+        tarkovStore.setTaskObjectiveComplete(o.id);
+        // When completing objectives, also set the count to the required amount
+        if (o.count !== undefined && o.count > 0) {
+          tarkovStore.setObjectiveCount(o.id, o.count);
+        }
+      } else {
+        // When uncompleting, only uncomplete if count is below the required amount
+        const currentCount = tarkovStore.getObjectiveCount(o.id);
+        const requiredCount = o.count ?? 1;
+        if (currentCount < requiredCount) {
+          tarkovStore.setTaskObjectiveUncomplete(o.id);
+        }
+      }
+    });
   };
   const handleAlternatives = (
     alternatives: string[] | undefined,

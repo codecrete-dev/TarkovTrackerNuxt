@@ -5,39 +5,40 @@ import { extractLanguageCode, useSafeLocale } from '@/composables/utils/i18nHelp
 import mapsData from '@/data/maps.json';
 import { useTarkovStore } from '@/stores/useTarkov';
 import type {
-  HideoutModule,
-  HideoutStation,
-  NeededItemHideoutModule,
-  NeededItemTaskObjective,
-  ObjectiveGPSInfo,
-  ObjectiveMapInfo,
-  PlayerLevel,
-  StaticMapData,
-  TarkovDataQueryResult,
-  TarkovHideoutQueryResult,
-  TarkovItem,
-  TarkovItemsQueryResult,
-  TarkovMap,
-  Task,
-  TaskObjective,
-  Trader,
+    HideoutModule,
+    HideoutStation,
+    NeededItemHideoutModule,
+    NeededItemTaskObjective,
+    ObjectiveGPSInfo,
+    ObjectiveMapInfo,
+    PlayerLevel,
+    StaticMapData,
+    TarkovDataQueryResult,
+    TarkovHideoutQueryResult,
+    TarkovItem,
+    TarkovItemsQueryResult,
+    TarkovMap,
+    Task,
+    TaskObjective,
+    Trader,
 } from '@/types/tarkov';
 import {
-  API_GAME_MODES,
-  API_SUPPORTED_LANGUAGES,
-  EXCLUDED_SCAV_KARMA_TASKS,
-  GAME_MODES,
-  LOCALE_TO_API_MAPPING,
-  MAP_NAME_MAPPING,
+    API_GAME_MODES,
+    API_SUPPORTED_LANGUAGES,
+    EXCLUDED_SCAV_KARMA_TASKS,
+    GAME_MODES,
+    LOCALE_TO_API_MAPPING,
+    MAP_NAME_MAPPING,
+    TRADER_ORDER,
 } from '@/utils/constants';
 import { createGraph } from '@/utils/graphHelpers';
 import { logger } from '@/utils/logger';
 import {
-  CACHE_CONFIG,
-  type CacheType,
-  cleanupExpiredCache,
-  getCachedData,
-  setCachedData,
+    CACHE_CONFIG,
+    type CacheType,
+    cleanupExpiredCache,
+    getCachedData,
+    setCachedData,
 } from '@/utils/tarkovCache';
 import type { AbstractGraph } from 'graphology-types';
 // Initialization guard to prevent race conditions
@@ -139,9 +140,17 @@ export const useMetadataStore = defineStore('metadata', {
       });
       return [...mergedMaps].sort((a, b) => a.name.localeCompare(b.name));
     },
-    // Computed properties for traders (sorted)
+    // Computed properties for traders (sorted by in-game order)
     sortedTraders: (state): Trader[] => {
-      return [...state.traders].sort((a, b) => a.name.localeCompare(b.name));
+      return [...state.traders].sort((a, b) => {
+        const aIndex = TRADER_ORDER.indexOf(a.normalizedName as (typeof TRADER_ORDER)[number]);
+        const bIndex = TRADER_ORDER.indexOf(b.normalizedName as (typeof TRADER_ORDER)[number]);
+        // Traders not in the order list go to the end, sorted alphabetically
+        if (aIndex === -1 && bIndex === -1) return a.name.localeCompare(b.name);
+        if (aIndex === -1) return 1;
+        if (bIndex === -1) return -1;
+        return aIndex - bIndex;
+      });
     },
     // Computed properties for hideout
     stationsByName: (state): { [name: string]: HideoutStation } => {

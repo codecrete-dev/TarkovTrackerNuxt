@@ -128,6 +128,9 @@
         alternativefailed: 'Las misiones alternativas también se reiniciarán',
       },
     },
+    traders: {
+      title: 'Comerciantes',
+    },
     hideout: {
       title: 'Escondite',
       loading: 'Cargando datos del escondite',

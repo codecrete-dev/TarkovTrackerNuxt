@@ -199,16 +199,16 @@
 </template>
 <script setup lang="ts">
   import { computed } from 'vue';
-  import { useI18n } from 'vue-i18n';
-  import { useTaskFiltering } from '@/composables/useTaskFiltering';
-  import { useMetadataStore } from '@/stores/useMetadata';
-  import { usePreferencesStore } from '@/stores/usePreferences';
+import { useI18n } from 'vue-i18n';
+import { useTaskFiltering } from '@/composables/useTaskFiltering';
+import { useMetadataStore } from '@/stores/useMetadata';
+import { usePreferencesStore } from '@/stores/usePreferences';
   const { t } = useI18n({ useScope: 'global' });
   const preferencesStore = usePreferencesStore();
   const metadataStore = useMetadataStore();
   const { calculateStatusCounts, calculateTraderCounts } = useTaskFiltering();
   const maps = computed(() => metadataStore.maps);
-  const traders = computed(() => metadataStore.traders);
+  const traders = computed(() => metadataStore.sortedTraders);
   // Calculate task counts for badges
   const statusCounts = computed(() => {
     const userView = preferencesStore.getTaskUserView;

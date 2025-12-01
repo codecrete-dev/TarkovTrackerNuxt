@@ -150,6 +150,9 @@
         alternativefailed: 'Alternative Aufgaben werden auch zurückgesetzt',
       },
     },
+    traders: {
+      title: 'Händler',
+    },
     hideout: {
       title: 'Versteck',
       loading: 'Lade Versteck Daten',
