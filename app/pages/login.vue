@@ -9,8 +9,7 @@
       }"
     >
       <!-- Header Section -->
-      <div class="flex flex-col items-center px-10 pt-12 pb-8 text-center">
-        <tracker-logo class="mb-8 scale-150" :is-collapsed="false" />
+      <div class="flex flex-col items-center px-10 pt-10 pb-8 text-center">
         <h1 class="mb-4 text-4xl font-bold tracking-tight text-white">
           {{ $t('page.login.title') }}
         </h1>
@@ -20,7 +19,36 @@
       </div>
       <!-- Auth Buttons -->
       <div class="px-10 pb-10">
-        <auth-buttons />
+        <div class="w-full space-y-4">
+          <UButton
+            block
+            size="xl"
+            variant="solid"
+            class="flex h-12 w-full items-center justify-center border-none bg-[#9146FF] text-white transition-colors hover:bg-[#9146FF]/90"
+            :loading="loading.twitch"
+            :disabled="loading.twitch || loading.discord"
+            @click="signInWithTwitch"
+          >
+            <UIcon name="i-mdi-twitch" class="mr-3 h-6 w-6 shrink-0 text-white" />
+            <span class="font-medium whitespace-nowrap text-white">
+              {{ $t('page.login.continue_twitch') }}
+            </span>
+          </UButton>
+          <UButton
+            block
+            size="xl"
+            variant="solid"
+            class="flex h-12 w-full items-center justify-center border-none bg-[#5865F2] text-white transition-colors hover:bg-[#5865F2]/90"
+            :loading="loading.discord"
+            :disabled="loading.twitch || loading.discord"
+            @click="signInWithDiscord"
+          >
+            <UIcon name="i-mdi-controller" class="mr-3 h-6 w-6 shrink-0 text-white" />
+            <span class="font-medium whitespace-nowrap text-white">
+              {{ $t('page.login.continue_discord') }}
+            </span>
+          </UButton>
+        </div>
       </div>
       <!-- Footer Links -->
       <div class="rounded-b-lg border-t border-white/5 bg-black/20 px-8 py-5">
@@ -51,9 +79,85 @@
   </div>
 </template>
 <script setup lang="ts">
-  import AuthButtons from '@/features/auth/AuthButtons.vue';
-  import TrackerLogo from '@/features/drawer/TrackerLogo.vue';
+  import { ref } from 'vue';
+  import { logger } from '@/utils/logger';
+  const { $supabase } = useNuxtApp();
+  const loading = ref({
+    twitch: false,
+    discord: false,
+  });
+  const buildCallbackUrl = () => {
+    const config = useRuntimeConfig();
+    const origin = typeof window !== 'undefined' ? window.location.origin : config.public.appUrl;
+    return `${origin}/auth/callback`;
+  };
+  const openPopupOrRedirect = (url: string, provider: 'twitch' | 'discord') => {
+    const width = 600;
+    const height = 700;
+    const left = window.screenX + (window.outerWidth - width) / 2;
+    const top = window.screenY + (window.outerHeight - height) / 2;
+    const popup = window.open(
+      url,
+      'oauth-popup',
+      `width=${width},height=${height},left=${left},top=${top},toolbar=no,menubar=no,location=no,status=no`
+    );
+    if (popup) {
+      const messageHandler = (event: MessageEvent) => {
+        if (event.origin === window.location.origin && event.data?.type === 'OAUTH_SUCCESS') {
+          loading.value[provider] = false;
+          cleanup();
+        }
+      };
+      const pollTimer = setInterval(() => {
+        if (popup.closed) {
+          loading.value[provider] = false;
+          cleanup();
+        }
+      }, 500);
+      function cleanup() {
+        clearInterval(pollTimer);
+        window.removeEventListener('message', messageHandler);
+        if (popup && !popup.closed) {
+          popup.close();
+        }
+      }
+      window.addEventListener('message', messageHandler);
+    } else {
+      logger.warn('[Login] Popup was blocked, falling back to redirect');
+      loading.value[provider] = false;
+      window.location.href = url;
+    }
+  };
+  const signInWithTwitch = async () => {
+    try {
+      loading.value.twitch = true;
+      const callbackUrl = buildCallbackUrl();
+      const data = await $supabase.signInWithOAuth('twitch', {
+        skipBrowserRedirect: true,
+        redirectTo: callbackUrl,
+      });
+      if (data?.url) {
+        openPopupOrRedirect(data.url, 'twitch');
+      }
+    } catch (error) {
+      logger.error('[Login] Twitch sign in error:', error);
+      loading.value.twitch = false;
+    }
+  };
+  const signInWithDiscord = async () => {
+    try {
+      loading.value.discord = true;
+      const callbackUrl = buildCallbackUrl();
+      const data = await $supabase.signInWithOAuth('discord', {
+        skipBrowserRedirect: true,
+        redirectTo: callbackUrl,
+      });
+      if (data?.url) {
+        openPopupOrRedirect(data.url, 'discord');
+      }
+    } catch (error) {
+      logger.error('[Login] Discord sign in error:', error);
+      loading.value.discord = false;
+    }
+  };
 </script>
-<style scoped>
-  /* Scoped styles removed as we use Tailwind utility classes */
-</style>

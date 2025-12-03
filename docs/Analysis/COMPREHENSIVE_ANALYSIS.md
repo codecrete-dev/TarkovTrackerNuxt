@@ -610,7 +610,7 @@ npx vitest --coverage   # With coverage report
 **Files migrated:**
 - Stores: `useTarkov.ts`, `useTeamStore.ts`, `usePreferences.ts`, `useMetadata.ts`
 - Composables: `useDataMigration.ts`, `useHideoutFiltering.ts`, `useAppInitialization.ts`, `useGraphBuilder.ts`, `useTarkovCache.ts`, `useEdgeFunctions.ts`, `useSupabaseSync.ts`, `useSupabaseListener.ts`, `i18nHelpers.ts`, `storeHelpers.ts`
-- Components: `AppBar.vue`, `GameItem.vue`, `AuthButtons.vue`, `ApiTokens.vue`, `AccountDeletionCard.vue`, `TarkovMap.vue`, `MapMarker.vue`, `TeamInvite.vue`, `TeamMemberCard.vue`, `TeamMembers.vue`, `MyTeam.vue`
+- Components: `AppBar.vue`, `GameItem.vue`, `ApiTokens.vue`, `AccountDeletionCard.vue`, `TarkovMap.vue`, `MapMarker.vue`, `TeamInvite.vue`, `TeamMemberCard.vue`, `TeamMembers.vue`, `MyTeam.vue`
 - Pages: `settings.vue`, `tasks.vue`, `neededitems.vue`
 - Utils: `graphHelpers.ts`, `tarkovCache.ts`, `dataMigrationService.ts`
 - Plugins: `store-initializer.ts`, `01.pinia.client.ts`, `i18n.client.ts`, `supabase.client.ts`
@@ -658,8 +658,7 @@ export const TARKOV_TIME_UPDATE_INTERVAL_MS = 3000;
 ### MEDIUM PRIORITY - Test Coverage
 
 #### 9. Minimal Test Coverage
-**Current tests:** Only 2 test files exist:
-- `app/features/auth/__tests__/AuthButtons.test.ts`
+**Current tests:** Only 1 test file exists:
 - `app/composables/__tests__/useTarkovTime.test.ts`
 
 **Missing critical test coverage:**

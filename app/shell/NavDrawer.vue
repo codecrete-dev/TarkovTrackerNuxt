@@ -1,6 +1,11 @@
 <template>
   <!-- Backdrop overlay for mobile expanded state -->
-  <Transition name="fade">
+  <Transition
+    enter-active-class="transition-opacity duration-300 ease-out"
+    leave-active-class="transition-opacity duration-300 ease-in"
+    enter-from-class="opacity-0"
+    leave-to-class="opacity-0"
+  >
     <div
       v-if="mdAndDown && mobileExpanded"
       class="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
@@ -9,27 +14,145 @@
   </Transition>
   <!-- Unified Sidebar - works as rail on mobile, rail/expanded on desktop -->
   <aside
-    class="nav-shell border-primary-800/60 fixed inset-y-0 left-0 z-50 flex flex-col border-r backdrop-blur-sm transition-all duration-300"
+    class="border-primary-800/60 fixed inset-y-0 left-0 z-50 flex flex-col border-r backdrop-blur-sm transition-all duration-300 bg-[linear-gradient(180deg,rgba(18,18,20,0.96)_0%,rgba(14,14,15,0.96)_45%,rgba(12,12,13,0.97)_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.03),inset_0_-1px_0_rgba(0,0,0,0.6),1px_0_0_rgba(0,0,0,0.55)]"
     :class="[sidebarWidth]"
   >
     <div class="relative z-10 flex h-full flex-col overflow-x-hidden overflow-y-auto">
-      <TrackerLogo :is-collapsed="isCollapsed" />
+      <NuxtLink
+        to="/"
+        class="group mt-2 flex flex-col items-center px-3 py-2 transition-opacity hover:opacity-90"
+      >
+        <div :class="isCollapsed ? 'w-8' : 'w-[130px]'" class="mx-auto transition-all duration-200">
+          <NuxtImg
+            :src="
+              isCollapsed
+                ? '/img/logos/tarkovtrackerlogo-mini.webp'
+                : '/img/logos/tarkovtrackerlogo-light.webp'
+            "
+            class="h-auto w-full"
+            preload
+          />
+        </div>
+        <div v-if="!isCollapsed" class="mt-2 text-center">
+          <div class="text-base leading-tight font-medium text-white">TarkovTracker.org</div>
+        </div>
+      </NuxtLink>
       <div class="bg-primary-800/40 mx-3 my-1 h-px" />
-      <DrawerAccount :is-collapsed="isCollapsed" />
+      <ul class="flex flex-col gap-1 px-1">
+        <template v-if="isLoggedIn">
+          <UDropdownMenu :items="accountItems" :content="{ side: 'right', align: 'start' }">
+            <UButton
+            color="neutral"
+            variant="ghost"
+            :padded="!isCollapsed"
+            class="w-full justify-between rounded-md px-2 py-2"
+            :class="[isCollapsed ? 'justify-center px-0' : '']"
+          >
+            <div class="flex min-w-0 items-center gap-3">
+              <UAvatar :src="avatarSrc" size="md" alt="User avatar" class="shrink-0" />
+              <span v-if="!isCollapsed" class="truncate">{{ userDisplayName }}</span>
+            </div>
+              <template #trailing>
+                <UIcon
+                  v-if="!isCollapsed"
+                  name="i-heroicons-chevron-down-20-solid"
+                  class="h-5 w-5 transition-transform duration-200"
+                />
+              </template>
+            </UButton>
+          </UDropdownMenu>
+        </template>
+        <template v-else>
+          <UButton
+            to="/login"
+            icon="i-mdi-fingerprint"
+            color="neutral"
+            variant="ghost"
+            block
+            :padded="!isCollapsed"
+            class="h-12 justify-center rounded-md px-3 py-3"
+          >
+            <span v-if="!isCollapsed" class="truncate text-base font-medium">
+              {{ t('navigation_drawer.login') }}
+            </span>
+          </UButton>
+        </template>
+      </ul>
       <div class="bg-primary-800/40 mx-3 my-1 h-px" />
       <DrawerLevel :is-collapsed="isCollapsed" />
-      <DrawerCharacter :is-collapsed="isCollapsed" />
+      <div v-if="!isCollapsed" class="my-4 flex flex-col items-center gap-2 px-4">
+        <button
+          class="border-primary-800/50 hover:border-primary-600 w-full rounded border px-2 py-1 text-center text-xs font-medium text-white/80 transition-colors hover:text-white"
+          @click="navigateToSettings"
+        >
+          {{ getEditionName(tarkovStore.gameEdition) }}
+        </button>
+        <div class="border-primary-800/50 flex w-full overflow-hidden rounded-md border">
+          <button
+            v-for="faction in factions"
+            :key="faction"
+            class="flex-1 px-2 py-1 text-xs font-semibold uppercase transition-colors"
+            :class="
+              faction === currentFaction
+                ? 'bg-primary-700 text-white'
+                : 'bg-transparent text-white/65 hover:bg-white/5 hover:text-white'
+            "
+            @click="setFaction(faction)"
+          >
+            {{ faction }}
+          </button>
+        </div>
+      </div>
       <div class="bg-primary-800/40 mx-3 my-1 h-px" />
       <DrawerLinks :is-collapsed="isCollapsed" />
       <div class="bg-primary-800/40 mx-3 my-1 h-px" />
-      <DrawerExternalLinks :is-collapsed="isCollapsed" />
+      <div class="flex flex-col gap-2">
+        <div v-if="!isCollapsed" class="px-4 py-1">
+          <h3 class="text-xs font-semibold tracking-wider text-gray-500 uppercase">External</h3>
+        </div>
+        <ul class="flex flex-col gap-1 px-1">
+          <DrawerItem
+            avatar="/img/logos/tarkovdevlogo.webp"
+            locale-key="tarkovdev"
+            href="https://tarkov.dev/"
+            ext-link
+            :is-collapsed="isCollapsed"
+          />
+          <DrawerItem
+            avatar="/img/logos/tarkovmonitorlogo.avif"
+            locale-key="tarkovmonitor"
+            href="https://github.com/the-hideout/TarkovMonitor"
+            ext-link
+            :is-collapsed="isCollapsed"
+          />
+          <DrawerItem
+            avatar="/img/logos/ratscannerlogo.webp"
+            locale-key="ratscanner"
+            href="https://ratscanner.com/"
+            ext-link
+            :is-collapsed="isCollapsed"
+          />
+          <DrawerItem
+            avatar="/img/logos/tarkovchangeslogo.svg"
+            locale-key="tarkovchanges"
+            href="https://tarkov-changes.com/"
+            ext-link
+            :is-collapsed="isCollapsed"
+          />
+        </ul>
+      </div>
     </div>
   </aside>
 </template>
-<script setup>
+<script setup lang="ts">
   import { useBreakpoints } from '@vueuse/core';
   import { computed, defineAsyncComponent, watch } from 'vue';
+  import { useI18n } from 'vue-i18n';
+  import { useRouter } from 'vue-router';
   import { useAppStore } from '@/stores/useApp';
+  import { usePreferencesStore } from '@/stores/usePreferences';
+  import { useTarkovStore } from '@/stores/useTarkov';
+  import { getEditionName, PMC_FACTIONS, type PMCFaction } from '@/utils/constants';
   // Define breakpoints (md breakpoint at 960px)
   const breakpoints = useBreakpoints({
     mobile: 0,
@@ -66,36 +189,41 @@
     // Desktop: based on rail setting
     return appStore.drawerRail ? 'w-14' : 'w-56';
   });
-  const TrackerLogo = defineAsyncComponent(() => import('@/features/drawer/TrackerLogo.vue'));
   const DrawerLinks = defineAsyncComponent(() => import('@/features/drawer/DrawerLinks.vue'));
-  const DrawerAccount = defineAsyncComponent(() => import('@/features/drawer/DrawerAccount.vue'));
   const DrawerLevel = defineAsyncComponent(() => import('@/features/drawer/DrawerLevel.vue'));
-  const DrawerExternalLinks = defineAsyncComponent(
-    () => import('@/features/drawer/DrawerExternalLinks.vue')
-  );
-  const DrawerCharacter = defineAsyncComponent(
-    () => import('@/features/drawer/DrawerCharacter.vue')
-  );
+  const DrawerItem = defineAsyncComponent(() => import('@/features/drawer/DrawerItem.vue'));
+  const preferencesStore = usePreferencesStore();
+  const tarkovStore = useTarkovStore();
+  const router = useRouter();
+  const factions = PMC_FACTIONS;
+  const { t } = useI18n({ useScope: 'global' });
+  const { $supabase } = useNuxtApp();
+  const isLoggedIn = computed(() => $supabase.user?.loggedIn ?? false);
+  const avatarSrc = computed(() => {
+    return preferencesStore.getStreamerMode || !$supabase.user.photoURL
+      ? '/img/default-avatar.svg'
+      : $supabase.user.photoURL;
+  });
+  const currentFaction = computed<PMCFaction>(() => tarkovStore.getPMCFaction());
+  function setFaction(faction: PMCFaction) {
+    if (faction !== currentFaction.value) {
+      tarkovStore.setPMCFaction(faction);
+    }
+  }
+  function navigateToSettings() {
+    router.push('/settings');
+  }
+  const userDisplayName = computed(() => {
+    return preferencesStore.getStreamerMode ? 'User' : $supabase.user.displayName || 'User';
+  });
+  function logout() {
+    $supabase.signOut();
+  }
+  const accountItems = computed(() => [
+    {
+      label: t('navigation_drawer.logout'),
+      icon: 'i-mdi-lock',
+      onSelect: logout,
+    },
+  ]);
 </script>
-<style scoped>
-  .nav-shell {
-    background: linear-gradient(
-      180deg,
-      rgba(18, 18, 20, 0.96) 0%,
-      rgba(14, 14, 15, 0.96) 45%,
-      rgba(12, 12, 13, 0.97) 100%
-    );
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.03),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.6),
-      1px 0 0 rgba(0, 0, 0, 0.55);
-  }
-  .fade-enter-active,
-  .fade-leave-active {
-    transition: opacity 0.3s ease;
-  }
-  .fade-enter-from,
-  .fade-leave-to {
-    opacity: 0;
-  }
-</style>
