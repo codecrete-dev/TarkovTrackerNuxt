@@ -31,6 +31,10 @@ export interface TarkovItem {
   types?: string[];
   category?: ItemCategory;
   categories?: ItemCategory[];
+  properties?: {
+    defaultPreset?: TarkovItem;
+    [key: string]: unknown;
+  };
 }
 export interface ItemRequirement {
   id: string;
@@ -212,6 +216,8 @@ export interface NeededItemHideoutModule extends NeededItemBase {
 export interface ObjectiveMapInfo {
   objectiveID: string;
   mapID: string;
+  x?: number;
+  y?: number;
 }
 export interface ObjectiveGPSInfo {
   objectiveID: string;
@@ -246,6 +252,8 @@ export interface StaticMapData {
 export interface SystemState extends StateTree {
   tokens?: string[];
   team?: string | null;
+  // Keep raw team_id from Supabase for backwards/compat and reactivity
+  team_id?: string | null;
 }
 export interface SystemGetters extends _GettersTree<SystemState> {
   userTokens: (state: SystemState) => string[];
@@ -255,14 +263,13 @@ export interface SystemGetters extends _GettersTree<SystemState> {
 }
 export interface TeamState extends StateTree {
   owner?: string | null;
-  password?: string | null;
   joinCode?: string | null;
   members?: string[];
+  memberProfiles?: Record<string, { displayName: string | null; level: number | null; tasksCompleted: number | null; gameMode?: 'pvp' | 'pve' }>;
 }
 export interface TeamGetters extends _GettersTree<TeamState> {
   teamOwner: (state: TeamState) => string | null;
   isOwner: (state: TeamState) => boolean;
-  teamPassword: (state: TeamState) => string | null;
   inviteCode: (state: TeamState) => string | null;
   teamMembers: (state: TeamState) => string[];
   teammates: (state: TeamState) => string[];

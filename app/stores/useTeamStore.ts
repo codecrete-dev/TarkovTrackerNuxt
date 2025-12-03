@@ -1,17 +1,26 @@
 import { defineStore } from 'pinia';
-import { computed, nextTick, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch, type Ref } from 'vue';
+import { useEdgeFunctions } from '@/composables/api/useEdgeFunctions';
 import { useSupabaseListener } from '@/composables/supabase/useSupabaseListener';
 import type { UserState } from '@/stores/progressState';
 import { useSystemStoreWithSupabase } from '@/stores/useSystemStore';
+import { useTarkovStore } from '@/stores/useTarkov';
 import type { TeamGetters, TeamState } from '@/types/tarkov';
+import { GAME_MODES } from '@/utils/constants';
 import { logger } from '@/utils/logger';
+import type { RealtimeChannel } from '@supabase/supabase-js';
 import type { Store } from 'pinia';
 import { useToast } from '#imports';
 /**
  * Team store definition with getters for team info and members
  */
 export const useTeamStore = defineStore<string, TeamState, TeamGetters>('team', {
-  state: (): TeamState => ({}),
+  state: (): TeamState => ({
+    owner: null,
+    joinCode: null,
+    members: [],
+    memberProfiles: {},
+  }),
   getters: {
     teamOwner(state) {
       return state?.owner || null;
@@ -21,14 +30,13 @@ export const useTeamStore = defineStore<string, TeamState, TeamGetters>('team', 
       const owner = state.owner;
       return owner === $supabase.user?.id;
     },
-    teamPassword(state) {
-      return state?.password || null;
-    },
     /**
      * Get the invite code for team joining
      */
     inviteCode(state) {
-      return state?.joinCode || state?.password || null;
+      // fall back to raw join_code (supabase column) in case mapping misses
+      const rawJoinCode = (state as unknown as { join_code?: string | null }).join_code;
+      return state?.joinCode || rawJoinCode || null;
     },
     teamMembers(state) {
       return state?.members || [];
@@ -44,13 +52,31 @@ export const useTeamStore = defineStore<string, TeamState, TeamGetters>('team', 
     },
   },
 });
-export function useTeamStoreWithSupabase() {
+// Type for the team store instance to avoid circular reference
+interface TeamStoreInstance {
+  teamStore: ReturnType<typeof useTeamStore>;
+  isSubscribed: Ref<boolean>;
+  cleanup: () => void;
+}
+// Singleton instance to prevent multiple listener setups
+let teamStoreInstance: TeamStoreInstance | null = null;
+export function useTeamStoreWithSupabase(): TeamStoreInstance {
+  // Return cached instance if it exists
+  if (teamStoreInstance) {
+    logger.debug('[TeamStore] Returning cached instance');
+    return teamStoreInstance;
+  }
+  logger.debug('[TeamStore] Creating new instance');
   const { systemStore } = useSystemStoreWithSupabase();
+  const tarkovStore = useTarkovStore();
   const teamStore = useTeamStore();
   const { $supabase } = useNuxtApp();
+  const teamChannel = ref<RealtimeChannel | null>(null);
   // Computed reference to the team document based on system store
   const teamFilter = computed(() => {
-    const currentSystemStateTeam = systemStore.$state.team;
+    // Access state directly for reactivity
+    const systemState = systemStore.$state as unknown as { team?: string | null; team_id?: string | null };
+    const currentSystemStateTeam = systemState.team ?? systemState.team_id;
     if (
       $supabase.user.loggedIn &&
       currentSystemStateTeam &&
@@ -60,37 +86,203 @@ export function useTeamStoreWithSupabase() {
     }
     return undefined;
   });
-  const handleTeamSnapshot = (data: Record<string, unknown> | null) => {
+  // Custom data handler that transforms DB data before patching to store
+  const handleTeamData = (data: Record<string, unknown> | null) => {
     if (data) {
-      const patch: Record<string, unknown> = { ...data };
-      if ('owner_id' in data) {
-        patch.owner = (data as { owner_id: string }).owner_id;
+      // Transform database fields to client fields BEFORE patching
+      const transformed: Partial<TeamState> & { owner_id?: string | null; join_code?: string | null } = {
+        ...data,
+      };
+      // Map owner_id to owner
+      if ('owner_id' in data && typeof data.owner_id === 'string') {
+        transformed.owner = data.owner_id;
+      } else if ('owner_id' in data && data.owner_id === null) {
+        transformed.owner = null;
       }
-      if ('join_code' in data) {
-        // Map server's join_code to client's joinCode
-        patch.joinCode = (data as { join_code: string }).join_code;
-        // Also keep password for legacy support
-        patch.password = (data as { join_code: string }).join_code;
+      // Map join_code to joinCode
+      if ('join_code' in data && typeof data.join_code === 'string') {
+        transformed.joinCode = data.join_code;
+      } else if ('join_code' in data && data.join_code === null) {
+        transformed.joinCode = null;
       }
-      teamStore.$patch(patch as Partial<TeamState>);
+      logger.debug('[TeamStore] Transforming data:', {
+        hasOwnerId: 'owner_id' in data,
+        hasJoinCode: 'join_code' in data,
+        owner: transformed.owner,
+        joinCode: transformed.joinCode
+      });
+      // Manually patch the store with transformed data
+      teamStore.$patch(transformed as Partial<TeamState>);
+      // Refresh members after team meta arrives
+      void refreshMembers();
+      logger.debug('[TeamStore] After patch:', {
+        owner: teamStore.owner,
+        joinCode: teamStore.joinCode,
+        inviteCode: teamStore.inviteCode
+      });
     } else {
       teamStore.$reset();
+      teamStore.$patch((state) => {
+        state.members = [];
+      });
     }
   };
-  // Setup Supabase listener
-  const { cleanup, isSubscribed } = useSupabaseListener({
+  const cleanupMembership = () => {
+    if (teamChannel.value) {
+      $supabase.client.removeChannel(teamChannel.value as unknown as RealtimeChannel);
+      teamChannel.value = null;
+    }
+  };
+  const refreshMembers = async () => {
+    const systemState = systemStore.$state as unknown as { team?: string | null; team_id?: string | null };
+    const currentTeamId = systemState.team ?? systemState.team_id;
+    if (!currentTeamId) {
+      teamStore.$patch((state) => {
+        state.members = [];
+        state.memberProfiles = {};
+      });
+      cleanupMembership();
+      return;
+    }
+    try {
+      const { getTeamMembers } = useEdgeFunctions();
+      const result = await getTeamMembers(currentTeamId);
+      teamStore.$patch((state) => {
+        state.members = result?.members || [];
+        state.memberProfiles = result?.profiles || {};
+      });
+    } catch (error) {
+      logger.warn('[TeamStore] Failed to load team members:', error);
+    }
+  };
+  const setupMembershipSubscription = () => {
+    const systemState = systemStore.$state as unknown as { team?: string | null; team_id?: string | null };
+    const currentTeamId = systemState.team ?? systemState.team_id;
+    cleanupMembership();
+    if (!currentTeamId) return;
+    teamChannel.value = $supabase.client
+      .channel(`team:${currentTeamId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'team_memberships',
+          filter: `team_id=eq.${currentTeamId}`,
+        },
+        () => {
+          void refreshMembers();
+        }
+      )
+      .on('broadcast', { event: 'progress' }, (payload) => {
+        const data = (payload?.payload || {}) as {
+          userId?: string;
+          displayName?: string | null;
+          level?: number | null;
+          tasksCompleted?: number | null;
+        };
+        if (!data?.userId) return;
+        // Update memberProfiles with the broadcasted snapshot
+        teamStore.$patch((state) => {
+          state.memberProfiles = {
+            ...teamStore.memberProfiles,
+            [data.userId as string]: {
+              displayName: data.displayName ?? null,
+              level: data.level ?? null,
+              tasksCompleted: data.tasksCompleted ?? null,
+            },
+          } as Record<string, { displayName: string | null; level: number | null; tasksCompleted: number | null; gameMode?: 'pvp' | 'pve' }>;
+        });
+      })
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          void refreshMembers();
+        }
+      });
+  };
+  // Setup Supabase listener with custom onData handler
+  // NOTE: Don't pass the store - we handle patching manually to preserve mapped fields
+  const { cleanup: teamListenerCleanup, isSubscribed } = useSupabaseListener({
     store: teamStore,
     table: 'teams',
-    filter: teamFilter.value,
+    // Pass the computed ref so subscription tracks team id changes reactively
+    filter: teamFilter,
     storeId: 'team',
-    onData: handleTeamSnapshot,
+    onData: handleTeamData,
   });
+  watch(
+    teamFilter,
+    async () => {
+      await refreshMembers();
+      setupMembershipSubscription();
+    },
+    { immediate: true }
+  );
+  // Broadcast local progress summary to teammates whenever it changes
+  const localProgressSnapshot = computed(() => {
+    const mode = (tarkovStore.$state.currentGameMode as 'pvp' | 'pve' | undefined) || GAME_MODES.PVP;
+    const modeState = (tarkovStore.$state as unknown as Record<string, unknown>)[mode] as {
+      displayName?: string | null;
+      level?: number | null;
+      taskCompletions?: Record<string, { complete?: boolean }>;
+    } | null;
+    const completed = modeState?.taskCompletions
+      ? Object.values(modeState.taskCompletions).filter((t) => t?.complete).length
+      : 0;
+    return {
+      mode,
+      displayName: modeState?.displayName ?? null,
+      level: modeState?.level ?? null,
+      tasksCompleted: completed,
+    };
+  });
+  watch(
+    () => localProgressSnapshot.value,
+    (snapshot) => {
+      const systemState = systemStore.$state as unknown as { team?: string | null; team_id?: string | null };
+      const currentTeamId = systemState.team ?? systemState.team_id;
+      if (!currentTeamId || !teamChannel.value || !$supabase.user?.id) {
+        return;
+      }
+      // Push to teammates
+      void teamChannel.value.send({
+        type: 'broadcast',
+        event: 'progress',
+        payload: {
+          userId: $supabase.user.id,
+          displayName: snapshot.displayName,
+          level: snapshot.level,
+          tasksCompleted: snapshot.tasksCompleted,
+          gameMode: snapshot.mode,
+        },
+      });
+      // Apply locally so the current user card updates immediately
+      teamStore.$patch((state) => {
+        state.memberProfiles = {
+          ...teamStore.memberProfiles,
+          [$supabase.user.id as string]: {
+            displayName: snapshot.displayName,
+            level: snapshot.level,
+            tasksCompleted: snapshot.tasksCompleted,
+            gameMode: snapshot.mode,
+          },
+        } as Record<string, { displayName: string | null; level: number | null; tasksCompleted: number | null; gameMode?: 'pvp' | 'pve' }>;
+      });
+    },
+    { deep: true }
+  );
   // Watch for filter changes handled by useSupabaseListener
-  return {
+  const instance = {
     teamStore,
     isSubscribed,
-    cleanup,
+    cleanup: () => {
+      teamListenerCleanup();
+      cleanupMembership();
+    },
   };
+  // Cache the instance for singleton pattern
+  teamStoreInstance = instance;
+  return instance;
 }
 /**
  * Composable for managing teammate stores dynamically
@@ -173,13 +365,24 @@ export function useTeammateStores() {
       });
       const storeInstance = storeDefinition();
       teammateStores.value[teammateId] = storeInstance;
-      // Setup Supabase listener for this teammate
-      // Note: We need to store the cleanup function, not the unsubscribe function directly
+      // Setup Supabase listener for this teammate with data transformation
+      // Transform Supabase field names to match store structure
+      const handleTeammateData = (data: Record<string, unknown> | null) => {
+        if (data) {
+          storeInstance.$patch({
+            currentGameMode: data.current_game_mode || GAME_MODES.PVP,
+            gameEdition: data.game_edition || 1,
+            pvp: data.pvp_data || {},
+            pve: data.pve_data || {},
+          });
+        }
+      };
       const { cleanup } = useSupabaseListener({
         store: storeInstance,
         table: 'user_progress',
         filter: `user_id=eq.${teammateId}`,
         storeId: `teammate-${teammateId}`,
+        onData: handleTeammateData,
       });
       teammateUnsubscribes.value[teammateId] = cleanup;
     } catch (error) {

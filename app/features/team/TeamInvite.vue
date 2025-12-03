@@ -45,7 +45,10 @@ import { useToast } from '#imports';
     return !!(route.query.team && route.query.code);
   });
   const inInviteTeam = computed(() => {
-    return systemStore?.userTeam != null && systemStore.userTeam == route?.query?.team;
+    // Access state directly for reactivity
+    const systemState = systemStore.$state as unknown as { team?: string | null; team_id?: string | null };
+    const currentTeamId = systemState.team ?? systemState.team_id;
+    return currentTeamId != null && currentTeamId == route?.query?.team;
   });
   const declined = ref(false);
   const accepting = ref(false);

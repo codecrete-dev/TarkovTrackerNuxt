@@ -1,5 +1,4 @@
 import { defineVitestConfig } from '@nuxt/test-utils/config';
-
 export default defineVitestConfig({
   test: {
     environment: 'nuxt', // The Nuxt environment handles the DOM setup automatically

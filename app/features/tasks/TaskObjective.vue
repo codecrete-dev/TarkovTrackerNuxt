@@ -19,7 +19,7 @@
       <div
         v-if="
           fullObjective &&
-          showCounterTypes.includes(fullObjective.type) &&
+          showCounterTypes.includes(fullObjective.type ?? '') &&
           (fullObjective.count ?? 0) > 1
         "
         class="ml-2"
@@ -37,12 +37,12 @@
     <div
       v-if="
         fullObjective &&
-        ((systemStore.userTeam && userNeeds.length > 0) ||
-          itemObjectiveTypes.includes(fullObjective.type))
+        ((userHasTeam && userNeeds.length > 0) ||
+          itemObjectiveTypes.includes(fullObjective.type ?? ''))
       "
       class="mt-px mb-px flex items-center text-xs"
     >
-      <div v-if="fullObjective && itemObjectiveTypes.includes(fullObjective.type)" class="w-full">
+      <div v-if="fullObjective && itemObjectiveTypes.includes(fullObjective.type ?? '')" class="w-full">
         <div
           class="mb-2 rounded p-1 transition-colors duration-200"
           :class="
@@ -50,6 +50,7 @@
           "
         >
           <GameItem
+            v-if="relatedItem"
             :item-id="relatedItem.id"
             :item-name="relatedItem.shortName"
             :dev-link="relatedItem.link"
@@ -72,10 +73,13 @@
           />
         </div>
       </div>
-      <div v-if="systemStore.userTeam && userNeeds.length > 0" class="flex items-center">
+      <div
+        v-if="userHasTeam && activeUserView === 'all' && userNeeds.length > 0"
+        class="flex items-center"
+      >
         <span v-for="(user, userIndex) in userNeeds" :key="userIndex" class="flex items-center">
           <UIcon name="i-mdi-account-child-circle" class="ml-1 h-4 w-4" />
-          {{ progressStore.teammemberNames[user] }}
+          {{ progressStore.getDisplayName(user) }}
         </span>
       </div>
       <div v-if="objective.type === 'mark'">
@@ -87,27 +91,33 @@
     </div>
   </span>
 </template>
-<script setup>
+<script setup lang="ts">
   import { computed, defineAsyncComponent, ref, watch } from 'vue';
   import { useMetadataStore } from '@/stores/useMetadata';
+  import { usePreferencesStore } from '@/stores/usePreferences';
   import { useProgressStore } from '@/stores/useProgress';
   import { useSystemStoreWithSupabase } from '@/stores/useSystemStore';
   import { useTarkovStore } from '@/stores/useTarkov';
+  import type { TaskObjective } from '@/types/tarkov';
   const ItemCountControls = defineAsyncComponent(
     () => import('@/features/neededitems/ItemCountControls.vue')
   );
   const { systemStore } = useSystemStoreWithSupabase();
   // Define the props for the component
-  const props = defineProps({
-    objective: {
-      type: Object,
-      required: true,
-    },
-  });
+  const props = defineProps<{
+    objective: TaskObjective;
+  }>();
   const metadataStore = useMetadataStore();
   const objectives = computed(() => metadataStore.objectives);
   const tarkovStore = useTarkovStore();
   const progressStore = useProgressStore();
+  const preferencesStore = usePreferencesStore();
+  const activeUserView = computed(() => preferencesStore.getTaskUserView);
+  // Computed property to check if user has a team (for reactivity)
+  const userHasTeam = computed(() => {
+    const systemState = systemStore.$state as unknown as { team?: string | null; team_id?: string | null };
+    return !!(systemState.team ?? systemState.team_id);
+  });
   const tasks = computed(() => metadataStore.tasks);
   const isComplete = computed(() => {
     return tarkovStore.isTaskObjectiveComplete(props.objective.id);
@@ -116,8 +126,9 @@
     return objectives.value.find((o) => o.id == props.objective.id);
   });
   const relatedTask = computed(() => {
-    if (!fullObjective.value?.taskId) return null;
-    return tasks.value.find((t) => t.id === fullObjective.value.taskId);
+    const obj = fullObjective.value;
+    if (!obj?.taskId) return null;
+    return tasks.value.find((t) => t.id === obj.taskId);
   });
   const itemObjectiveTypes = ['giveItem', 'mark', 'buildWeapon', 'plantItem'];
   // Objective types that should show a counter (for kill tracking, etc.)
@@ -146,14 +157,18 @@
     }
   });
   const userNeeds = computed(() => {
-    const needingUsers = [];
+    const needingUsers: string[] = [];
     if (fullObjective.value == undefined) {
       return needingUsers;
     }
-    Object.entries(progressStore.unlockedTasks[fullObjective.value.taskId]).forEach(
-      ([teamId, unlocked]) => {
+    const taskId = fullObjective.value.taskId;
+    if (!taskId) return needingUsers;
+    const unlocked = progressStore.unlockedTasks[taskId];
+    if (!unlocked) return needingUsers;
+    Object.entries(unlocked).forEach(
+      ([teamId, isUnlocked]) => {
         if (
-          unlocked &&
+          isUnlocked &&
           progressStore.objectiveCompletions?.[props.objective.id]?.[teamId] == false
         ) {
           needingUsers.push(teamId);
@@ -177,7 +192,7 @@
         return 'mdi-check-circle';
       }
     }
-    const iconMap = {
+    const iconMap: Record<string, string> = {
       key: 'mdi-key',
       shoot: 'mdi-target-account',
       giveItem: 'mdi-close-circle-outline',
@@ -199,12 +214,12 @@
       experience: 'mdi-eye-circle-outline',
       warning: 'mdi-alert-circle',
     };
-    return iconMap[props.objective.type] || 'mdi-help-circle';
+    return iconMap[props.objective.type ?? ''] || 'mdi-help-circle';
   });
   const toggleObjectiveCompletion = () => {
     if (isComplete.value) {
       const currentCount = currentObjectiveCount.value;
-      const neededCount = fullObjective.value.count ?? 1;
+      const neededCount = fullObjective.value?.count ?? 1;
       if (currentCount >= neededCount) {
         tarkovStore.setObjectiveCount(props.objective.id, Math.max(0, neededCount - 1));
       }
@@ -218,25 +233,25 @@
     return tarkovStore.getObjectiveCount(props.objective.id);
   });
   const isItemCollected = computed(() => {
-    const neededCount = fullObjective.value.count ?? 1;
+    const neededCount = fullObjective.value?.count ?? 1;
     return currentItemCount.value >= neededCount;
   });
   // Watch for objective completion to auto-complete item collection
   watch(isComplete, (newVal) => {
     if (newVal) {
       // If objective is marked complete, ensure item is marked collected
-      const neededCount = fullObjective.value.count ?? 1;
+      const neededCount = fullObjective.value?.count ?? 1;
       tarkovStore.setObjectiveCount(props.objective.id, neededCount);
     }
   });
-  const handleItemClick = (event) => {
+  const handleItemClick = (event: Event) => {
     // Prevent bubbling to the objective click handler if needed, though they are separate elements
     event.stopPropagation();
     // If multi-item, clicking the item itself (not the controls) should probably just increment
     // or maybe do nothing if controls are present?
     // The user requested controls "similar to Needed Items", which implies the controls handle the interaction.
     // But for single items, we still want the click-to-toggle behavior.
-    const neededCount = fullObjective.value.count ?? 1;
+    const neededCount = fullObjective.value?.count ?? 1;
     if (neededCount > 1) {
       // For multi-item, let the controls handle it, or maybe clicking the icon increments?
       // Let's keep increment behavior on icon click for consistency, but controls offer fine-grained.
@@ -252,7 +267,7 @@
       const newCount = currentCount - 1;
       tarkovStore.setObjectiveCount(props.objective.id, newCount);
       // If we drop below needed count and objective was complete, uncomplete it
-      const neededCount = fullObjective.value.count ?? 1;
+      const neededCount = fullObjective.value?.count ?? 1;
       if (newCount < neededCount && isComplete.value) {
         tarkovStore.setTaskObjectiveUncomplete(props.objective.id);
       }
@@ -260,7 +275,7 @@
   };
   const increaseCount = () => {
     const currentCount = currentItemCount.value;
-    const neededCount = fullObjective.value.count ?? 1;
+    const neededCount = fullObjective.value?.count ?? 1;
     if (currentCount < neededCount) {
       const newCount = currentCount + 1;
       tarkovStore.setObjectiveCount(props.objective.id, newCount);
@@ -271,7 +286,7 @@
   };
   const toggleCount = () => {
     const currentCount = currentItemCount.value;
-    const neededCount = fullObjective.value.count ?? 1;
+    const neededCount = fullObjective.value?.count ?? 1;
     if (currentCount >= neededCount) {
       tarkovStore.setObjectiveCount(props.objective.id, Math.max(0, neededCount - 1));
       if (isComplete.value) {

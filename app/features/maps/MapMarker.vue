@@ -15,8 +15,8 @@
     <div class="bg-accent-800 border-surface-700 m-0 rounded border px-1 pt-2 shadow-md">
       <task-link :task="relatedTask" show-wiki-link />
       <task-objective
-        v-if="props.mark.id"
-        :objective="objectives.find((obj) => obj.id == props.mark.id)"
+        v-if="relatedObjective"
+        :objective="relatedObjective"
       />
     </div>
   </div>

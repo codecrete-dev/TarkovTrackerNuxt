@@ -5,12 +5,9 @@ export interface Env {
   SUPABASE_SERVICE_ROLE_KEY: string;
   ALLOWED_ORIGIN?: string;
 }
-
 type TeamAction = "team-create" | "team-join" | "team-leave" | "team-kick";
 type TokenAction = "token-create" | "token-revoke";
-
 type Action = TeamAction | TokenAction;
-
 const RATE_LIMITS: Record<Action, { limit: number; windowSec: number }> = {
   "team-create": { limit: 10, windowSec: 3600 }, // 10 creates/hour per ip+user
   "team-join": { limit: 30, windowSec: 600 }, // 30 joins/10min
@@ -20,14 +17,12 @@ const RATE_LIMITS: Record<Action, { limit: number; windowSec: number }> = {
   "token-revoke": { limit: 50, windowSec: 600 },
   "token-create": { limit: 8, windowSec: 3600 },
 };
-
 const fnMap: Record<TeamAction, string> = {
   "team-create": "team-create",
   "team-join": "team-join",
   "team-leave": "team-leave",
   "team-kick": "team-kick",
 };
-
 async function rateLimit(env: Env, key: string, limit: number, windowSec: number) {
   const now = Date.now();
   const bucket = Math.floor(now / (windowSec * 1000));
@@ -41,7 +36,6 @@ async function rateLimit(env: Env, key: string, limit: number, windowSec: number
   });
   return true;
 }
-
 function resolveOrigin(envOrigin?: string, requestOrigin?: string) {
   if (!envOrigin || envOrigin === "*") return "*";
   const list = envOrigin.split(",").map((o) => o.trim()).filter(Boolean);
@@ -50,7 +44,6 @@ function resolveOrigin(envOrigin?: string, requestOrigin?: string) {
   // default to first configured origin to avoid open CORS in prod
   return list[0];
 }
-
 function corsHeaders(envOrigin?: string, requestOrigin?: string) {
   const allowOrigin = resolveOrigin(envOrigin, requestOrigin);
   return {
@@ -59,7 +52,6 @@ function corsHeaders(envOrigin?: string, requestOrigin?: string) {
     "Access-Control-Allow-Headers": "Content-Type,Authorization,apikey",
   };
 }
-
 function jsonResponse(data: unknown, status = 200, envOrigin?: string, requestOrigin?: string) {
   return new Response(JSON.stringify(data), {
     status,
@@ -70,7 +62,6 @@ function jsonResponse(data: unknown, status = 200, envOrigin?: string, requestOr
     },
   });
 }
-
 async function proxyToSupabase(
   env: Env,
   action: TeamAction,
@@ -98,25 +89,20 @@ async function proxyToSupabase(
     },
   });
 }
-
 async function handleAction(request: Request, env: Env, action: TeamAction) {
   const origin = env.ALLOWED_ORIGIN;
   const reqOrigin = request.headers.get("Origin") || undefined;
   const headers = corsHeaders(origin, reqOrigin);
-
   if (request.method === "OPTIONS") {
     return new Response(null, { status: 204, headers });
   }
-
   if (request.method !== "POST") {
     return new Response("Method Not Allowed", { status: 405, headers });
   }
-
   const authHeader = request.headers.get("Authorization");
   if (!authHeader) {
     return new Response("Unauthorized", { status: 401, headers });
   }
-
   const clientIp =
     request.headers.get("CF-Connecting-IP") ||
     request.headers.get("x-forwarded-for") ||
@@ -127,14 +113,12 @@ async function handleAction(request: Request, env: Env, action: TeamAction) {
   if (!allowed) {
     return new Response("Rate limit exceeded", { status: 429, headers });
   }
-
   let body: Record<string, unknown> = {};
   try {
     body = (await request.json()) as Record<string, unknown>;
   } catch {
     // keep empty
   }
-
   // Try proxy to Supabase Function first
   let resp: Response;
   try {
@@ -144,13 +128,12 @@ async function handleAction(request: Request, env: Env, action: TeamAction) {
       Object.entries(headers).forEach(([k, v]) => outHeaders.set(k, v));
       return new Response(await resp.text(), { status: resp.status, headers: outHeaders });
     }
-  } catch (error) {
+  } catch {
     if (action !== "team-leave") {
       return new Response("Internal Server Error", { status: 500, headers });
     }
     // fall through for leave fallback
   }
-
   // Fallback path for team-leave: perform the operation directly with service role to avoid edge-function reachability issues
   if (action === "team-leave") {
     const { teamId } = body as { teamId?: string };
@@ -165,7 +148,6 @@ async function handleAction(request: Request, env: Env, action: TeamAction) {
       if (error instanceof Response) return error;
       return new Response("Unauthorized", { status: 401, headers });
     }
-
     const api = (path: string, init?: RequestInit) =>
       fetch(`${env.SUPABASE_URL}/rest/v1/${path}`, {
         ...init,
@@ -176,7 +158,6 @@ async function handleAction(request: Request, env: Env, action: TeamAction) {
           ...(init?.headers as Record<string, string> | undefined),
         },
       });
-
     // Fetch membership
     const membershipRes = await api(
       `team_memberships?team_id=eq.${teamId}&user_id=eq.${userId}&select=role,user_id&limit=1`
@@ -189,7 +170,6 @@ async function handleAction(request: Request, env: Env, action: TeamAction) {
     if (!membership) {
       return jsonResponse({ error: "You are not a member of this team" }, 404, origin, reqOrigin);
     }
-
     // If owner, ensure no other members then delete team
     if (membership.role === "owner") {
       const othersRes = await api(
@@ -251,7 +231,6 @@ async function handleAction(request: Request, env: Env, action: TeamAction) {
         headers: { Prefer: "resolution=merge-duplicates" },
       });
     }
-
     // Log event (best-effort)
     await api(`team_events`, {
       method: "POST",
@@ -263,13 +242,10 @@ async function handleAction(request: Request, env: Env, action: TeamAction) {
         created_at: new Date().toISOString(),
       }),
     });
-
     return jsonResponse({ success: true }, 200, origin, reqOrigin);
   }
-
   return new Response("Internal Server Error", { status: 500, headers });
 }
-
 async function fetchUser(env: Env, authHeader: string) {
   const url = `${env.SUPABASE_URL}/auth/v1/user`;
   const res = await fetch(url, {
@@ -283,37 +259,30 @@ async function fetchUser(env: Env, authHeader: string) {
   }
   return (await res.json()) as { id: string };
 }
-
 async function handleTokenAction(request: Request, env: Env, action: TokenAction) {
   const origin = env.ALLOWED_ORIGIN;
   const reqOrigin = request.headers.get("Origin") || undefined;
   const headers = corsHeaders(origin, reqOrigin);
-
   if (request.method === "OPTIONS") {
     return new Response(null, { status: 204, headers });
   }
-
   if (request.method !== "POST") {
     return new Response("Method Not Allowed", { status: 405, headers });
   }
-
   const authHeader = request.headers.get("Authorization");
   if (!authHeader) {
     return new Response("Unauthorized", { status: 401, headers });
   }
-
   const clientIp =
     request.headers.get("CF-Connecting-IP") ||
     request.headers.get("x-forwarded-for") ||
     "unknown";
-
   let body: Record<string, unknown> = {};
   try {
     body = (await request.json()) as Record<string, unknown>;
   } catch {
     // keep empty
   }
-
   let userId = "";
   try {
     const user = await fetchUser(env, authHeader);
@@ -322,14 +291,12 @@ async function handleTokenAction(request: Request, env: Env, action: TokenAction
     if (error instanceof Response) return error;
     return new Response("Unauthorized", { status: 401, headers });
   }
-
   const rlKey = `${action}:${clientIp}:${userId}`;
   const { limit = 20, windowSec = 3600 } = RATE_LIMITS[action];
   const allowed = await rateLimit(env, rlKey, limit, windowSec);
   if (!allowed) {
     return new Response("Rate limit exceeded", { status: 429, headers });
   }
-
   if (action === "token-revoke") {
     const tokenId = body.tokenId as string;
     if (!tokenId) return jsonResponse({ error: "tokenId required" }, 400, origin, reqOrigin);
@@ -347,30 +314,25 @@ async function handleTokenAction(request: Request, env: Env, action: TokenAction
     }
     return jsonResponse({ success: true }, 200, origin, reqOrigin);
   }
-
   if (action === "token-create") {
     // Accept either client-provided token_hash/token_value or generate server-side
     let tokenValue = (body.tokenValue as string) || "";
     const permissions = (body.permissions as string[]) || [];
     const gameMode = (body.gameMode as string) || "";
     const note = (body.note as string | null) || null;
-
     if (!gameMode || permissions.length === 0) {
       return jsonResponse({ error: "gameMode and permissions are required" }, 400, origin, reqOrigin);
     }
-
     if (!tokenValue) {
       // generate a token if the client did not supply one
       const bytes = crypto.getRandomValues(new Uint8Array(32));
       tokenValue = `tt_${Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("")}`;
     }
-
     const encoder = new TextEncoder();
     const hashBuffer = await crypto.subtle.digest("SHA-256", encoder.encode(tokenValue));
     const tokenHash = Array.from(new Uint8Array(hashBuffer))
       .map((b) => b.toString(16).padStart(2, "0"))
       .join("");
-
     const insertBody = {
       user_id: userId,
       token_hash: tokenHash,
@@ -379,7 +341,6 @@ async function handleTokenAction(request: Request, env: Env, action: TokenAction
       game_mode: gameMode,
       note,
     };
-
     const resp = await fetch(`${env.SUPABASE_URL}/rest/v1/api_tokens`, {
       method: "POST",
       headers: {
@@ -390,7 +351,6 @@ async function handleTokenAction(request: Request, env: Env, action: TokenAction
       },
       body: JSON.stringify(insertBody),
     });
-
     let text = await resp.text();
     if (!resp.ok) {
       // If the column does not exist (old DB), retry without token_value
@@ -433,17 +393,14 @@ async function handleTokenAction(request: Request, env: Env, action: TokenAction
     }
     return jsonResponse({ success: true, tokenId: created?.token_id, tokenValue }, 200, origin, reqOrigin);
   }
-
   return new Response("Not Implemented", { status: 501, headers });
 }
-
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
     // Normalize path: collapse duplicate slashes, strip trailing slash (except root)
     const normalized = "/" + url.pathname.split("/").filter(Boolean).join("/");
     const path = normalized === "//" || normalized === "/" ? "/" : normalized;
-
     if (path === "/health") {
       return new Response("ok", {
         status: 200,

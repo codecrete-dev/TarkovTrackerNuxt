@@ -1,6 +1,5 @@
-import { beforeAll, afterEach } from 'vitest';
 import { cleanup } from '@vue/test-utils';
-
+import { beforeAll, afterEach } from 'vitest';
 // Cleanup after each test
 afterEach(() => {
   try {
@@ -10,7 +9,6 @@ afterEach(() => {
     // when using Nuxt test environment
   }
 });
-
 // Global setup for Nuxt testing
 beforeAll(() => {
   // Mock console methods that might be noisy in tests

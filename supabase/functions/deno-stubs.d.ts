@@ -5,7 +5,7 @@ declare const Deno: {
 }
 
 declare module "@supabase/supabase-js" {
-  export type SupabaseClient = any
+  export type SupabaseClient = unknown
   export function createClient(
     url: string,
     key: string
@@ -27,7 +27,7 @@ declare module "https://esm.sh/@supabase/supabase-js@2" {
   export * from "@supabase/supabase-js"
 }
 declare module "shared/auth" {
-  export function authenticateUser(req: Request): Promise<any>
+  export function authenticateUser(req: Request): Promise<{ user: { id: string }; supabase: unknown } | { error: string; status: number }>
   export function handleCorsPreflight(req: Request): Response | null
   export function validateMethod(req: Request, allowed: string[]): Response | null
   export function createErrorResponse(error: string | Error, status?: number, req?: Request): Response

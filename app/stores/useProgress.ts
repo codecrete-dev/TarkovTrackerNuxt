@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia';
 import { computed } from 'vue';
 import { GAME_EDITIONS, GAME_MODES, SPECIAL_STATIONS } from '@/utils/constants';
-import { useTeammateStores } from './useTeamStore';
+import { logger } from '@/utils/logger';
+import { useTeammateStores, useTeamStore } from './useTeamStore';
 import type { Store } from 'pinia';
 import type { UserProgressData, UserState } from '~/stores/progressState';
 import type { Task } from '~/types/tarkov';
@@ -42,6 +43,7 @@ export const useProgressStore = defineStore('progress', () => {
   const preferencesStore = usePreferencesStore();
   const metadataStore = useMetadataStore();
   const { teammateStores } = useTeammateStores();
+  const teamStore = useTeamStore();
   // Get the tarkov store to source "self" data directly from it
   const tarkovStore = useTarkovStore();
   const teamStores = computed(() => {
@@ -53,15 +55,23 @@ export const useProgressStore = defineStore('progress', () => {
         stores[teammate] = teammateStores.value[teammate];
       }
     }
+    logger.debug('[ProgressStore] All team stores:', Object.keys(stores));
     return stores;
   });
   const visibleTeamStores = computed(() => {
     const visibleStores: TeamStoresMap = {};
     Object.entries(teamStores.value).forEach(([teamId, store]) => {
-      if (!preferencesStore.teamIsHidden(teamId)) {
+      const isHidden = preferencesStore.teamIsHidden(teamId);
+      if (!isHidden) {
         visibleStores[teamId] = store;
       }
+      logger.debug('[ProgressStore] Team visibility check:', {
+        teamId,
+        isHidden,
+        taskTeamHideAll: preferencesStore.taskTeamAllHidden,
+      });
     });
+    logger.debug('[ProgressStore] Visible team stores:', Object.keys(visibleStores));
     return visibleStores;
   });
   const tasksCompletions = computed(() => {
@@ -314,13 +324,27 @@ export const useProgressStore = defineStore('progress', () => {
   };
   const getDisplayName = (teamId: string): string => {
     const storeKey = getTeamIndex(teamId);
-    const store = teamStores.value[storeKey];
-    const currentData = getGameModeData(store);
-    const displayNameFromStore = currentData?.displayName;
-    if (!displayNameFromStore) {
-      return teamId.substring(0, 6);
+    // If it's the current user, get from tarkov store
+    if (storeKey === 'self') {
+      const store = teamStores.value[storeKey];
+      const currentData = getGameModeData(store);
+      return currentData?.displayName || 'You';
     }
-    return displayNameFromStore;
+    // For teammates, try to get from memberProfiles first (server-side source of truth)
+    const profile = teamStore.memberProfiles?.[teamId];
+    if (profile?.displayName) {
+      return profile.displayName;
+    }
+    // Fallback to store data if available
+    const store = teamStores.value[storeKey];
+    if (store) {
+      const currentData = getGameModeData(store);
+      if (currentData?.displayName) {
+        return currentData.displayName;
+      }
+    }
+    // Final fallback
+    return teamId.substring(0, 6);
   };
   const getLevel = (teamId: string): number => {
     const storeKey = getTeamIndex(teamId);

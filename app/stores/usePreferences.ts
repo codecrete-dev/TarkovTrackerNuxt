@@ -136,7 +136,15 @@ export const usePreferencesStore: PreferencesStoreDefinition = defineStore('pref
         if (teamId === 'self') {
           return state.teamHide?.[teamId] || false;
         }
-        return state.taskTeamHideAll || state.teamHide?.[teamId] || false;
+        const isHidden = state.taskTeamHideAll || state.teamHide?.[teamId] || false;
+        if (isHidden) {
+          logger.debug('[PreferencesStore] Teammate is hidden:', {
+            teamId,
+            taskTeamHideAll: state.taskTeamHideAll,
+            individuallyHidden: state.teamHide?.[teamId],
+          });
+        }
+        return isHidden;
       };
     },
     taskTeamAllHidden: (state) => {

@@ -6,7 +6,7 @@
         <div class="min-w-0 flex-1">
           <div class="flex flex-wrap items-center gap-2">
             <h3 class="truncate text-xl font-bold sm:text-2xl">
-              {{ progressStore.getDisplayName(props.teammember) }}
+              {{ displayName }}
             </h3>
             <UBadge v-if="isOwner" color="primary" variant="solid" size="sm">
               {{ $t('page.team.card.manageteam.membercard.owner') }}
@@ -29,7 +29,7 @@
               {{ $t('navigation_drawer.level') }}
             </div>
             <div class="mt-1 text-3xl leading-none font-bold sm:text-4xl">
-              {{ progressStore.getLevel(props.teammember) }}
+              {{ level }}
             </div>
           </div>
         </div>
@@ -129,13 +129,26 @@ import { useToast } from '#imports';
   const tasks = computed(() => metadataStore.tasks);
   const playerLevels = computed(() => metadataStore.playerLevels);
   const { t } = useI18n({ useScope: 'global' });
+  const displayName = computed(() => {
+    const fromProfile = teamStore.memberProfiles?.[props.teammember]?.displayName;
+    const fromProgress = progressStore.getDisplayName(props.teammember);
+    return fromProfile || fromProgress || props.teammember;
+  });
+  const level = computed(() => {
+    const fromProfile = teamStore.memberProfiles?.[props.teammember]?.level;
+    const fromProgress = progressStore.getLevel(props.teammember);
+    return fromProfile ?? fromProgress;
+  });
   const completedTaskCount = computed(() => {
+    const profileCount = teamStore.memberProfiles?.[props.teammember]?.tasksCompleted;
+    if (profileCount != null) return profileCount;
     return tasks.value.filter(
       (task) => progressStore.tasksCompletions?.[task.id]?.[teamStoreId.value] == true
     ).length;
   });
   const groupIcon = computed(() => {
-    const level = progressStore.getLevel(props.teammember);
+    const level =
+      teamStore.memberProfiles?.[props.teammember]?.level ?? progressStore.getLevel(props.teammember);
     const entry = playerLevels.value.find((pl) => pl.level === level);
     return entry?.levelBadgeImageLink ?? '';
   });

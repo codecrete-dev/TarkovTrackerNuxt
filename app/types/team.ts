@@ -7,6 +7,7 @@ export interface TeamData {
   maxMembers: number;
   ownerId: string;
   createdAt: string;
+  joinCode?: string;
 }
 export interface CreateTeamResponse {
   success: boolean;

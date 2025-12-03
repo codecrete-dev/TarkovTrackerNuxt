@@ -174,7 +174,8 @@ serve(async (req) => {
         name: team.name,
         maxMembers: team.max_members,
         ownerId: team.owner_id,
-        createdAt: team.created_at
+        createdAt: team.created_at,
+        joinCode: team.join_code
       }
     }, 201, req)
 

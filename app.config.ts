@@ -6,18 +6,15 @@ export default defineAppConfig({
       primary: 'primary', // brand tan
       secondary: 'secondary', // brand dark
       neutral: 'surface', // dark grays for neutral UI elements
-
       // Game mode colors - map to in-game color palettes
       pvp: 'pvp', // in-game PvP tan (#DBD5C1)
       pve: 'pve', // in-game PvE blue (#73ADC3)
-
       // Semantic colors - map to Tailwind's default palettes or custom ones
       info: 'accent',
       success: 'success',
       warning: 'warning',
       error: 'error',
     },
-
     header: {
       slots: {
         root: 'fixed top-0 inset-x-0 z-50 backdrop-blur-sm bg-gradient-to-tr from-surface-800/95 to-surface-950/95 border-b border-surface-700/70 h-[var(--ui-header-height)]',
@@ -27,7 +24,6 @@ export default defineAppConfig({
         right: 'ml-auto flex items-center gap-2',
       },
     },
-
     // Popover configuration to ensure proper display above other content
     popover: {
       popper: {
@@ -37,7 +33,6 @@ export default defineAppConfig({
         content: 'z-[9999]',
       },
     },
-
     // USelect specific configuration
     select: {
       popper: {
@@ -52,7 +47,6 @@ export default defineAppConfig({
         options: 'z-[9999] max-h-60 overflow-auto',
       },
     },
-
     // SelectMenu configuration
     selectMenu: {
       popper: {
@@ -71,7 +65,6 @@ export default defineAppConfig({
         empty: 'px-3 py-2 text-sm text-surface-500 text-center',
       },
     },
-
     // Modal configuration with proper z-index stacking
     modal: {
       slots: {
@@ -83,7 +76,6 @@ export default defineAppConfig({
         wrapper: 'relative w-full max-w-md',
       },
     },
-
     // Button configuration for custom colors
     button: {
       variants: {

@@ -63,6 +63,51 @@ function openDatabase(): Promise<IDBDatabase> {
   });
 }
 /**
+ * Generic database transaction executor with common error handling and cleanup
+ */
+function executeDatabaseTransaction<T>(
+  mode: IDBTransactionMode,
+  operation: (store: IDBObjectStore) => IDBRequest
+): Promise<T> {
+  return openDatabase().then((db) => {
+    return new Promise<T>((resolve, reject) => {
+      let settled = false;
+      const transaction = db.transaction(CACHE_CONFIG.STORE_NAME, mode);
+      const store = transaction.objectStore(CACHE_CONFIG.STORE_NAME);
+      const request = operation(store);
+      const closeDb = () => {
+        try {
+          db.close();
+        } catch {
+          // ignore close errors; nothing else to do here
+        }
+      };
+      const setError = (error: unknown) => {
+        if (!settled) {
+          settled = true;
+          logger.error('[TarkovCache] Transaction error:', error);
+          reject(error);
+        }
+      };
+      request.onerror = () => setError(request.error);
+      transaction.onabort = () => {
+        if (!settled) {
+          settled = true;
+          reject(new Error('Transaction aborted'));
+        }
+        closeDb();
+      };
+      transaction.oncomplete = closeDb;
+      request.onsuccess = () => {
+        if (!settled) {
+          settled = true;
+          resolve(request.result as T);
+        }
+      };
+    });
+  });
+}
+/**
  * Generates a cache key for Tarkov data
  */
 export function generateCacheKey(type: CacheType, gameMode: string, lang: string = 'en'): string {
@@ -78,64 +123,27 @@ export async function getCachedData<T>(
   lang: string = 'en'
 ): Promise<T | null> {
   try {
-    const db = await openDatabase();
     const cacheKey = generateCacheKey(type, gameMode, lang);
-    return new Promise((resolve, _reject) => {
-      let settled = false;
-      const transaction = db.transaction(CACHE_CONFIG.STORE_NAME, 'readonly');
-      const store = transaction.objectStore(CACHE_CONFIG.STORE_NAME);
-      const request = store.get(cacheKey);
-      const closeDb = () => {
-        try {
-          db.close();
-        } catch {
-          // ignore close errors; nothing else to do here
-        }
-      };
-      request.onerror = () => {
-        if (!settled) {
-          settled = true;
-          logger.error('[TarkovCache] Failed to get cached data:', request.error);
-          resolve(null);
-        }
-      };
-      request.onsuccess = () => {
-        if (settled) return;
-        const cachedResult = request.result as CachedData<T> | undefined;
-        if (!cachedResult) {
-          logger.debug(`[TarkovCache] Cache MISS: ${cacheKey}`);
-          settled = true;
-          resolve(null);
-          return;
-        }
-        // Check if cache is expired
-        const now = Date.now();
-        const age = now - cachedResult.timestamp;
-        if (age > cachedResult.ttl) {
-          logger.debug(
-            `[TarkovCache] Cache EXPIRED: ${cacheKey} (age: ${Math.round(age / 1000 / 60)}min)`
-          );
-          // Don't delete here, let the write operation overwrite it
-          settled = true;
-          resolve(null);
-          return;
-        }
+    return executeDatabaseTransaction<CachedData<T> | undefined>('readonly', (store) => 
+      store.get(cacheKey)
+    ).then((cachedResult) => {
+      if (!cachedResult) {
+        logger.debug(`[TarkovCache] Cache MISS: ${cacheKey}`);
+        return null;
+      }
+      // Check if cache is expired
+      const now = Date.now();
+      const age = now - cachedResult.timestamp;
+      if (age > cachedResult.ttl) {
         logger.debug(
-          `[TarkovCache] Cache HIT: ${cacheKey} (age: ${Math.round(age / 1000 / 60)}min)`
+          `[TarkovCache] Cache EXPIRED: ${cacheKey} (age: ${Math.round(age / 1000 / 60)}min)`
         );
-        settled = true;
-        resolve(cachedResult.data);
-      };
-      transaction.oncomplete = () => {
-        closeDb();
-      };
-      transaction.onabort = () => {
-        if (!settled) {
-          settled = true;
-          resolve(null);
-        }
-        closeDb();
-      };
+        return null;
+      }
+      logger.debug(
+        `[TarkovCache] Cache HIT: ${cacheKey} (age: ${Math.round(age / 1000 / 60)}min)`
+      );
+      return cachedResult.data;
     });
   } catch (error) {
     logger.error('[TarkovCache] Error getting cached data:', error);
@@ -153,7 +161,6 @@ export async function setCachedData<T>(
   ttl: number = CACHE_CONFIG.DEFAULT_TTL
 ): Promise<void> {
   try {
-    const db = await openDatabase();
     const cacheKey = generateCacheKey(type, gameMode, lang);
     const cacheEntry: CachedData<T> = {
       data,
@@ -164,43 +171,10 @@ export async function setCachedData<T>(
       lang,
       version: CACHE_CONFIG.DB_VERSION,
     };
-    return new Promise((resolve, reject) => {
-      let settled = false;
-      const transaction = db.transaction(CACHE_CONFIG.STORE_NAME, 'readwrite');
-      const store = transaction.objectStore(CACHE_CONFIG.STORE_NAME);
-      const request = store.put(cacheEntry);
-      const closeDb = () => {
-        try {
-          db.close();
-        } catch {
-          // ignore close errors; nothing else to do here
-        }
-      };
-      request.onerror = () => {
-        if (!settled) {
-          settled = true;
-          logger.error('[TarkovCache] Failed to store data:', request.error);
-          reject(request.error);
-        }
-      };
-      request.onsuccess = () => {
-        if (!settled) {
-          settled = true;
-          logger.debug(`[TarkovCache] Cache STORED: ${cacheKey}`);
-          resolve();
-        }
-      };
-      transaction.oncomplete = () => {
-        closeDb();
-      };
-      transaction.onabort = () => {
-        if (!settled) {
-          settled = true;
-          reject(new Error('Transaction aborted'));
-        }
-        closeDb();
-      };
-    });
+    await executeDatabaseTransaction<undefined>('readwrite', (store) => 
+      store.put(cacheEntry)
+    );
+    logger.debug(`[TarkovCache] Cache STORED: ${cacheKey}`);
   } catch (error) {
     logger.error('[TarkovCache] Error storing cached data:', error);
     throw error;
@@ -215,45 +189,11 @@ export async function clearCacheEntry(
   lang: string = 'en'
 ): Promise<void> {
   try {
-    const db = await openDatabase();
     const cacheKey = generateCacheKey(type, gameMode, lang);
-    return new Promise((resolve, reject) => {
-      let settled = false;
-      const transaction = db.transaction(CACHE_CONFIG.STORE_NAME, 'readwrite');
-      const store = transaction.objectStore(CACHE_CONFIG.STORE_NAME);
-      const request = store.delete(cacheKey);
-      const closeDb = () => {
-        try {
-          db.close();
-        } catch {
-          // ignore close errors; nothing else to do here
-        }
-      };
-      request.onerror = () => {
-        if (!settled) {
-          settled = true;
-          logger.error('[TarkovCache] Failed to delete cache entry:', request.error);
-          reject(request.error);
-        }
-      };
-      request.onsuccess = () => {
-        if (!settled) {
-          settled = true;
-          logger.debug(`[TarkovCache] Cache DELETED: ${cacheKey}`);
-          resolve();
-        }
-      };
-      transaction.oncomplete = () => {
-        closeDb();
-      };
-      transaction.onabort = () => {
-        if (!settled) {
-          settled = true;
-          reject(new Error('Transaction aborted'));
-        }
-        closeDb();
-      };
-    });
+    await executeDatabaseTransaction<undefined>('readwrite', (store) => 
+      store.delete(cacheKey)
+    );
+    logger.debug(`[TarkovCache] Cache DELETED: ${cacheKey}`);
   } catch (error) {
     logger.error('[TarkovCache] Error deleting cache entry:', error);
     throw error;

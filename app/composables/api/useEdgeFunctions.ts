@@ -36,15 +36,23 @@ export const useEdgeFunctions = () => {
       throw new Error('Gateway URL not configured');
     }
     const token = await getAuthToken();
-    const response = await $fetch<T>(`${gatewayUrl}/team/${action}`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body,
-    });
-    return response;
+    try {
+      const response = await $fetch<T>(`${gatewayUrl}/team/${action}`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body,
+      });
+      return response as T;
+    } catch (error: unknown) {
+      // Log the full error response for debugging
+      if (error && typeof error === 'object' && 'data' in error) {
+        logger.error('[EdgeFunctions] Gateway error response:', error.data);
+      }
+      throw error;
+    }
   };
   const callTokenGateway = async <T>(action: 'revoke' | 'create', body: Record<string, unknown>) => {
     if (!tokenGatewayUrl) {
@@ -59,7 +67,7 @@ export const useEdgeFunctions = () => {
       },
       body,
     });
-    return response;
+    return response as T;
   };
   const callSupabaseFunction = async <T>(
     fnName: string,
@@ -75,16 +83,46 @@ export const useEdgeFunctions = () => {
     }
     return data as T;
   };
+  const getTeamMembers = async (
+    teamId: string
+  ): Promise<{
+    members: string[];
+    profiles?: Record<string, { displayName: string | null; level: number | null; tasksCompleted: number | null }>;
+  }> => {
+    // Call Nuxt server route which uses service role and validates membership
+    const token = await getAuthToken();
+    const result = await $fetch<{
+      members: string[];
+      profiles?: Record<string, { displayName: string | null; level: number | null; tasksCompleted: number | null }>;
+    }>(
+      `/api/team/members`,
+      {
+        method: 'GET',
+        query: { teamId },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return result;
+  };
   const preferGateway = async <T>(action: string, body: Record<string, unknown>): Promise<T> => {
+    logger.debug(`[EdgeFunctions] preferGateway called with action: ${action}, body:`, body);
     if (gatewayUrl) {
       try {
-        return await callGateway<T>(action, body);
+        logger.debug(`[EdgeFunctions] Attempting gateway call to: ${gatewayUrl}/team/${action}`);
+        const result = await callGateway<T>(action, body);
+        logger.debug('[EdgeFunctions] Gateway call succeeded:', result);
+        return result;
       } catch (error) {
         logger.warn('[EdgeFunctions] Gateway failed, falling back to Supabase:', error);
       }
     }
     const fnName = `team-${action}`;
-    return await callSupabaseFunction<T>(fnName, body);
+    logger.debug(`[EdgeFunctions] Calling Supabase function: ${fnName}`);
+    const result = await callSupabaseFunction<T>(fnName, body);
+    logger.debug('[EdgeFunctions] Supabase function result:', result);
+    return result;
   };
   /**
    * Update user progress for a specific game mode
@@ -195,6 +233,7 @@ export const useEdgeFunctions = () => {
     joinTeam,
     leaveTeam,
     kickTeamMember,
+    getTeamMembers,
     // API token management
     createToken,
     revokeToken,

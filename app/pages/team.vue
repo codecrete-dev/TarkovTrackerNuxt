@@ -11,19 +11,34 @@
           <TeamOptions />
         </div>
         <!-- Team Members Section -->
-        <TeamMembers v-if="systemStore.$state.team" />
+        <TeamMembers v-if="userHasTeam" />
       </div>
     </div>
   </div>
 </template>
-<script setup>
-  import { defineAsyncComponent } from 'vue';
+<script setup lang="ts">
+  import { computed, defineAsyncComponent, watch } from 'vue';
   import { useRoute } from 'vue-router';
   import { useSystemStoreWithSupabase } from '@/stores/useSystemStore';
-  const TeamMembers = defineAsyncComponent(() => import('@/features/team/TeamMembers'));
-  const TeamOptions = defineAsyncComponent(() => import('@/features/team/TeamOptions'));
-  const MyTeam = defineAsyncComponent(() => import('@/features/team/MyTeam'));
-  const TeamInvite = defineAsyncComponent(() => import('@/features/team/TeamInvite'));
+  import { logger } from '@/utils/logger';
+  const TeamMembers = defineAsyncComponent(() => import('@/features/team/TeamMembers.vue'));
+  const TeamOptions = defineAsyncComponent(() => import('@/features/team/TeamOptions.vue'));
+  const MyTeam = defineAsyncComponent(() => import('@/features/team/MyTeam.vue'));
+  const TeamInvite = defineAsyncComponent(() => import('@/features/team/TeamInvite.vue'));
   const { systemStore } = useSystemStoreWithSupabase();
   const route = useRoute();
+  logger.debug('[TeamPage] Initial systemStore state:', systemStore.$state);
+  logger.debug('[TeamPage] systemStore.userTeam:', systemStore.userTeam);
+  const userHasTeam = computed(() => {
+    const state = systemStore.$state as unknown as { team?: string | null; team_id?: string | null };
+    return !!(state.team ?? state.team_id);
+  });
+  watch(
+    () => userHasTeam.value,
+    (hasTeam, hadTeam) => {
+      logger.debug('[TeamPage] userHasTeam changed:', { hadTeam, hasTeam });
+      const state = systemStore.$state as unknown as { team?: string | null; team_id?: string | null };
+      logger.debug('[TeamPage] Current team ID:', state.team ?? state.team_id);
+    }
+  );
 </script>

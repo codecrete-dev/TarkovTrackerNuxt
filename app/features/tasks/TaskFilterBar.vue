@@ -97,8 +97,9 @@
       </div>
       <!-- Section 2: Player/Team view buttons - grows to fill space -->
       <div
-        class="flex flex-1 items-center justify-center gap-2 rounded-lg bg-[hsl(240,5%,5%)] px-4 py-3"
+        class="flex flex-1 items-center justify-center gap-2 rounded-lg bg-[hsl(240,5%,5%)] px-4 py-3 overflow-x-auto"
       >
+        <!-- Self button with display name -->
         <UButton
           :variant="'ghost'"
           :color="'neutral'"
@@ -109,15 +110,39 @@
           }"
           @click="
             onUserViewSelect({
-              label: t('page.tasks.userviews.yourself'),
+              label: currentUserDisplayName,
               value: 'self',
             })
           "
         >
-          <UIcon name="i-mdi-account-outline" class="mr-1 h-4 w-4" />
-          {{ t('page.tasks.userviews.yourself').toUpperCase() }}
+          <UIcon name="i-mdi-account-circle" class="mr-1 h-4 w-4" />
+          {{ currentUserDisplayName.toUpperCase() }}
+          <UBadge size="xs" color="primary" variant="solid" class="ml-2">YOU</UBadge>
         </UButton>
+        <!-- Individual teammate buttons -->
         <UButton
+          v-for="teamId in visibleTeammates"
+          :key="teamId"
+          :variant="'ghost'"
+          :color="'neutral'"
+          size="sm"
+          :class="{
+            'border-primary-500 rounded-none border-b-2':
+              preferencesStore.getTaskUserView === teamId,
+          }"
+          @click="
+            onUserViewSelect({
+              label: getTeammateDisplayName(teamId),
+              value: teamId,
+            })
+          "
+        >
+          <UIcon name="i-mdi-account" class="mr-1 h-4 w-4" />
+          {{ getTeammateDisplayName(teamId).toUpperCase() }}
+        </UButton>
+        <!-- All button (only show if there are teammates) -->
+        <UButton
+          v-if="visibleTeammates.length > 0"
           :variant="'ghost'"
           :color="'neutral'"
           size="sm"
@@ -203,12 +228,28 @@ import { useI18n } from 'vue-i18n';
 import { useTaskFiltering } from '@/composables/useTaskFiltering';
 import { useMetadataStore } from '@/stores/useMetadata';
 import { usePreferencesStore } from '@/stores/usePreferences';
+import { useProgressStore } from '@/stores/useProgress';
+import { useTeamStore } from '@/stores/useTeamStore';
   const { t } = useI18n({ useScope: 'global' });
   const preferencesStore = usePreferencesStore();
   const metadataStore = useMetadataStore();
+  const progressStore = useProgressStore();
+  const teamStore = useTeamStore();
   const { calculateStatusCounts, calculateTraderCounts } = useTaskFiltering();
   const maps = computed(() => metadataStore.maps);
   const traders = computed(() => metadataStore.sortedTraders);
+  // Get current user's display name
+  const currentUserDisplayName = computed(() => {
+    return progressStore.getDisplayName('self');
+  });
+  // Get visible teammates (excluding self)
+  const visibleTeammates = computed(() => {
+    return teamStore.teammates || [];
+  });
+  // Helper to get teammate display name
+  const getTeammateDisplayName = (teamId: string): string => {
+    return progressStore.getDisplayName(teamId);
+  };
   // Calculate task counts for badges
   const statusCounts = computed(() => {
     const userView = preferencesStore.getTaskUserView;

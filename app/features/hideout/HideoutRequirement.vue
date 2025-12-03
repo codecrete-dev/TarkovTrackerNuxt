@@ -124,7 +124,6 @@
   }
   const props = defineProps<Props>();
   const tarkovStore = useTarkovStore();
-
   // Check if item requires Found in Raid status
   const isFoundInRaid = computed(() => {
     if (!props.requirement.attributes) return false;

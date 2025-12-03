@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite';
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const appDir = resolve(__dirname, 'app');
 export default defineNuxtConfig({
@@ -17,7 +17,6 @@ export default defineNuxtConfig({
   },
   devtools: {
     enabled: process.env.NODE_ENV === 'development',
-
     timeline: {
       enabled: true,
     },

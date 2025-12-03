@@ -119,7 +119,7 @@ import { useEdgeFunctions } from '@/composables/api/useEdgeFunctions';
 import { useSystemStoreWithSupabase } from '@/stores/useSystemStore';
 import { useTarkovStore } from '@/stores/useTarkov';
 import { useTeamStoreWithSupabase } from '@/stores/useTeamStore';
-import type { SystemState } from '@/types/tarkov';
+import type { SystemState, TeamState } from '@/types/tarkov';
 import type { CreateTeamResponse, LeaveTeamResponse } from '@/types/team';
 import { LIMITS } from '@/utils/constants';
 import { logger } from '@/utils/logger';
@@ -163,11 +163,29 @@ import { logger } from '@/utils/logger';
         Math.floor(Math.random() * 62)
       )
     ).join('');
-  const localUserTeam = computed(() => systemStore.$state?.team || null);
+  // Access team ID directly from store state for better reactivity
+  const localUserTeam = computed(() => {
+    const state = systemStore.$state as unknown as { team?: string | null; team_id?: string | null };
+    const teamId = state.team ?? state.team_id ?? null;
+    logger.debug('[MyTeam] Computing localUserTeam:', { team: state.team, team_id: state.team_id, result: teamId });
+    return teamId;
+  });
+  // Debug: Watch for changes to localUserTeam
+  watch(
+    () => localUserTeam.value,
+    (newTeam, oldTeam) => {
+      logger.debug('[MyTeam] localUserTeam changed:', { oldTeam, newTeam });
+      logger.debug('[MyTeam] Raw store state:', systemStore.$state);
+    },
+    { immediate: true }
+  );
   const isTeamOwner = computed(() => {
-    const state = teamStore.$state as { owner_id?: string; owner?: string };
-    const owner = state.owner_id ?? state.owner;
-    return owner === $supabase.user.id && systemStore.$state?.team != null;
+    const teamState = teamStore.$state as { owner_id?: string; owner?: string };
+    const owner = teamState.owner_id ?? teamState.owner;
+    // Access system store state directly
+    const systemState = systemStore.$state as unknown as { team?: string | null; team_id?: string | null };
+    const hasTeam = !!(systemState.team || systemState.team_id);
+    return owner === $supabase.user.id && hasTeam;
   });
   const loading = ref({ createTeam: false, leaveTeam: false });
   const validateAuth = () => {
@@ -204,7 +222,9 @@ import { logger } from '@/utils/logger';
         return await createTeam(teamName, password, maxMembers);
       }
       case 'leaveTeam': {
-        const teamId = payload.teamId || systemStore.$state.team;
+        // Access team ID directly from state instead of using getter
+        const state = systemStore.$state as unknown as { team?: string | null; team_id?: string | null };
+        const teamId = payload.teamId || state.team || state.team_id;
         if (!teamId) {
           throw new Error(t('page.team.card.myteam.no_team'));
         }
@@ -220,48 +240,88 @@ import { logger } from '@/utils/logger';
   const handleCreateTeam = async () => {
     loading.value.createTeam = true;
     try {
+      logger.debug('[MyTeam] Starting team creation process...');
       validateAuth();
-      // If backend thinks we're already in a team, sync local state and abort
-      if (!systemStore.$state.team) {
-        const { data: membership } = await $supabase.client
-          .from('team_memberships')
-          .select('team_id')
-          .eq('user_id', $supabase.user.id)
-          .maybeSingle();
-        if (membership?.team_id) {
-          systemStore.$patch({ team: membership.team_id });
-          showNotification(t('page.team.card.myteam.create_team_error_ui_update'), 'error');
-          loading.value.createTeam = false;
-          return;
-        }
+      logger.debug('[MyTeam] Auth validated, user ID:', $supabase.user.id);
+      // Diagnostic: Check user_system table for this user
+      logger.debug('[MyTeam] [DIAGNOSTIC] Checking user_system table...');
+      const { data: userSystemData, error: userSystemError } = await $supabase.client
+        .from('user_system')
+        .select('*')
+        .eq('user_id', $supabase.user.id)
+        .maybeSingle();
+      logger.debug('[MyTeam] [DIAGNOSTIC] user_system data:', userSystemData);
+      logger.debug('[MyTeam] [DIAGNOSTIC] user_system error:', userSystemError);
+      // ALWAYS check database for existing team membership before creating
+      // Don't rely solely on local state as it could be out of sync
+      logger.debug('[MyTeam] Checking for existing team membership...');
+      const { data: membership, error: membershipError } = await $supabase.client
+        .from('team_memberships')
+        .select('team_id')
+        .eq('user_id', $supabase.user.id)
+        .maybeSingle();
+      if (membershipError) {
+        logger.error('[MyTeam] Error checking membership:', membershipError);
+        throw membershipError;
       }
+      if (membership?.team_id) {
+        logger.warn('[MyTeam] User already in team:', membership.team_id);
+        // Sync local state with database truth (cover both keys for reactivity)
+        systemStore.$patch({ team: membership.team_id, team_id: membership.team_id } as Partial<SystemState>);
+        showNotification('You are already in a team. Leave your current team first.', 'error');
+        loading.value.createTeam = false;
+        return;
+      }
+      logger.debug('[MyTeam] No existing membership found, proceeding with creation');
+      logger.debug('[MyTeam] Calling team creation function...');
       const result = (await callTeamFunction('createTeam')) as CreateTeamResponse;
+      logger.debug('[MyTeam] Team creation response:', result);
       if (!result?.team) {
+        logger.error('[MyTeam] Invalid response structure - missing team object');
         throw new Error(t('page.team.card.myteam.create_team_error_ui_update'));
       }
+      logger.debug('[MyTeam] Team created successfully, ID:', result.team.id);
       // Manually update systemStore with the new team ID
-      systemStore.$patch({ team: result.team.id } as Partial<SystemState>);
+      logger.debug('[MyTeam] Patching system store with team ID:', result.team.id);
+      systemStore.$patch({ team: result.team.id, team_id: result.team.id } as Partial<SystemState>);
+      // Manually update teamStore with the new team data (including joinCode)
+      if (result.team.joinCode) {
+        logger.debug('[MyTeam] Patching team store with join code:', result.team.joinCode);
+        teamStore.$patch({
+          joinCode: result.team.joinCode,
+          owner: result.team.ownerId,
+          members: [result.team.ownerId]
+        } as Partial<TeamState>);
+      }
       // Wait a brief moment for database to settle, then verify
+      logger.debug('[MyTeam] Waiting 500ms for database to settle...');
       await new Promise(resolve => setTimeout(resolve, 500));
       // Verify the team was created by checking the database directly
-      const { data: verification } = await $supabase.client
+      logger.debug('[MyTeam] Verifying team creation in database...');
+      const { data: verification, error: verificationError } = await $supabase.client
         .from('team_memberships')
         .select('team_id')
         .eq('user_id', $supabase.user.id)
         .eq('team_id', result.team.id)
         .maybeSingle();
+      if (verificationError) {
+        logger.error('[MyTeam] Verification query error:', verificationError);
+      }
+      logger.debug('[MyTeam] Verification result:', verification);
       if (!verification) {
+        logger.error('[MyTeam] Team membership not found in database after creation');
         throw new Error(t('page.team.card.myteam.create_team_error_ui_update'));
       }
+      // Team creation verified successful - Supabase listener will sync state
+      logger.debug('[MyTeam] Team creation verified successfully');
       await nextTick();
-      if (localUserTeam.value) {
-        if (isTeamOwner.value) {
-          tarkovStore.setDisplayName(generateRandomName());
-        }
-        showNotification(t('page.team.card.myteam.create_team_success'));
-      } else {
-        throw new Error(t('page.team.card.myteam.create_team_error_ui_update'));
+      // Generate random display name for team owner
+      if (result.team.ownerId === $supabase.user.id) {
+        logger.debug('[MyTeam] Setting random display name for team owner');
+        tarkovStore.setDisplayName(generateRandomName());
       }
+      logger.debug('[MyTeam] Team creation complete!');
+      showNotification(t('page.team.card.myteam.create_team_success'));
     } catch (error: unknown) {
       logger.error('[MyTeam] Error creating team:', error);
       const message =
@@ -283,12 +343,83 @@ import { logger } from '@/utils/logger';
     loading.value.leaveTeam = true;
     try {
       validateAuth();
+      // Diagnostic: Check team_memberships directly
+      const systemState = systemStore.$state as unknown as { team?: string | null; team_id?: string | null };
+      const currentTeamId = systemState.team ?? systemState.team_id;
+      logger.debug('[MyTeam] [DIAGNOSTIC] Current team from state:', currentTeamId);
+      const { data: membershipData, error: membershipError } = await $supabase.client
+        .from('team_memberships')
+        .select('*')
+        .eq('user_id', $supabase.user.id)
+        .eq('team_id', currentTeamId)
+        .maybeSingle();
+      logger.debug('[MyTeam] [DIAGNOSTIC] Current membership:', membershipData);
+      logger.debug('[MyTeam] [DIAGNOSTIC] Membership error:', membershipError);
+      // Handle broken state: user has team_id but no membership record
+      if (!membershipData && !membershipError) {
+        logger.warn('[MyTeam] [DIAGNOSTIC] Broken state detected: team_id exists but no membership record');
+        logger.debug('[MyTeam] [DIAGNOSTIC] Cleaning up broken state...');
+        // Clear the team_id from user_system
+        systemStore.$patch({ team: null, team_id: null } as Partial<SystemState>);
+        // Delete the team if it has no members
+        const { data: allMembers } = await $supabase.client
+          .from('team_memberships')
+          .select('user_id')
+          .eq('team_id', currentTeamId);
+        if (!allMembers || allMembers.length === 0) {
+          logger.debug('[MyTeam] [DIAGNOSTIC] Team has no members, deleting team record...');
+          const { error: deleteTeamError } = await $supabase.client
+            .from('teams')
+            .delete()
+            .eq('id', currentTeamId);
+          if (deleteTeamError) {
+            logger.error('[MyTeam] [DIAGNOSTIC] Failed to delete team:', deleteTeamError);
+          } else {
+            logger.debug('[MyTeam] [DIAGNOSTIC] Successfully deleted empty team');
+          }
+        }
+        showNotification('Your team data was in a broken state and has been cleaned up. Please create a new team.');
+        loading.value.leaveTeam = false;
+        return;
+      }
+      // Check if there are other members
+      const { data: otherMembers, error: otherMembersError } = await $supabase.client
+        .from('team_memberships')
+        .select('*')
+        .eq('team_id', currentTeamId)
+        .neq('user_id', $supabase.user.id);
+      logger.debug('[MyTeam] [DIAGNOSTIC] Other members:', otherMembers);
+      logger.debug('[MyTeam] [DIAGNOSTIC] Other members error:', otherMembersError);
+      logger.debug('[MyTeam] [DIAGNOSTIC] Other members count:', otherMembers?.length ?? 0);
+      // If there are ghost members, try to clean them up
+      if (otherMembers && otherMembers.length > 0) {
+        logger.warn('[MyTeam] [DIAGNOSTIC] Found ghost members, attempting to clean up...');
+        for (const ghostMember of otherMembers) {
+          logger.debug('[MyTeam] [DIAGNOSTIC] Deleting ghost member:', ghostMember);
+          const { error: deleteError } = await $supabase.client
+            .from('team_memberships')
+            .delete()
+            .eq('team_id', currentTeamId)
+            .eq('user_id', ghostMember.user_id);
+          if (deleteError) {
+            logger.error('[MyTeam] [DIAGNOSTIC] Failed to delete ghost member:', deleteError);
+          } else {
+            logger.debug('[MyTeam] [DIAGNOSTIC] Successfully deleted ghost member:', ghostMember.user_id);
+          }
+        }
+        // Wait a moment for database to update
+        await new Promise(resolve => setTimeout(resolve, 500));
+        logger.debug('[MyTeam] [DIAGNOSTIC] Ghost cleanup complete, retrying leave/disband...');
+      }
       const result = (await callTeamFunction('leaveTeam')) as LeaveTeamResponse;
       if (!result.success) {
         throw new Error(t('page.team.card.myteam.leave_team_error'));
       }
       // Manually update systemStore to clear team ID
-      systemStore.$patch({ team: undefined } as Partial<SystemState>);
+      // IMPORTANT: Clear both 'team' and 'team_id' to ensure reactivity updates
+      systemStore.$patch({ team: null, team_id: null } as Partial<SystemState>);
+      // Also reset team store
+      teamStore.$reset();
       // Wait a brief moment for database to settle
       await new Promise(resolve => setTimeout(resolve, 500));
       await nextTick();
@@ -325,9 +456,18 @@ import { logger } from '@/utils/logger';
     }
   };
   const teamUrl = computed(() => {
-    const { team: teamId } = systemStore.$state;
+    // Access state directly for reactivity
+    const systemState = systemStore.$state as unknown as { team?: string | null; team_id?: string | null };
+    const teamId = systemState.team ?? systemState.team_id;
     // Use getter to get invite code (supports legacy password and new joinCode)
     const code = teamStore.inviteCode;
+    // Debug logging
+    logger.debug('[MyTeam] teamUrl computed:', {
+      teamId,
+      code,
+      teamStoreState: teamStore.$state,
+      inviteCode: teamStore.inviteCode
+    });
     if (!teamId || !code) return '';
     // Use Nuxt-safe route composables instead of window.location
     // This works during SSR and client-side

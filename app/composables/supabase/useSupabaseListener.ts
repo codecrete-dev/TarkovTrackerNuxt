@@ -1,4 +1,4 @@
-import { isRef, onUnmounted, ref, unref, watch, type ComputedRef, type Ref } from 'vue';
+import { getCurrentInstance, isRef, onUnmounted, ref, unref, watch, type ComputedRef, type Ref } from 'vue';
 import { logger } from '@/utils/logger';
 import { clearStaleState, devLog, resetStore, safePatchStore } from '@/utils/storeHelpers';
 import type { RealtimeChannel, RealtimePostgresChangesPayload } from '@supabase/supabase-js';
@@ -128,9 +128,12 @@ export function useSupabaseListener({
     },
     { immediate: true }
   );
-  onUnmounted(() => {
-    cleanup();
-  });
+  // If used inside a component, clean up on unmount; otherwise caller must clean up manually.
+  if (getCurrentInstance()) {
+    onUnmounted(() => {
+      cleanup();
+    });
+  }
   return {
     isSubscribed,
     cleanup,
