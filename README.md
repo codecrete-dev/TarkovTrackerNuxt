@@ -90,4 +90,4 @@ For detailed development guidelines, architecture information, and migration pro
 
 ## License
 
-This project is licensed under the GNU v3 License.
+This project remains licensed under the GNU General Public License v3.0. See LICENSE.md for the full license text.
