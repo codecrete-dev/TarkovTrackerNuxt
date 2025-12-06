@@ -98,6 +98,8 @@
     hideoutNonFir: number;
     total: number;
   }
+  // Get user's faction for filtering task objectives
+  const userFaction = computed(() => progressStore.playerFaction['self'] ?? 'USEC');
   const allItems = computed(() => {
     const combined = [
       ...(neededItemTaskObjectives.value || []),
@@ -110,6 +112,11 @@
       let key: string;
       let itemId: string | undefined;
       if (need.needType === 'taskObjective') {
+        // Filter by faction: skip task objectives for tasks that don't match user's faction
+        const task = metadataStore.getTaskById(need.taskId);
+        if (task && task.factionName !== 'Any' && task.factionName !== userFaction.value) {
+          continue;
+        }
         // For tasks: get itemId from either item or markerItem (for mark objectives)
         itemId = need.item?.id || need.markerItem?.id;
         if (!itemId) {
