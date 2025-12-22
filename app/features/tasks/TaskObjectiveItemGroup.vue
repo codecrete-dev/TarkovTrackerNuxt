@@ -174,30 +174,43 @@
       consolidated.objectives.push(row);
     });
     // Second pass to aggregate values
+    // For find+give pairs, only count the "give" objectives since "find" is a passive check
+    const findTypes = new Set(['findItem', 'findQuestItem']);
+    const giveTypes = new Set(['giveItem', 'giveQuestItem']);
+
     return Array.from(itemMap.values()).map((consolidated) => {
-      let totalCurrent = 0;
-      let totalNeeded = 0;
       let allComplete = true;
       const firstRow = consolidated.objectives[0];
       if (!firstRow) return consolidated;
-      const firstNeeded = firstRow.meta.neededCount;
-      let allSameNeeded = true;
-      consolidated.objectives.forEach((row) => {
+
+      // Separate objectives by type
+      const findObjectives = consolidated.objectives.filter((row) =>
+        findTypes.has(row.objective.type ?? '')
+      );
+      const giveObjectives = consolidated.objectives.filter((row) =>
+        giveTypes.has(row.objective.type ?? '')
+      );
+
+      // Determine which objectives to count for the total
+      // If we have give objectives, use those (find is just a passive check)
+      // If we only have find objectives, use those
+      const objectivesToCount =
+        giveObjectives.length > 0 ? giveObjectives : findObjectives.length > 0 ? findObjectives : consolidated.objectives;
+
+      let totalCurrent = 0;
+      let totalNeeded = 0;
+      objectivesToCount.forEach((row) => {
         totalCurrent += row.meta.currentCount;
         totalNeeded += row.meta.neededCount;
-        if (row.meta.neededCount !== firstNeeded) {
-          allSameNeeded = false;
-        }
+      });
+
+      // Check completion status across ALL objectives (both find and give must be complete)
+      consolidated.objectives.forEach((row) => {
         if (!isObjectiveComplete(row.objective.id)) {
           allComplete = false;
         }
       });
-      if (!allSameNeeded) {
-        console.warn(
-          `[TaskObjectiveItemGroup] Mixed neededCount in group ${consolidated.itemKey}, summing. Counts:`,
-          consolidated.objectives.map((o) => o.meta.neededCount)
-        );
-      }
+
       return {
         ...consolidated,
         allComplete,

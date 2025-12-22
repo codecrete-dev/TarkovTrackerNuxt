@@ -115,9 +115,13 @@ export function useGraphBuilder() {
           }
         }
         // Item requirements
-        // Exclude "findItem" objectives as they are passive checks that auto-complete
-        // when the player acquires the items for the corresponding "giveItem" objective
-        if ((objective?.item?.id || objective?.markerItem?.id) && objective.type !== 'findItem') {
+        // Exclude "findItem" and "findQuestItem" objectives as they are passive checks that auto-complete
+        // when the player acquires the items for the corresponding "giveItem"/"giveQuestItem" objective
+        if (
+          (objective?.item?.id || objective?.markerItem?.id) &&
+          objective.type !== 'findItem' &&
+          objective.type !== 'findQuestItem'
+        ) {
           tempNeededObjectives.push({
             id: objective.id,
             needType: 'taskObjective',
