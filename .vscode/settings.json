@@ -7,6 +7,7 @@
   },
   "deno.path": "/home/lab/.deno/bin/deno",
   "deno.enable": false,
-  "deno.enablePaths": ["./supabase/functions"],
+  "deno.enablePaths": ["supabase/functions"],
+  "deno.config": "supabase/functions/deno.json",
   "deno.unstable": true
 }
