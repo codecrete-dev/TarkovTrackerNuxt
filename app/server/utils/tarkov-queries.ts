@@ -390,12 +390,25 @@ export const TARKOV_DATA_QUERY = `
     maps {
       id
       name
+      normalizedName
       tarkovDataId
       enemies
       wiki
       raidDuration
       players
       description
+      extracts {
+        id
+        name
+        faction
+        position {
+          x
+          y
+          z
+        }
+        top
+        bottom
+      }
     }
     playerLevels {
       level

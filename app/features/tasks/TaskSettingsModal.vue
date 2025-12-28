@@ -4,9 +4,9 @@
     :title="t('page.tasks.settings.title', 'Task Settings')"
     :description="t('page.tasks.settings.description', 'Configure task filters and appearance')"
   >
-    <UButton variant="ghost" color="neutral" size="sm" @click="isOpen = true">
-      <UIcon name="i-mdi-tune" class="mr-1 h-4 w-4" />
-      {{ t('page.tasks.settings.button', 'TASK SETTINGS') }}
+    <UButton variant="ghost" color="neutral" size="sm" class="text-gray-400" @click="isOpen = true">
+      <UIcon name="i-mdi-tune" class="h-4 w-4 sm:mr-1.5" />
+      <span class="hidden text-xs sm:inline">SETTINGS</span>
     </UButton>
     <template #content>
       <UCard class="bg-contentbackground">

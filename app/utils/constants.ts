@@ -96,7 +96,9 @@ export const MAP_NAME_MAPPING: Record<string, string> = {
   'night factory': 'factory',
   'the lab': 'lab',
   'ground zero 21+': 'groundzero',
-  'the labyrinth': 'labyrinth',
+  'ground zero tutorial': 'groundzero', // Tutorial uses same map as Ground Zero
+  'the labyrinth': 'labyrinth', // New map, no SVG available yet
+  terminal: 'terminal', // New map, no SVG available yet
 };
 // API Permissions
 export const API_PERMISSIONS: Record<string, { title: string; description: string }> = {
@@ -166,6 +168,40 @@ export function sortTradersByGameOrder<T extends { name: string; normalizedName?
     const aIndex = TRADER_ORDER.indexOf(a.normalizedName as (typeof TRADER_ORDER)[number]);
     const bIndex = TRADER_ORDER.indexOf(b.normalizedName as (typeof TRADER_ORDER)[number]);
     // Traders not in the order list go to the end, sorted alphabetically
+    if (aIndex === -1 && bIndex === -1) return a.name.localeCompare(b.name);
+    if (aIndex === -1) return 1;
+    if (bIndex === -1) return -1;
+    return aIndex - bIndex;
+  });
+}
+// Map display order (matches typical task progression)
+// Uses static map keys from maps.json for stable identification
+export const MAP_ORDER = [
+  'groundzero', // Starting map
+  'customs', // Early game, lots of early quests
+  'woods', // Early-mid game
+  'factory', // Early tasks but optional
+  'shoreline', // Mid-game health resort quests
+  'interchange', // Mid-game mall quests
+  'reserve', // Mid-game military base
+  'lighthouse', // Mid-late game
+  'streetsoftarkov', // Late game
+  'lab', // End game, requires access card
+  'labyrinth', // Very end game
+  'terminal', // Newest/end game content
+] as const;
+// Sort maps by task progression order
+// Maps not in MAP_ORDER are placed at the end, sorted alphabetically
+export function sortMapsByGameOrder<T extends { id: string; name: string }>(
+  maps: T[],
+  mapKeyLookup: (map: T) => string
+): T[] {
+  return [...maps].sort((a, b) => {
+    const aKey = mapKeyLookup(a);
+    const bKey = mapKeyLookup(b);
+    const aIndex = MAP_ORDER.indexOf(aKey as (typeof MAP_ORDER)[number]);
+    const bIndex = MAP_ORDER.indexOf(bKey as (typeof MAP_ORDER)[number]);
+    // Maps not in the order list go to the end, sorted alphabetically
     if (aIndex === -1 && bIndex === -1) return a.name.localeCompare(b.name);
     if (aIndex === -1) return 1;
     if (bIndex === -1) return -1;

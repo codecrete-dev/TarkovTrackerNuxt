@@ -13,7 +13,7 @@ import { logger } from './logger';
 // Cache configuration
 export const CACHE_CONFIG = {
   DB_NAME: 'tarkov-tracker-cache',
-  DB_VERSION: 1,
+  DB_VERSION: 3, // Bumped to force cache clear and fetch fresh API data with extracts
   STORE_NAME: 'tarkov-data',
   // 12 hours in milliseconds
   DEFAULT_TTL: 12 * 60 * 60 * 1000,
@@ -49,16 +49,20 @@ function openDatabase(): Promise<IDBDatabase> {
     };
     request.onupgradeneeded = (event) => {
       const db = (event.target as IDBOpenDBRequest).result;
-      // Create object store if it doesn't exist
-      if (!db.objectStoreNames.contains(CACHE_CONFIG.STORE_NAME)) {
-        const store = db.createObjectStore(CACHE_CONFIG.STORE_NAME, {
-          keyPath: 'cacheKey',
-        });
-        // Create indexes for querying
-        store.createIndex('timestamp', 'timestamp', { unique: false });
-        store.createIndex('gameMode', 'gameMode', { unique: false });
-        store.createIndex('lang', 'lang', { unique: false });
+      // Delete existing store on version upgrade to clear stale data
+      if (db.objectStoreNames.contains(CACHE_CONFIG.STORE_NAME)) {
+        db.deleteObjectStore(CACHE_CONFIG.STORE_NAME);
+        logger.info('[TarkovCache] Deleted old cache store for version upgrade');
       }
+      // Create fresh object store
+      const store = db.createObjectStore(CACHE_CONFIG.STORE_NAME, {
+        keyPath: 'cacheKey',
+      });
+      // Create indexes for querying
+      store.createIndex('timestamp', 'timestamp', { unique: false });
+      store.createIndex('gameMode', 'gameMode', { unique: false });
+      store.createIndex('lang', 'lang', { unique: false });
+      logger.info('[TarkovCache] Created new cache store v' + CACHE_CONFIG.DB_VERSION);
     };
   });
 }

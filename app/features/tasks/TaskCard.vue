@@ -149,6 +149,14 @@
               {{ t('page.tasks.questcard.lightkeeper', 'Lightkeeper') }}
             </UBadge>
           </AppTooltip>
+          <!-- XP display - shown for all task statuses when setting is enabled -->
+          <div
+            v-if="preferencesStore.getShowExperienceRewards && task.experience"
+            class="flex items-center gap-1 text-xs text-gray-400"
+          >
+            <UIcon name="i-mdi-star" aria-hidden="true" class="h-4 w-4 shrink-0 text-yellow-500" />
+            <span>{{ formatNumber(task.experience) }} XP</span>
+          </div>
           <!-- Action buttons in header for consistent positioning -->
           <template v-if="isOurFaction">
             <UButton
@@ -171,29 +179,16 @@
             >
               {{ t('page.tasks.questcard.uncompletebutton', 'Mark Uncompleted') }}
             </UButton>
-            <template v-if="!isComplete && !isLocked">
-              <!-- XP display left of Complete button -->
-              <div
-                v-if="preferencesStore.getShowExperienceRewards && task.experience"
-                class="flex items-center gap-1 text-xs text-gray-400"
-              >
-                <UIcon
-                  name="i-mdi-star"
-                  aria-hidden="true"
-                  class="h-4 w-4 shrink-0 text-yellow-500"
-                />
-                <span>{{ formatNumber(task.experience) }} XP</span>
-              </div>
-              <UButton
-                :size="actionButtonSize"
-                color="success"
-                :ui="completeButtonUi"
-                class="shrink-0"
-                @click.stop="markTaskComplete()"
-              >
-                {{ t('page.tasks.questcard.completebutton', 'Complete').toUpperCase() }}
-              </UButton>
-            </template>
+            <UButton
+              v-if="!isComplete && !isLocked"
+              :size="actionButtonSize"
+              color="success"
+              :ui="completeButtonUi"
+              class="shrink-0"
+              @click.stop="markTaskComplete()"
+            >
+              {{ t('page.tasks.questcard.completebutton', 'Complete').toUpperCase() }}
+            </UButton>
           </template>
           <!-- Menu button -->
           <AppTooltip v-if="isOurFaction" :text="t('page.tasks.questcard.more', 'More')">

@@ -105,7 +105,7 @@
                     <UIcon name="i-mdi-account" class="mr-2 h-4.5 w-4.5 text-gray-400" />
                     <span class="text-sm">
                       <span class="text-gray-400">Username:</span>
-                      <span class="ml-1 font-medium font-mono">{{ maskedUsername }}</span>
+                      <span class="ml-1 font-mono font-medium">{{ maskedUsername }}</span>
                     </span>
                     <AppTooltip :text="showUsername ? 'Hide' : 'Show'">
                       <UButton
@@ -122,7 +122,7 @@
                     <UIcon name="i-mdi-email" class="mr-2 h-4.5 w-4.5 text-gray-400" />
                     <span class="text-sm">
                       <span class="text-gray-400">Email:</span>
-                      <span class="ml-1 font-medium font-mono">{{ maskedEmail }}</span>
+                      <span class="ml-1 font-mono font-medium">{{ maskedEmail }}</span>
                     </span>
                     <AppTooltip :text="showEmail ? 'Hide' : 'Show'">
                       <UButton

@@ -42,6 +42,8 @@ export interface PreferencesState {
   useAutomaticLevelCalculation: boolean;
   // Holiday effects
   enableHolidayEffects: boolean;
+  // Map display settings
+  showMapExtracts: boolean;
   saving?: {
     streamerMode: boolean;
     hideGlobalTasks: boolean;
@@ -86,6 +88,8 @@ export const preferencesDefaultState: PreferencesState = {
   useAutomaticLevelCalculation: false,
   // Holiday effects (enabled by default during holiday season)
   enableHolidayEffects: true,
+  // Map display settings
+  showMapExtracts: true,
   saving: {
     streamerMode: false,
     hideGlobalTasks: false,
@@ -219,6 +223,10 @@ export const usePreferencesStore = defineStore('preferences', {
     getEnableHolidayEffects: (state) => {
       return state.enableHolidayEffects ?? true;
     },
+    // Map display getters
+    getShowMapExtracts: (state) => {
+      return state.showMapExtracts ?? true;
+    },
   },
   actions: {
     setStreamerMode(mode: boolean) {
@@ -328,6 +336,10 @@ export const usePreferencesStore = defineStore('preferences', {
     setEnableHolidayEffects(enable: boolean) {
       this.enableHolidayEffects = enable;
     },
+    // Map display actions
+    setShowMapExtracts(show: boolean) {
+      this.showMapExtracts = show;
+    },
   },
   // Enable automatic localStorage persistence
   persist: {
@@ -373,6 +385,7 @@ export const usePreferencesStore = defineStore('preferences', {
       'taskCardDensity',
       'useAutomaticLevelCalculation',
       'enableHolidayEffects',
+      'showMapExtracts',
     ],
   },
 });

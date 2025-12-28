@@ -124,7 +124,7 @@ export default defineNuxtConfig({
       ],
     },
   },
-  css: ['~/assets/css/tailwind.css'],
+  css: ['~/assets/css/tailwind.css', 'leaflet/dist/leaflet.css'],
   alias: {
     '@': appDir,
     '~': appDir,
@@ -209,6 +209,9 @@ export default defineNuxtConfig({
       rollupOptions: {
         output: {
           manualChunks: (id) => {
+            if (id.includes('node_modules/leaflet')) {
+              return 'vendor-leaflet';
+            }
             if (id.includes('node_modules/d3')) {
               return 'vendor-d3';
             }

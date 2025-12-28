@@ -17,10 +17,11 @@
       "file": "Factory.svg",
       "floors": ["Basement", "Ground_Floor", "Second_Floor", "Third_Floor"],
       "defaultFloor": "Third_Floor",
-      "coordinateRotation": 90,
+      "coordinateRotation": 270,
+      "transform": [1.629, 119.9, 1.629, 139.3],
       "bounds": [
-        [-67.5, 77],
-        [64, -65]
+        [79, -64.5],
+        [-66.5, 67.4]
       ]
     }
   },
@@ -42,10 +43,11 @@
       "file": "Customs.svg",
       "floors": ["Ground_Level"],
       "defaultFloor": "Ground_Level",
-      "coordinateRotation": 0,
+      "coordinateRotation": 180,
+      "transform": [0.239, 168.65, 0.239, 136.35],
       "bounds": [
         [698, -307],
-        [-371, 237]
+        [-372, 237]
       ]
     }
   },
@@ -67,10 +69,11 @@
       "file": "Woods.svg",
       "floors": ["Ground_Level"],
       "defaultFloor": "Ground_Level",
-      "coordinateRotation": 0,
+      "coordinateRotation": 180,
+      "transform": [0.1855, 113.1, 0.1855, 167.8],
       "bounds": [
         [650, -945],
-        [-695, 470]
+        [-762, 470]
       ]
     }
   },
@@ -90,11 +93,12 @@
     },
     "svg": {
       "file": "Shoreline.svg",
-      "floors": ["Ground_Level", "Underground_Level", "First_Floor", "Second_Floor", "Third_Floor"],
+      "floors": ["Underground_Level", "Ground_Level", "First_Floor", "Second_Floor", "Third_Floor"],
       "defaultFloor": "Ground_Level",
-      "coordinateRotation": 0,
+      "coordinateRotation": 180,
+      "transform": [0.16, 83.2, 0.16, 111.1],
       "bounds": [
-        [506, -405],
+        [508, -415],
         [-1060, 618]
       ]
     }
@@ -117,10 +121,11 @@
       "file": "Interchange.svg",
       "floors": ["Ground_Level", "First_Floor", "Second_Floor"],
       "defaultFloor": "Ground_Level",
-      "coordinateRotation": 0,
+      "coordinateRotation": 180,
+      "transform": [0.265, 150.6, 0.265, 134.6],
       "bounds": [
-        [530, -439],
-        [-364, 452]
+        [532.75, -442.75],
+        [-364, 453.5]
       ]
     }
   },
@@ -138,13 +143,15 @@
       "day": 40,
       "night": 40
     },
+    "unavailable": true,
     "svg": {
       "file": "Labs.svg",
       "floors": ["Technical_Level", "First_Level", "Second_Level"],
       "defaultFloor": "Technical_Level",
       "coordinateRotation": 270,
+      "transform": [0.575, 281.2, 0.575, 193.7],
       "bounds": [
-        [-91, -477],
+        [-80, -477],
         [-287, -193]
       ]
     }
@@ -167,11 +174,17 @@
       "file": "Reserve.svg",
       "floors": ["Bunkers", "Ground_Level"],
       "defaultFloor": "Ground_Level",
-      "coordinateRotation": 0,
+      "coordinateRotation": 180,
+      "transform": [0.395, 122.0, 0.395, 137.65],
       "bounds": [
+        [289, -293],
+        [-303, 244]
+      ],
+      "svgBounds": [
         [289, -338],
         [-303, 336]
-      ]
+      ],
+      "stackFloors": false
     }
   },
   "lighthouse": {
@@ -192,9 +205,10 @@
       "file": "Lighthouse.svg",
       "floors": ["Ground_Level"],
       "defaultFloor": "Ground_Level",
-      "coordinateRotation": 0,
+      "coordinateRotation": 180,
+      "transform": [0.2, 0, 0.2, 0],
       "bounds": [
-        [515, -1000],
+        [515, -998],
         [-545, 725]
       ]
     }
@@ -209,8 +223,8 @@
     "svg": {
       "file": "StreetsOfTarkov.svg",
       "floors": [
-        "Ground_Level",
         "Underground_Level",
+        "Ground_Level",
         "First_Floor",
         "Second_Floor",
         "Third_Floor",
@@ -218,10 +232,11 @@
         "Fifth_Floor"
       ],
       "defaultFloor": "Ground_Level",
-      "coordinateRotation": 0,
+      "coordinateRotation": 180,
+      "transform": [0.38, 0, 0.38, 0],
       "bounds": [
         [323, -317],
-        [-280, 549]
+        [-280, 554]
       ]
     }
   },
@@ -233,13 +248,31 @@
     },
     "svg": {
       "file": "GroundZero.svg",
-      "floors": ["Ground_Level", "Underground_Level", "First_Floor", "Second_Floor", "Third_Floor"],
+      "floors": ["Underground_Level", "Ground_Level", "First_Floor", "Second_Floor", "Third_Floor"],
       "defaultFloor": "Ground_Level",
-      "coordinateRotation": 0,
+      "coordinateRotation": 180,
+      "transform": [0.524, 167.3, 0.524, 65.1],
       "bounds": [
         [249, -124],
         [-99, 364]
-      ]
+      ],
+      "stackFloors": true
     }
+  },
+  "terminal": {
+    "id": 10,
+    "tdevId": "terminal",
+    "locale": {
+      "en": "Terminal"
+    },
+    "unavailable": true
+  },
+  "labyrinth": {
+    "id": 11,
+    "tdevId": "labyrinth",
+    "locale": {
+      "en": "The Labyrinth"
+    },
+    "unavailable": true
   }
 }

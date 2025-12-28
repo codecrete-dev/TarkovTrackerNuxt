@@ -5,6 +5,34 @@
       <div v-else>
         <!-- Task Filter Bar -->
         <TaskFilterBar v-model:search-query="searchQuery" />
+        <!-- Map Display (shown when MAPS view is selected) -->
+        <div v-if="showMapDisplay" class="mb-6">
+          <div class="bg-surface-800/50 rounded-lg p-4">
+            <div class="mb-3 flex items-center justify-between">
+              <h3 class="text-lg font-medium text-gray-200">
+                {{ selectedMapData?.name || 'Map' }}
+                <span class="ml-2 text-sm font-normal text-gray-400">
+                  {{ displayTime }}
+                </span>
+              </h3>
+            </div>
+            <LeafletMapComponent
+              v-if="selectedMapData"
+              :map="selectedMapData"
+              :marks="mapObjectiveMarks"
+              :show-extracts="true"
+              :show-extract-toggle="true"
+              :show-legend="true"
+            />
+            <UAlert
+              v-else
+              icon="i-mdi-alert-circle"
+              color="warning"
+              variant="soft"
+              title="No map data available for this selection."
+            />
+          </div>
+        </div>
         <div v-if="filteredTasks.length === 0" class="py-6">
           <TaskEmptyState />
         </div>
@@ -66,10 +94,11 @@
 </template>
 <script setup lang="ts">
   import { storeToRefs } from 'pinia';
-  import { computed, nextTick, ref, watch } from 'vue';
+  import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useRoute, useRouter } from 'vue-router';
   import { useInfiniteScroll } from '@/composables/useInfiniteScroll';
+  import { useTarkovTime } from '@/composables/useTarkovTime';
   import { useTaskFiltering } from '@/composables/useTaskFiltering';
   import TaskCard from '@/features/tasks/TaskCard.vue';
   import TaskEmptyState from '@/features/tasks/TaskEmptyState.vue';
@@ -80,6 +109,8 @@
   import { useTarkovStore } from '@/stores/useTarkov';
   import type { Task, TaskObjective } from '@/types/tarkov';
   import { logger } from '@/utils/logger';
+  // Lazy load LeafletMap for performance
+  const LeafletMapComponent = defineAsyncComponent(() => import('@/features/maps/LeafletMap.vue'));
   // Page metadata
   useSeoMeta({
     title: 'Tasks',
@@ -102,11 +133,125 @@
     getShowEodTasks,
   } = storeToRefs(preferencesStore);
   const metadataStore = useMetadataStore();
-  const { tasks, maps, loading: tasksLoading } = storeToRefs(metadataStore);
+  const { tasks, loading: tasksLoading } = storeToRefs(metadataStore);
+  // Use mapsWithSvg getter to get maps with merged SVG config from maps.json
+  const maps = computed(() => metadataStore.mapsWithSvg);
   const progressStore = useProgressStore();
   const { tasksCompletions, unlockedTasks } = storeToRefs(progressStore);
   const { visibleTasks, reloadingTasks, updateVisibleTasks } = useTaskFiltering();
   const tarkovStore = useTarkovStore();
+  const { tarkovTime } = useTarkovTime();
+  // Maps with static/fixed raid times (don't follow normal day/night cycle)
+  const STATIC_TIME_MAPS: Record<string, string> = {
+    '55f2d3fd4bdc2d5f408b4567': '15:28 / 03:28', // Factory
+    '5b0fc42d86f7744a585f9105': '15:28 / 03:28', // The Lab
+  };
+  type MapObjectiveZone = { map: { id: string }; outline: { x: number; z: number }[] };
+  type MapObjectiveLocation = {
+    map: { id: string };
+    positions?: Array<{ x: number; y?: number; z: number }>;
+  };
+  type MapObjectiveMark = {
+    id?: string;
+    zones: MapObjectiveZone[];
+    possibleLocations?: MapObjectiveLocation[];
+    users?: string[];
+  };
+  // Map display state
+  const showMapDisplay = computed(() => {
+    return getTaskPrimaryView.value === 'maps' && getTaskMapView.value !== 'all';
+  });
+  const selectedMapData = computed(() => {
+    const mapId = getTaskMapView.value;
+    if (!mapId || mapId === 'all') return null;
+    return maps.value.find((m) => m.id === mapId) || null;
+  });
+  // Display time - use static time for certain maps, dynamic for others
+  const displayTime = computed(() => {
+    const mapId = getTaskMapView.value;
+    if (!mapId) return tarkovTime.value;
+    const staticTime = STATIC_TIME_MAPS[mapId];
+    return staticTime ?? tarkovTime.value;
+  });
+  // Compute objective markers from visible tasks for the selected map
+  const mapObjectiveMarks = computed(() => {
+    if (!selectedMapData.value) return [];
+    const mapId = selectedMapData.value.id;
+    const marks: MapObjectiveMark[] = [];
+    // Get objectives from visible tasks that have location data for this map
+    visibleTasks.value.forEach((task) => {
+      if (!task.objectives) return;
+      const objectiveMaps = metadataStore.objectiveMaps?.[task.id] ?? [];
+      const objectiveGps = metadataStore.objectiveGPS?.[task.id] ?? [];
+      task.objectives.forEach((obj) => {
+        const zones: MapObjectiveZone[] = [];
+        const possibleLocations: MapObjectiveLocation[] = [];
+        const objectiveWithLocations = obj as TaskObjective & {
+          zones?: Array<{
+            map?: { id: string };
+            outline?: Array<{ x: number; y?: number; z: number }>;
+            position?: { x: number; y?: number; z: number };
+          }>;
+          possibleLocations?: Array<{
+            map?: { id: string };
+            positions?: Array<{ x: number; y?: number; z: number }>;
+          }>;
+        };
+        // Zones (polygons)
+        if (Array.isArray(objectiveWithLocations.zones)) {
+          objectiveWithLocations.zones.forEach((zone) => {
+            if (zone?.map?.id !== mapId) return;
+            const outline = Array.isArray(zone.outline)
+              ? zone.outline.map((point) => ({ x: point.x, z: point.z }))
+              : [];
+            if (outline.length >= 3) {
+              zones.push({ map: { id: mapId }, outline });
+            } else if (zone.position) {
+              possibleLocations.push({
+                map: { id: mapId },
+                positions: [{ x: zone.position.x, y: zone.position.y, z: zone.position.z }],
+              });
+            }
+          });
+        }
+        // Possible locations (point markers)
+        if (Array.isArray(objectiveWithLocations.possibleLocations)) {
+          objectiveWithLocations.possibleLocations.forEach((location) => {
+            if (location?.map?.id !== mapId) return;
+            const positions = Array.isArray(location.positions)
+              ? location.positions.map((pos) => ({ x: pos.x, y: pos.y, z: pos.z }))
+              : [];
+            if (positions.length > 0) {
+              possibleLocations.push({
+                map: { id: mapId },
+                positions,
+              });
+            }
+          });
+        }
+        // GPS fallback from processed metadata (legacy/objective overlay data)
+        const gpsInfo = objectiveGps.find((gps) => gps.objectiveID === obj.id);
+        const isOnThisMap = objectiveMaps.some(
+          (mapInfo) => mapInfo.objectiveID === obj.id && mapInfo.mapID === mapId
+        );
+        if (isOnThisMap && gpsInfo && (gpsInfo.x !== undefined || gpsInfo.y !== undefined)) {
+          possibleLocations.push({
+            map: { id: mapId },
+            positions: [{ x: gpsInfo.x ?? 0, y: 0, z: gpsInfo.y ?? 0 }],
+          });
+        }
+        if (zones.length > 0 || possibleLocations.length > 0) {
+          marks.push({
+            id: obj.id,
+            zones,
+            possibleLocations,
+            users: ['self'],
+          });
+        }
+      });
+    });
+    return marks;
+  });
   // Toast / Undo State
   const taskStatusUpdated = ref(false);
   const taskStatus = ref('');

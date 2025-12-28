@@ -295,25 +295,59 @@ export function useTaskFiltering() {
     disabledTasks: string[],
     hideGlobalTasks: boolean,
     hideNonKappaTasks: boolean,
-    activeUserView: string
+    activeUserView: string,
+    secondaryView: string
   ) => {
     const mapTaskCounts: Record<string, number> = {};
+    const typedTasks = filterTasksByTypeSettings(tasks);
+    const statusFilteredTasks = filterTasksByStatus(typedTasks, secondaryView, activeUserView);
     for (const map of mergedMaps) {
       const ids = map.mergedIds || [map.id];
-      const mapId = ids[0];
+      const mapId = map.id;
       if (!mapId) continue;
       mapTaskCounts[mapId] = 0;
-      for (const task of tasks) {
+      for (const task of statusFilteredTasks) {
         if (!taskPassesFilters(task, disabledTasks, hideGlobalTasks, hideNonKappaTasks)) continue;
         const taskLocations = extractTaskLocations(task);
         if (!ids.some((id: string) => taskLocations.includes(id))) continue;
-        if (!isTaskUnlockedForUser(task.id, activeUserView)) continue;
-        if (hasIncompleteObjectives(task, ids, activeUserView)) {
-          mapTaskCounts[mapId]!++;
+        if (secondaryView === 'available') {
+          if (!isTaskUnlockedForUser(task.id, activeUserView)) continue;
+          if (!hasIncompleteObjectives(task, ids, activeUserView)) continue;
         }
+        mapTaskCounts[mapId]!++;
       }
     }
     return mapTaskCounts;
+  };
+  /**
+   * Calculate impact score for a task (number of incomplete successor tasks)
+   * Higher impact = more tasks are blocked by this one
+   */
+  const calculateTaskImpact = (task: Task, userView: string): number => {
+    if (!task.successors?.length) return 0;
+    const teamIds = Object.keys(progressStore.visibleTeamStores || {});
+    return task.successors.filter((successorId) => {
+      if (userView === 'all') {
+        // For "all" view, count as incomplete if ANY team member hasn't completed it
+        return teamIds.some(
+          (teamId) => progressStore.tasksCompletions?.[successorId]?.[teamId] !== true
+        );
+      } else {
+        // For single user view, check that user's completion status
+        return progressStore.tasksCompletions?.[successorId]?.[userView] !== true;
+      }
+    }).length;
+  };
+  /**
+   * Sort tasks by impact (number of incomplete successor tasks) in descending order
+   * Tasks with higher impact (more tasks blocked) appear first
+   */
+  const sortTasksByImpact = (taskList: Task[], userView: string): Task[] => {
+    return [...taskList].sort((a, b) => {
+      const impactA = calculateTaskImpact(a, userView);
+      const impactB = calculateTaskImpact(b, userView);
+      return impactB - impactA; // Descending order (highest impact first)
+    });
   };
   /**
    * Main function to update visible tasks based on all filters
@@ -346,6 +380,8 @@ export function useTaskFiltering() {
       );
       // Apply status and user filters
       visibleTaskList = filterTasksByStatus(visibleTaskList, activeSecondaryView, activeUserView);
+      // Sort by impact (number of incomplete successor tasks) - highest impact first
+      visibleTaskList = sortTasksByImpact(visibleTaskList, activeUserView);
       visibleTasks.value = visibleTaskList;
     } finally {
       reloadingTasks.value = false;

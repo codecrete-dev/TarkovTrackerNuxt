@@ -32,6 +32,7 @@ import {
   GAME_MODES,
   LOCALE_TO_API_MAPPING,
   MAP_NAME_MAPPING,
+  sortMapsByGameOrder,
   sortTradersByGameOrder,
 } from '@/utils/constants';
 import { createGraph } from '@/utils/graphHelpers';
@@ -156,23 +157,40 @@ export const useMetadataStore = defineStore('metadata', {
       if (!state.maps.length || !state.staticMapData) {
         return [];
       }
-      const mergedMaps = state.maps.map((map) => {
+      const mapGroups: Record<string, TarkovMap[]> = {};
+      state.maps.forEach((map) => {
         const lowerCaseName = map.name.toLowerCase();
         const mapKey = MAP_NAME_MAPPING[lowerCaseName] || lowerCaseName.replace(/\s+|\+/g, '');
-        const staticData = state.staticMapData?.[mapKey];
-        if (staticData?.svg) {
-          return {
-            ...map,
-            svg: staticData.svg,
-          };
-        } else {
-          logger.warn(
-            `[MetadataStore] Static SVG data not found for map: ${map.name} (lookup key: ${mapKey})`
-          );
-          return map;
+        if (!mapGroups[mapKey]) {
+          mapGroups[mapKey] = [];
         }
+        mapGroups[mapKey]!.push(map);
       });
-      return [...mergedMaps].sort((a, b) => a.name.localeCompare(b.name));
+      const mergedMaps = Object.entries(mapGroups).map(([mapKey, maps]) => {
+        const primaryMap = maps.find((map) => map.name.toLowerCase() === 'ground zero') ?? maps[0];
+        const staticData = state.staticMapData?.[mapKey];
+        const mergedIds = maps.map((map) => map.id);
+        if (staticData) {
+          return {
+            ...primaryMap,
+            svg: staticData.svg,
+            unavailable: staticData.unavailable,
+            mergedIds,
+          };
+        }
+        logger.warn(
+          `[MetadataStore] Static SVG data not found for map: ${primaryMap.name} (lookup key: ${mapKey})`
+        );
+        return {
+          ...primaryMap,
+          mergedIds,
+        };
+      });
+      // Sort maps by task progression order using the mapKey for lookup
+      return sortMapsByGameOrder(mergedMaps, (map) => {
+        const lowerCaseName = map.name.toLowerCase();
+        return MAP_NAME_MAPPING[lowerCaseName] || lowerCaseName.replace(/\s+|\+/g, '');
+      });
     },
     // Computed properties for traders (sorted by in-game order)
     sortedTraders: (state): Trader[] => sortTradersByGameOrder(state.traders),

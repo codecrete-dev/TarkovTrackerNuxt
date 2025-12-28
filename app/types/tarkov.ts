@@ -215,10 +215,37 @@ export interface Task {
   /** Flag indicating the task is disabled or removed from standard gameplay */
   disabled?: boolean;
 }
+/**
+ * 3D position coordinates used for map locations
+ */
+export interface MapPosition {
+  x: number;
+  y: number;
+  z: number;
+}
+/**
+ * Extraction point on a map
+ */
+export interface MapExtract {
+  id: string;
+  name: string;
+  /** Faction that can use this extract: 'pmc', 'scav', 'shared', or null */
+  faction?: 'pmc' | 'scav' | 'shared' | null;
+  /** Position on the map */
+  position?: MapPosition;
+  /** Top boundary for multi-floor extracts */
+  top?: number;
+  /** Bottom boundary for multi-floor extracts */
+  bottom?: number;
+}
 export interface TarkovMap {
   id: string;
   name: string;
   normalizedName?: string;
+  /** Extraction points available on this map */
+  extracts?: MapExtract[];
+  /** Whether the map is unavailable for display */
+  unavailable?: boolean;
   svg?:
     | string
     | {
@@ -226,7 +253,12 @@ export interface TarkovMap {
         floors: string[];
         defaultFloor: string;
         coordinateRotation: number;
+        transform?: [number, number, number, number];
         bounds: number[][];
+        /** Separate bounds for SVG overlay (if different from marker bounds) */
+        svgBounds?: number[][];
+        /** Whether lower floors should remain visible when a higher floor is selected */
+        stackFloors?: boolean;
       };
 }
 export interface Trader {
