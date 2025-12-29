@@ -122,8 +122,8 @@
   );
   const pvpClasses = computed(() =>
     currentGameMode.value === GAME_MODES.PVP
-      ? 'bg-pvp-700 text-white'
-      : 'bg-transparent text-pvp-400 hover:bg-pvp-400/10'
+      ? 'bg-pvp-800 text-white'
+      : 'bg-transparent text-pvp-700 hover:bg-pvp-400/10'
   );
   async function switchMode(mode: GameMode) {
     if (mode !== currentGameMode.value && !dataLoading.value) {
