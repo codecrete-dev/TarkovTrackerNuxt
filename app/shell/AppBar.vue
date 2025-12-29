@@ -32,13 +32,13 @@
         </AppTooltip>
         <!-- Game mode quick toggle -->
         <div
-          class="bg-surface-900/90 flex items-center overflow-hidden rounded-md border border-white/15 ring-1 ring-white/10"
+          class="bg-surface-900/90 flex overflow-hidden rounded-md border border-white/15 ring-1 ring-white/10"
           role="group"
           aria-label="Toggle game mode"
         >
           <button
             type="button"
-            class="focus:ring-pvp-400 inline-flex items-center gap-0.5 px-1.5 py-1 text-[10px] font-semibold tracking-wide uppercase transition-colors focus:z-10 focus:ring-2 focus:outline-none sm:gap-2 sm:px-3 sm:py-1.5 sm:text-xs md:px-3.5 md:text-sm lg:px-4 lg:text-[15px]"
+            class="focus-visible:ring-inset focus-visible:z-10 cursor-pointer inline-flex items-center justify-center gap-0.5 px-1.5 py-1 text-[10px] font-semibold tracking-wide uppercase transition-colors sm:gap-2 sm:px-3 sm:py-1.5 sm:text-xs md:px-3.5 md:text-sm lg:px-4 lg:text-[15px]"
             :class="pvpClasses"
             :disabled="dataLoading"
             @click="switchMode(GAME_MODES.PVP)"
@@ -46,10 +46,10 @@
             <UIcon name="i-mdi-sword-cross" class="hidden h-4 w-4 sm:block md:h-5 md:w-5" />
             PvP
           </button>
-          <div class="h-6 w-px bg-white/15 sm:h-8" aria-hidden="true" />
+          <div class="h-6 w-px self-center bg-white/15 sm:h-8" aria-hidden="true" />
           <button
             type="button"
-            class="focus:ring-pve-400 inline-flex items-center gap-0.5 px-1.5 py-1 text-[10px] font-semibold tracking-wide uppercase transition-colors focus:z-10 focus:ring-2 focus:outline-none sm:gap-2 sm:px-3 sm:py-1.5 sm:text-xs md:px-3.5 md:text-sm lg:px-4 lg:text-[15px]"
+            class="focus-visible:ring-inset focus-visible:z-10 cursor-pointer inline-flex items-center justify-center gap-0.5 px-1.5 py-1 text-[10px] font-semibold tracking-wide uppercase transition-colors sm:gap-2 sm:px-3 sm:py-1.5 sm:text-xs md:px-3.5 md:text-sm lg:px-4 lg:text-[15px]"
             :class="pveClasses"
             :disabled="dataLoading"
             @click="switchMode(GAME_MODES.PVE)"
@@ -63,35 +63,29 @@
           v-model="selectedLocale"
           :items="localeItems"
           value-key="value"
+          trailing-icon=""
           :popper="{ placement: 'bottom-end', strategy: 'fixed' }"
           :ui="{
-            base: 'bg-surface-900/90 border border-white/15 ring-1 ring-white/10 rounded-md px-2 py-1.5',
-          }"
-          :ui-menu="{
-            container: 'z-[9999]',
+            base: 'bg-surface-900/90 border border-white/15 ring-1 ring-white/10 rounded-md px-1.5 py-1 sm:px-3 sm:py-1.5 flex items-center gap-1.5 cursor-pointer !pe-1.5 sm:!pe-3',
             width: 'w-auto min-w-32',
             background: 'bg-surface-900',
             shadow: 'shadow-xl',
             rounded: 'rounded-lg',
             ring: 'ring-1 ring-white/10',
             padding: 'p-1',
-            option: {
-              base: 'px-3 py-2 text-sm cursor-pointer transition-colors rounded',
-              inactive: 'text-surface-200 hover:bg-surface-800 hover:text-white',
-              active: 'bg-surface-800 text-white',
-              selected: 'bg-primary-500/10 text-primary-100 ring-1 ring-primary-500',
-            },
           }"
           class="h-auto min-w-0"
         >
-          <template #leading>
-            <UIcon name="i-mdi-translate" class="text-surface-300 h-4 w-4" />
-          </template>
           <template #default>
-            <span class="text-xs font-medium text-white/80 uppercase">{{ locale }}</span>
-          </template>
-          <template #trailing>
-            <UIcon name="i-mdi-chevron-down" class="text-surface-400 h-3 w-3" />
+            <div class="flex items-center gap-2">
+              <UIcon name="i-mdi-translate" class="text-surface-300 h-4 w-4" />
+              <span
+                class="text-[10px] font-medium text-white/80 uppercase sm:text-xs md:text-sm lg:text-[15px]"
+              >
+                {{ locale }}
+              </span>
+              <UIcon name="i-mdi-chevron-down" class="text-surface-400 h-5 w-5" />
+            </div>
           </template>
         </USelectMenu>
       </div>
@@ -129,13 +123,13 @@
   });
   const pveClasses = computed(() =>
     currentGameMode.value === GAME_MODES.PVE
-      ? 'bg-pve-500 hover:bg-pve-600 text-white shadow-[0_0_0_4px_rgba(0,0,0,0.45)] ring-2 ring-white/60 ring-inset outline outline-2 outline-white/40'
-      : 'bg-pve-950/80 text-pve-400 hover:bg-pve-900/90'
+      ? 'bg-pve-700 text-white'
+      : 'bg-transparent text-pve-400 hover:bg-pve-400/10'
   );
   const pvpClasses = computed(() =>
     currentGameMode.value === GAME_MODES.PVP
-      ? 'bg-pvp-800 hover:bg-pvp-700 text-pvp-100 shadow-[0_0_0_4px_rgba(0,0,0,0.45)] ring-2 ring-white/60 ring-inset outline outline-2 outline-white/40'
-      : 'bg-pvp-950/80 text-pvp-400 hover:bg-pvp-900/90'
+      ? 'bg-pvp-700 text-white'
+      : 'bg-transparent text-pvp-400 hover:bg-pvp-400/10'
   );
   async function switchMode(mode: GameMode) {
     if (mode !== currentGameMode.value && !dataLoading.value) {
@@ -215,3 +209,12 @@
     },
   });
 </script>
+<style>
+  [role='option'] {
+    cursor: pointer !important;
+  }
+  input[role="combobox"] {
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+  }
+</style>
