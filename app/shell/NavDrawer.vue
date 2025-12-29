@@ -96,7 +96,7 @@
           <button
             v-for="faction in factions"
             :key="faction"
-            class="flex-1 px-2 py-1 text-xs font-semibold uppercase transition-colors"
+            class="focus-visible:z-10 focus-visible:ring-inset flex-1 px-2 py-1 text-xs font-semibold uppercase transition-colors"
             :class="
               faction === currentFaction
                 ? 'bg-primary-700 text-white'
