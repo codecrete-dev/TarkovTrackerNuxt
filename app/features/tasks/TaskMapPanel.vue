@@ -7,9 +7,9 @@
           variant="ghost"
           class="flex w-full items-center justify-between rounded-none py-2 sm:p-3"
         >
-          <span class="text-base font-medium text-gray-200">
+          <span class="text-base font-medium text-content-secondary">
             {{ item.label }}
-            <span class="font-normal text-gray-400">
+            <span class="font-normal text-content-tertiary">
               &nbsp;-&nbsp;{{ displayTime }}
             </span>
           </span>
@@ -21,7 +21,7 @@
         </UButton>
       </template>
       <template #content>
-        <div class="bg-gray-900/50 p-4">
+        <div class="bg-surface-elevated p-4">
           <LeafletMapComponent
             v-if="selectedMap"
             :map="selectedMap"

@@ -1,7 +1,7 @@
 <template>
   <UCard
     :id="`task-${task.id}`"
-    class="relative overflow-hidden border border-gray-200 bg-white shadow-sm dark:border-white/10 dark:bg-[hsl(240_5%_7%)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.03),0_10px_30px_rgba(0,0,0,0.35)]"
+    class="relative overflow-hidden border border-base bg-surface-base shadow-sm"
     :class="taskClasses"
     :ui="{ body: cardBodyClass }"
     @contextmenu.prevent="openOverflowMenu"
@@ -40,7 +40,7 @@
                 :alt="task?.factionName"
                 class="h-6 w-6 shrink-0 object-contain invert"
               />
-              <span class="min-w-0 truncate text-sm font-semibold text-gray-900 dark:text-gray-100 sm:text-base">
+              <span class="min-w-0 truncate text-sm font-semibold text-content-primary sm:text-base">
                 {{ task?.name }}
               </span>
             </router-link>
@@ -55,7 +55,7 @@
                 :href="task.wikiLink"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="focus-visible:ring-primary-500 focus-visible:ring-offset-surface-900 inline-flex items-center justify-center rounded p-1 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-gray-200"
+                class="focus-visible:ring-primary-500 focus-visible:ring-offset-surface-900 inline-flex items-center justify-center rounded p-1 text-content-tertiary transition-colors hover:bg-surface-200 hover:text-content-secondary focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
                 :aria-label="t('page.tasks.questcard.viewOnWiki', 'View on Wiki')"
                 @click.stop
               >
@@ -67,7 +67,7 @@
                 :href="tarkovDevTaskUrl"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="focus-visible:ring-primary-500 focus-visible:ring-offset-surface-900 inline-flex items-center justify-center rounded p-1 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-gray-200"
+                class="focus-visible:ring-primary-500 focus-visible:ring-offset-surface-900 inline-flex items-center justify-center rounded p-1 text-content-tertiary transition-colors hover:bg-surface-200 hover:text-content-secondary focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
                 :aria-label="t('page.tasks.questcard.viewOnTarkovDev', 'View on tarkov.dev')"
                 @click.stop
               >
@@ -206,8 +206,8 @@
         </div>
       </div>
       <!-- 2) Top strip: Before (only show when there are pending prerequisites) -->
-      <div v-if="lockedBefore > 0" class="text-xs text-gray-500 dark:text-gray-400">
-        <span class="text-gray-600 dark:text-gray-500">{{ t('page.tasks.questcard.requires', 'Requires') }}:</span>
+      <div v-if="lockedBefore > 0" class="text-xs text-content-tertiary">
+        <span class="text-content-secondary">{{ t('page.tasks.questcard.requires', 'Requires') }}:</span>
         <template v-if="pendingParentTasks.length">
           <span class="ml-2 inline-flex flex-wrap items-center gap-1.5">
             <AppTooltip
@@ -217,7 +217,7 @@
             >
               <router-link
                 :to="`/tasks?task=${parent.id}`"
-                class="inline-flex max-w-[16rem] items-center rounded-md border border-gray-200 bg-gray-50 px-2 py-0.5 text-[11px] text-gray-700 hover:bg-gray-100 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10"
+                class="inline-flex max-w-[16rem] items-center rounded-md border border-base bg-surface-elevated px-2 py-0.5 text-[11px] text-content-secondary hover:bg-surface-200"
               >
                 <span class="truncate">{{ parent.name }}</span>
               </router-link>
@@ -241,7 +241,7 @@
         />
       </div>
       <!-- 4) Chain info -->
-      <div v-if="afterHasContent" class="text-xs text-gray-500 dark:text-gray-400">
+      <div v-if="afterHasContent" class="text-xs text-content-tertiary">
         <AppTooltip
           v-if="unlocksNextCount > 0"
           :text="
@@ -393,7 +393,7 @@
   const taskClasses = computed(() => {
     if (isComplete.value && !isFailed.value) return 'border-success-500/25 bg-success-500/10';
     if (isLocked.value || isFailed.value) return 'border-error-500/25 bg-error-500/10';
-    return 'border-gray-200 dark:border-white/10';
+    return 'border-base';
   });
   const isCompact = computed(() => preferencesStore.getTaskCardDensity === 'compact');
   const cardBodyClass = computed(() => {

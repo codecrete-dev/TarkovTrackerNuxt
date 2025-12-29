@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-background text-surface-200 flex min-h-screen flex-col">
+  <div class="bg-surface-base text-content-primary flex min-h-screen flex-col">
     <!-- Holiday Effects -->
     <template v-if="holidayEffectsEnabled">
       <HolidayLights />

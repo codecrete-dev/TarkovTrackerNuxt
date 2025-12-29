@@ -2,7 +2,7 @@
   <div class="flex items-center justify-center px-3 py-2">
     <template v-if="isCollapsed">
       <div class="text-center">
-        <div class="mb-1 text-[0.7em] text-gray-400">
+        <div class="mb-1 text-[0.7em] text-content-tertiary">
           {{ t('navigation_drawer.level') }}
         </div>
         <h1 class="text-center text-2xl leading-tight font-bold">
@@ -13,7 +13,7 @@
     <template v-else>
       <!-- Card container for expanded state -->
       <div
-        class="w-full overflow-hidden rounded-lg border border-white/10 bg-white/5 px-2 py-1.5 backdrop-blur-sm"
+        class="w-full overflow-hidden rounded-lg border border-base bg-surface-elevated px-2 py-1.5 backdrop-blur-sm"
       >
         <div class="flex min-w-0 items-center gap-1">
           <span class="mr-1 shrink-0 leading-none">
@@ -38,21 +38,21 @@
                 <!-- Final fallback if both fail -->
                 <div
                   v-if="factionImageLoadFailed && groupImageLoadFailed"
-                  class="flex h-12 w-12 items-center justify-center rounded bg-white/5"
+                  class="flex h-12 w-12 items-center justify-center rounded bg-surface-200 dark:bg-surface-700"
                 >
-                  <UIcon name="i-heroicons-photo" class="h-6 w-6 text-gray-600" />
+                  <UIcon name="i-heroicons-photo" class="h-6 w-6 text-content-tertiary" />
                 </div>
               </template>
               <template v-else>
                 <!-- Loading placeholder -->
-                <div class="flex h-12 w-12 items-center justify-center rounded bg-white/5">
-                  <UIcon name="i-heroicons-arrow-path" class="h-6 w-6 animate-spin text-gray-500" />
+                <div class="flex h-12 w-12 items-center justify-center rounded bg-surface-200 dark:bg-surface-700">
+                  <UIcon name="i-heroicons-arrow-path" class="h-6 w-6 animate-spin text-content-tertiary" />
                 </div>
               </template>
             </div>
           </span>
           <span class="mx-0.5 min-w-0 flex-1">
-            <div class="mb-0.5 text-center text-[0.65rem] text-gray-300">
+            <div class="mb-0.5 text-center text-[0.65rem] text-content-tertiary">
               {{ t('navigation_drawer.level') }}
             </div>
             <div class="text-center">
@@ -70,8 +70,8 @@
                 <h1
                   :class="
                     useAutomaticLevel
-                      ? 'mx-auto w-11 text-[2rem] leading-[0.85]'
-                      : 'hover:text-primary mx-auto w-11 cursor-pointer text-[2rem] leading-[0.85] transition-colors'
+                      ? 'mx-auto w-11 text-[2rem] leading-[0.85] text-content-primary'
+                      : 'hover:text-primary mx-auto w-11 cursor-pointer text-[2rem] leading-[0.85] text-content-primary transition-colors'
                   "
                   :tabindex="useAutomaticLevel ? '-1' : '0'"
                   :role="useAutomaticLevel ? undefined : 'button'"
@@ -103,7 +103,7 @@
                 type="number"
                 :min="minPlayerLevel"
                 :max="maxPlayerLevel"
-                class="mx-auto w-11 appearance-none border-0 bg-transparent p-0 text-center text-[2rem] leading-[0.85] outline-none focus:ring-0 focus:outline-none"
+                class="mx-auto w-11 appearance-none border-0 bg-transparent p-0 text-center text-[2rem] leading-[0.85] text-content-primary outline-none focus:ring-0 focus:outline-none"
                 @input="enforceMaxLevel"
                 @blur="saveLevel"
                 @keyup.enter="saveLevel"
@@ -122,7 +122,7 @@
               "
             >
               <button
-                class="flex h-6 w-6 cursor-pointer items-center justify-center p-0 text-white/70 transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+                class="flex h-6 w-6 cursor-pointer items-center justify-center p-0 text-content-secondary transition-colors hover:text-content-primary disabled:cursor-not-allowed disabled:opacity-40"
                 :disabled="useAutomaticLevel || displayedLevel >= maxPlayerLevel"
                 @click="incrementLevel"
               >
@@ -141,7 +141,7 @@
                 "
               >
                 <button
-                  class="flex h-6 w-6 cursor-pointer items-center justify-center p-0 text-white/70 transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+                  class="flex h-6 w-6 cursor-pointer items-center justify-center p-0 text-content-secondary transition-colors hover:text-content-primary disabled:cursor-not-allowed disabled:opacity-40"
                   :disabled="useAutomaticLevel"
                   @click="decrementLevel"
                 >
@@ -156,16 +156,16 @@
         </div>
         <!-- XP Progress Display -->
         <div
-          class="hover:border-primary/30 mt-1.5 cursor-pointer rounded border border-white/5 bg-white/[0.02] px-2 py-1 transition-all hover:bg-white/[0.04]"
+          class="hover:border-primary/30 mt-1.5 cursor-pointer rounded border border-base bg-surface-200 px-2 py-1 transition-all hover:bg-surface-elevated dark:bg-white/[0.02] dark:hover:bg-white/[0.04]"
           @click="navigateToSettings"
         >
           <div class="mb-0.5 flex items-center justify-between text-[0.6rem]">
-            <span class="text-gray-400">{{ formatNumber(xpCalculation.totalXP.value) }} XP</span>
-            <span class="text-gray-500">
+            <span class="text-content-secondary">{{ formatNumber(xpCalculation.totalXP.value) }} XP</span>
+            <span class="text-content-tertiary">
               {{ formatNumber(xpCalculation.xpToNextLevel.value) }} needed
             </span>
           </div>
-          <div class="h-1 overflow-hidden rounded-full bg-gray-800">
+          <div class="h-1 overflow-hidden rounded-full bg-surface-400 dark:bg-gray-800">
             <div
               class="bg-primary-500 h-full transition-all duration-300"
               :style="{ width: `${xpCalculation.xpProgress.value}%` }"

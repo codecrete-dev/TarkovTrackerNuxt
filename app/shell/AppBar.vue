@@ -15,7 +15,7 @@
         />
       </AppTooltip>
       <!-- Center: Page Title -->
-      <span class="min-w-0 flex-1 truncate text-xl font-bold text-gray-900 dark:text-white">
+      <span class="min-w-0 flex-1 truncate text-xl font-bold text-content-primary">
         {{ pageTitle }}
       </span>
       <!-- Right: Status Icons & Settings -->
@@ -32,7 +32,7 @@
         </AppTooltip>
         <!-- Game mode quick toggle -->
         <div
-          class="flex items-center overflow-hidden rounded-md border border-gray-200 bg-gray-100 ring-1 ring-gray-200 dark:border-white/15 dark:bg-surface-900/90 dark:ring-white/10"
+          class="flex items-center overflow-hidden rounded-md border border-base bg-surface-elevated ring-1 ring-gray-200/50 dark:ring-white/10"
           role="group"
           aria-label="Toggle game mode"
         >
@@ -65,21 +65,21 @@
           value-attribute="value"
           :popper="{ placement: 'bottom-end', strategy: 'fixed' }"
           :ui="{
-            base: 'bg-white border border-gray-200 ring-1 ring-gray-200 rounded-md px-2 py-1.5 dark:bg-surface-900/90 dark:border-white/15 dark:ring-white/10',
+            base: 'bg-surface-elevated border border-base ring-1 ring-gray-200/50 rounded-md px-2 py-1.5 dark:ring-white/10',
             leading: { padding: { sm: 'pl-1' } },
           }"
           :ui-menu="{
             container: 'z-[9999]',
             width: 'w-32',
-            background: 'bg-white dark:bg-surface-900',
+            background: 'bg-surface-floating',
             shadow: 'shadow-xl',
             rounded: 'rounded-lg',
             ring: 'ring-1 ring-gray-200 dark:ring-white/10',
             padding: 'p-1',
             option: {
               base: 'px-3 py-2 text-sm cursor-pointer transition-colors rounded',
-              inactive: 'text-gray-700 hover:bg-gray-100 dark:text-surface-200 dark:hover:bg-surface-800 dark:hover:text-white',
-              active: 'bg-gray-100 text-gray-900 dark:bg-surface-800 dark:text-white',
+              inactive: 'text-content-secondary hover:bg-surface-200 dark:hover:bg-surface-800 hover:text-content-primary',
+              active: 'bg-surface-200 text-content-primary dark:bg-surface-800',
               selected: 'bg-primary-50 text-primary-600 ring-1 ring-primary-500 dark:bg-primary-500/10 dark:text-primary-100',
               icon: { base: 'flex-shrink-0 h-4 w-4', active: 'text-primary-600 dark:text-white', inactive: 'text-gray-400 dark:text-surface-400' },
             },
@@ -87,7 +87,7 @@
           class="h-auto min-w-0"
         >
           <template #leading>
-            <UIcon :name="currentThemeIcon" class="h-4 w-4 text-gray-500 dark:text-surface-300" />
+            <UIcon :name="currentThemeIcon" class="h-4 w-4 text-content-tertiary" />
           </template>
           <template #default>
             <span class="sr-only">Theme</span>
@@ -103,33 +103,33 @@
           value-key="value"
           :popper="{ placement: 'bottom-end', strategy: 'fixed' }"
           :ui="{
-            base: 'bg-white border border-gray-200 ring-1 ring-gray-200 rounded-md px-2 py-1.5 dark:bg-surface-900/90 dark:border-white/15 dark:ring-white/10',
+            base: 'bg-surface-elevated border border-base ring-1 ring-gray-200/50 rounded-md px-2 py-1.5 dark:ring-white/10',
           }"
           :ui-menu="{
             container: 'z-[9999]',
             width: 'w-auto min-w-32',
-            background: 'bg-white dark:bg-surface-900',
+            background: 'bg-surface-floating',
             shadow: 'shadow-xl',
             rounded: 'rounded-lg',
             ring: 'ring-1 ring-gray-200 dark:ring-white/10',
             padding: 'p-1',
             option: {
               base: 'px-3 py-2 text-sm cursor-pointer transition-colors rounded',
-              inactive: 'text-gray-700 hover:bg-gray-100 dark:text-surface-200 dark:hover:bg-surface-800 dark:hover:text-white',
-              active: 'bg-gray-100 text-gray-900 dark:bg-surface-800 dark:text-white',
+              inactive: 'text-content-secondary hover:bg-surface-200 dark:hover:bg-surface-800 hover:text-content-primary',
+              active: 'bg-surface-200 text-content-primary dark:bg-surface-800',
               selected: 'bg-primary-50 text-primary-600 ring-1 ring-primary-500 dark:bg-primary-500/10 dark:text-primary-100',
             },
           }"
           class="h-auto min-w-0"
         >
           <template #leading>
-            <UIcon name="i-mdi-translate" class="h-4 w-4 text-gray-500 dark:text-surface-300" />
+            <UIcon name="i-mdi-translate" class="h-4 w-4 text-content-tertiary" />
           </template>
           <template #default>
-            <span class="text-xs font-medium uppercase text-gray-700 dark:text-white/80">{{ locale }}</span>
+            <span class="text-xs font-medium uppercase text-content-secondary">{{ locale }}</span>
           </template>
           <template #trailing>
-            <UIcon name="i-mdi-chevron-down" class="h-3 w-3 text-gray-400 dark:text-surface-400" />
+            <UIcon name="i-mdi-chevron-down" class="h-3 w-3 text-content-tertiary" />
           </template>
         </USelectMenu>
       </div>

@@ -1,7 +1,7 @@
 <template>
   <div class="container mx-auto min-h-[calc(100vh-250px)] space-y-4 px-4 py-6">
     <div class="flex justify-center">
-      <div class="w-full max-w-4xl rounded-lg bg-[hsl(240,5%,5%)] px-4 py-3">
+      <div class="w-full max-w-4xl rounded-lg bg-surface-elevated px-4 py-3 shadow-sm">
         <div class="flex flex-wrap justify-center gap-2">
           <UButton
             v-for="view in primaryViews"
@@ -16,7 +16,7 @@
             }"
             @click="activePrimaryView = view.view"
           >
-            <span class="text-xs sm:text-sm">{{ view.title.toUpperCase() }}</span>
+            <span class="text-xs sm:text-sm text-content-primary">{{ view.title.toUpperCase() }}</span>
             <span
               :class="[
                 'ml-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-xs font-bold text-white sm:h-7 sm:min-w-7 sm:px-1.5 sm:text-sm',

@@ -1,7 +1,7 @@
 <template>
   <div class="mb-6 space-y-3">
     <!-- Top Bar: Search (left) | Primary View Tabs (center) | Settings (right) -->
-    <div class="flex items-center gap-3 rounded-lg bg-gray-100 px-4 py-2.5 dark:bg-[hsl(240,5%,5%)]">
+    <div class="flex items-center gap-3 rounded-lg bg-surface-elevated px-4 py-2.5">
       <!-- Search - larger width -->
       <div class="w-56 shrink-0 sm:w-64 lg:w-72">
         <UInput
@@ -74,7 +74,7 @@
       </div>
     </div>
     <!-- Secondary filters: Status Filters + User View (centered) -->
-    <div class="flex items-center justify-center gap-3 rounded-lg bg-gray-100 px-4 py-2.5 dark:bg-[hsl(240,5%,5%)]">
+    <div class="flex items-center justify-center gap-3 rounded-lg bg-surface-elevated px-4 py-2.5">
       <!-- Status filters (ALL / AVAILABLE / LOCKED / COMPLETED) -->
       <div class="flex items-center gap-1">
         <UButton
@@ -149,7 +149,7 @@
         </UButton>
       </div>
       <!-- Divider -->
-      <div class="h-6 w-px shrink-0 bg-gray-200 dark:bg-white/20" />
+      <div class="h-6 w-px shrink-0 bg-divider" />
       <!-- Player/Team view buttons -->
       <div class="flex items-center gap-1">
         <UButton
@@ -202,7 +202,7 @@
     <!-- Map selector (shown when MAPS is selected) - Horizontal scrollable -->
     <div v-if="primaryView === 'maps' && maps.length > 0" class="w-full overflow-x-auto">
       <div
-        class="flex w-max min-w-full justify-center gap-1 rounded-lg bg-gray-100 px-4 py-2.5 dark:bg-[hsl(240,5%,5%)]"
+        class="flex w-max min-w-full justify-center gap-1 rounded-lg bg-surface-elevated px-4 py-2.5"
       >
         <button
           v-for="mapOption in mapOptions"
@@ -234,7 +234,7 @@
     <!-- Trader selector (shown when TRADERS is selected) - Horizontal scrollable -->
     <div v-if="primaryView === 'traders' && traders.length > 0" class="w-full overflow-x-auto">
       <div
-        class="flex w-max min-w-full justify-center gap-1 rounded-lg bg-gray-100 px-4 py-2.5 dark:bg-[hsl(240,5%,5%)]"
+        class="flex w-max min-w-full justify-center gap-1 rounded-lg bg-surface-elevated px-4 py-2.5"
       >
         <button
           v-for="trader in traders"

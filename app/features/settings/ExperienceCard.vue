@@ -21,13 +21,13 @@
           </template>
         </UAlert>
         <!-- Automatic Level Calculation Toggle -->
-        <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-surface-700 dark:bg-surface-800/30">
+        <div class="rounded-lg border border-base bg-surface-elevated p-4">
           <div class="flex items-start justify-between gap-3">
             <div class="flex-1">
-              <div class="mb-1 text-sm font-semibold text-gray-900 dark:text-surface-200">
+              <div class="mb-1 text-sm font-semibold text-content-primary">
                 {{ $t('settings.experience.auto_level_title', 'Automatic Level Calculation') }}
               </div>
-              <p class="text-xs text-gray-500 dark:text-surface-400">
+              <p class="text-xs text-content-tertiary">
                 {{
                   $t(
                     'settings.experience.auto_level_description',
@@ -59,9 +59,9 @@
           </UAlert>
         </div>
         <!-- Current Level Display -->
-        <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-surface-700 dark:bg-surface-800/30">
+        <div class="rounded-lg border border-base bg-surface-elevated p-4">
           <div class="mb-3 flex items-center justify-between">
-            <span class="text-sm font-semibold text-gray-900 dark:text-surface-200">
+            <span class="text-sm font-semibold text-content-primary">
               {{ $t('settings.experience.current_level', 'Current Level') }}
             </span>
             <span class="text-2xl font-bold text-primary-600 dark:text-primary-400">
@@ -70,35 +70,35 @@
           </div>
           <!-- XP Progress Bar -->
           <div class="space-y-1">
-            <div class="flex justify-between text-xs text-gray-500 dark:text-surface-400">
+            <div class="flex justify-between text-xs text-content-tertiary">
               <span>{{ formatNumber(xpCalculation.totalXP.value) }} XP</span>
               <span>{{ formatNumber(xpCalculation.xpToNextLevel.value) }} to next</span>
             </div>
-            <div class="h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-surface-700">
+            <div class="h-2 overflow-hidden rounded-full bg-surface-400 dark:bg-surface-700">
               <div
                 class="h-full bg-primary-500 transition-all duration-300"
                 :style="{ width: `${xpCalculation.xpProgress.value}%` }"
               ></div>
             </div>
-            <div class="flex justify-between text-xs text-gray-400 dark:text-surface-500">
+            <div class="flex justify-between text-xs text-content-tertiary">
               <span>{{ formatNumber(xpCalculation.xpForCurrentLevel.value) }}</span>
               <span>{{ formatNumber(xpCalculation.xpForNextLevel.value) }}</span>
             </div>
           </div>
         </div>
         <!-- XP Breakdown -->
-        <div class="rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-surface-700 dark:bg-surface-800/30">
-          <div class="mb-2 text-sm font-semibold text-gray-900 dark:text-surface-200">
+        <div class="rounded-lg border border-base bg-surface-elevated p-3">
+          <div class="mb-2 text-sm font-semibold text-content-primary">
             {{ $t('settings.experience.breakdown', 'XP Breakdown') }}
           </div>
           <div class="grid grid-cols-2 gap-3 text-sm">
-            <div class="text-gray-500 dark:text-surface-400">
+            <div class="text-content-tertiary">
               Quest XP:
-              <span class="ml-1 text-gray-700 dark:text-surface-200">
+              <span class="ml-1 text-content-primary">
                 {{ formatNumber(xpCalculation.calculatedQuestXP.value) }}
               </span>
             </div>
-            <div class="text-gray-500 dark:text-surface-400">
+            <div class="text-content-tertiary">
               Manual Offset:
               <span
                 class="ml-1"
@@ -108,7 +108,7 @@
                 }}{{ formatNumber(tarkovStore.getXpOffset()) }}
               </span>
             </div>
-            <div class="col-span-2 border-t border-gray-200 pt-2 text-gray-500 dark:border-surface-700 dark:text-surface-400">
+            <div class="col-span-2 border-t border-base pt-2 text-content-tertiary">
               Total XP:
               <span class="ml-1 font-bold text-primary-600 dark:text-primary-400">
                 {{ formatNumber(xpCalculation.totalXP.value) }}
@@ -118,7 +118,7 @@
         </div>
         <!-- Manual XP Offset Input -->
         <div class="space-y-2">
-          <label class="text-sm font-semibold text-gray-900 dark:text-surface-200">
+          <label class="text-sm font-semibold text-content-primary">
             {{ $t('settings.experience.set_total_xp', 'Set Total XP') }}
           </label>
           <div class="flex items-center gap-2">
@@ -140,7 +140,7 @@
               Apply
             </UButton>
           </div>
-          <p class="text-xs text-gray-500 dark:text-surface-400">
+          <p class="text-xs text-content-tertiary">
             {{
               $t(
                 'settings.experience.manual_hint',

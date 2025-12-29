@@ -1,7 +1,7 @@
 <template>
   <div
     class="group focus-within:ring-primary-500 focus-within:ring-offset-surface-900 flex w-full cursor-pointer items-start gap-4 rounded-md px-2 py-2 transition-colors focus-within:ring-2 focus-within:ring-offset-2"
-    :class="isComplete ? 'bg-success-500/10' : 'hover:bg-white/5'"
+    :class="isComplete ? 'bg-success-500/10' : 'hover:bg-surface-200'"
     @click="handleRowClick"
     @mouseenter="objectiveMouseEnter()"
     @mouseleave="objectiveMouseLeave()"
@@ -10,18 +10,18 @@
       :name="objectiveIcon.startsWith('mdi-') ? `i-${objectiveIcon}` : objectiveIcon"
       aria-hidden="true"
       class="mt-0.5 h-4 w-4 shrink-0"
-      :class="isComplete ? 'text-success-300' : 'text-gray-400 group-hover:text-gray-300'"
+      :class="isComplete ? 'text-success-500 dark:text-success-300' : 'text-content-tertiary group-hover:text-content-secondary'"
     />
     <div class="flex flex-1 flex-wrap items-center gap-2">
       <div class="min-w-0">
-        <div class="text-sm leading-5 text-gray-100">
+        <div class="text-sm leading-5 text-content-primary">
           {{ props.objective?.description }}
         </div>
         <AppTooltip
           v-if="userHasTeam && activeUserView === 'all' && userNeeds.length > 0"
           :text="userNeedsTitle"
         >
-          <div class="mt-1 inline-flex items-center gap-1 text-[11px] text-gray-500">
+          <div class="mt-1 inline-flex items-center gap-1 text-[11px] text-content-tertiary">
             <UIcon name="i-mdi-account-multiple-outline" aria-hidden="true" class="h-3.5 w-3.5" />
             <span>{{ userNeeds.length }}</span>
           </div>
@@ -52,7 +52,7 @@
             :class="
               isComplete
                 ? 'bg-success-600 border-success-500 hover:bg-success-500 text-white'
-                : 'border-white/10 bg-white/5 text-gray-300 hover:bg-white/10'
+                : 'border-base bg-surface-floating text-content-tertiary hover:bg-surface-elevated'
             "
             @click="toggleObjectiveCompletion()"
           >

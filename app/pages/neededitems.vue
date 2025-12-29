@@ -14,8 +14,8 @@
       :ungrouped-count="filteredItems.length"
     />
     <!-- Items Container -->
-    <UCard class="bg-contentbackground border border-white/5">
-      <div v-if="displayItems.length === 0" class="text-surface-400 p-8 text-center">
+    <UCard class="border border-base bg-surface-base">
+      <div v-if="displayItems.length === 0" class="p-8 text-center text-content-tertiary">
         {{ $t('page.neededitems.empty', 'No items match your search.') }}
       </div>
       <!-- Grouped View -->
@@ -33,7 +33,7 @@
         <div v-if="visibleCount < displayItems.length" ref="gridSentinel" class="h-1 w-full"></div>
       </div>
       <!-- List View -->
-      <div v-else-if="viewMode === 'list'" class="divide-y divide-white/5">
+      <div v-else-if="viewMode === 'list'" class="divide-y divide-base">
         <NeededItem
           v-for="(item, index) in visibleIndividualItems"
           :key="`${item.needType}-${item.id}`"

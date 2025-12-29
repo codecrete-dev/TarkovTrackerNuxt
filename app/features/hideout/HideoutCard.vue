@@ -18,7 +18,7 @@
           </span>
           <!-- Title and Level Badge -->
           <div class="flex items-center gap-2">
-            <span class="inline-block text-left leading-6 text-gray-900 dark:text-white">
+            <span class="inline-block text-left leading-6 text-content-primary">
               {{ station.name }}
             </span>
             <div
@@ -54,20 +54,20 @@
         </div>
       </div>
       <!-- Divider -->
-      <div class="mx-4 border-b border-gray-200 dark:border-surface-700"></div>
+      <div class="mx-4 border-b border-base"></div>
     </template>
     <template #content>
       <!-- Station description -->
-      <div v-if="currentLevel" class="mx-2 mb-3 text-left text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+      <div v-if="currentLevel" class="mx-2 mb-3 text-left text-sm leading-relaxed text-content-secondary">
         {{ getStashAdjustedDescription(currentLevel.description) }}
       </div>
-      <div v-else-if="nextLevel" class="mx-2 mb-3 text-left text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+      <div v-else-if="nextLevel" class="mx-2 mb-3 text-left text-sm leading-relaxed text-content-secondary">
         {{ getStashAdjustedDescription(nextLevel.description) }}
       </div>
       <!-- Stash station special content -->
       <div
         v-if="props.station.normalizedName === SPECIAL_STATIONS.STASH"
-        class="mb-3 rounded-lg bg-gray-100 p-3 text-center text-gray-700 dark:bg-gray-700 dark:text-white"
+        class="mb-3 rounded-lg bg-surface-elevated border border-base p-3 text-center text-content-secondary"
       >
         <div class="mb-2 text-sm">
           {{ $t('page.hideout.stationcard.gameeditiondescription') }}
@@ -79,8 +79,8 @@
       <!-- Next level requirements -->
       <div v-if="nextLevel" class="space-y-3">
         <!-- Item Requirements Section -->
-        <div v-if="hasItemRequirements" class="rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-transparent dark:bg-gray-800">
-          <div class="mb-3 flex items-center text-base font-medium text-gray-900 dark:text-white">
+        <div v-if="hasItemRequirements" class="rounded-lg border border-base bg-surface-elevated p-3">
+          <div class="mb-3 flex items-center text-base font-medium text-content-primary">
             <UIcon name="i-mdi-package-variant-closed-check" class="mr-2 h-5 w-5 text-green-600 dark:text-green-500" />
             {{ $t('page.hideout.stationcard.nextlevel') }}
           </div>
@@ -95,8 +95,8 @@
             />
           </div>
           <!-- Prerequisites Section -->
-          <div v-if="hasPrerequisites" class="space-y-2 border-t border-gray-200 pt-3 dark:border-gray-700">
-            <div class="mb-2 text-xs font-medium tracking-wider uppercase text-gray-500 dark:text-gray-400">
+          <div v-if="hasPrerequisites" class="space-y-2 border-t border-base pt-3">
+            <div class="mb-2 text-xs font-medium tracking-wider uppercase text-content-tertiary">
               {{ $t('page.hideout.stationcard.prerequisites') || 'Prerequisites' }}
             </div>
             <!-- Station Level Requirements -->
@@ -104,7 +104,7 @@
               v-for="(requirement, rIndex) in nextLevel.stationLevelRequirements"
               :key="`station-${rIndex}`"
               class="flex items-center gap-2 text-sm"
-              :class="isStationReqMet(requirement) ? 'text-gray-500 dark:text-gray-300' : 'font-semibold text-red-500 dark:text-red-400'"
+              :class="isStationReqMet(requirement) ? 'text-content-secondary' : 'font-semibold text-error-500 dark:text-error-400'"
             >
               <UIcon
                 name="i-mdi-home"
@@ -125,7 +125,7 @@
               v-for="(requirement, rIndex) in nextLevel.skillRequirements"
               :key="`skill-${rIndex}`"
               class="flex items-center gap-2 text-sm"
-              :class="isSkillReqMet(requirement) ? 'text-gray-500 dark:text-gray-300' : 'font-semibold text-red-500 dark:text-red-400'"
+              :class="isSkillReqMet(requirement) ? 'text-content-secondary' : 'font-semibold text-error-500 dark:text-error-400'"
             >
               <UIcon
                 name="i-mdi-star"
@@ -146,7 +146,7 @@
               v-for="(requirement, rIndex) in nextLevel.traderRequirements"
               :key="`trader-${rIndex}`"
               class="flex items-center gap-2 text-sm"
-              :class="isTraderReqMet(requirement) ? 'text-gray-500 dark:text-gray-300' : 'font-semibold text-red-500 dark:text-red-400'"
+              :class="isTraderReqMet(requirement) ? 'text-content-secondary' : 'font-semibold text-error-500 dark:text-error-400'"
             >
               <UIcon
                 name="i-mdi-account-tie"

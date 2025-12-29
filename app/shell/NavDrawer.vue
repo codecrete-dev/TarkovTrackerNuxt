@@ -39,10 +39,10 @@
           />
         </div>
         <div v-if="!isCollapsed" class="mt-1 text-center">
-          <div class="text-base leading-tight font-medium text-gray-900 dark:text-white">TarkovTracker.org</div>
+          <div class="text-base leading-tight font-medium text-content-primary">TarkovTracker.org</div>
         </div>
       </NuxtLink>
-      <div class="mx-3 my-0.5 h-px bg-gray-200 dark:bg-primary-800/40" />
+      <div class="mx-3 my-0.5 h-px bg-divider" />
       <ul class="flex flex-col gap-1 px-1">
         <template v-if="isLoggedIn">
           <UDropdownMenu :items="accountItems" :content="{ side: 'right', align: 'start' }">
@@ -87,12 +87,12 @@
       <DrawerLevel :is-collapsed="isCollapsed" />
       <div v-if="!isCollapsed" class="my-2 flex flex-col items-center gap-1.5 px-4">
         <button
-          class="w-full rounded border px-2 py-1 text-center text-xs font-medium transition-colors border-gray-300 text-gray-600 hover:border-gray-400 hover:text-gray-900 dark:border-primary-800/50 dark:text-white/80 dark:hover:border-primary-600 dark:hover:text-white"
+          class="w-full rounded border px-2 py-1 text-center text-xs font-medium transition-colors border-base text-content-secondary hover:text-content-primary dark:hover:border-primary-600"
           @click="navigateToSettings"
         >
           {{ currentEditionName }}
         </button>
-        <div class="flex w-full overflow-hidden rounded-md border border-gray-300 dark:border-primary-800/50">
+        <div class="flex w-full overflow-hidden rounded-md border border-base">
           <button
             v-for="faction in factions"
             :key="faction"
@@ -100,7 +100,7 @@
             :class="
               faction === currentFaction
                 ? 'bg-primary-600 text-white dark:bg-primary-700'
-                : 'bg-transparent text-gray-500 hover:bg-gray-200 hover:text-gray-900 dark:text-white/65 dark:hover:bg-white/5 dark:hover:text-white'
+                : 'bg-transparent text-content-tertiary hover:bg-surface-200 hover:text-content-primary dark:hover:bg-white/5'
             "
             @click="setFaction(faction)"
           >
@@ -113,7 +113,7 @@
       <div class="mx-3 my-0.5 h-px bg-gray-200 dark:bg-primary-800/40" />
       <div class="flex flex-col gap-1">
         <div v-if="!isCollapsed" class="px-4 py-0.5">
-          <h3 class="text-xs font-semibold tracking-wider text-gray-500 uppercase">External</h3>
+          <h3 class="text-xs font-semibold tracking-wider text-content-tertiary uppercase">External</h3>
         </div>
         <ul class="flex flex-col gap-1 px-1">
           <DrawerItem

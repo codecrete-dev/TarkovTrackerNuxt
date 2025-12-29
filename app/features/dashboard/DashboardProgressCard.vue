@@ -1,7 +1,7 @@
 <template>
   <div
     :class="[
-      'cursor-pointer rounded-xl border border-gray-200 bg-white p-6 shadow-lg dark:border-surface-700/30 dark:bg-surface-900',
+      'cursor-pointer rounded-xl border border-base bg-surface-elevated p-6 shadow-lg',
       'transition-colors',
       hoverBorderClass,
     ]"
@@ -21,15 +21,15 @@
           <UIcon :name="icon" class="h-5 w-5" :class="iconColorClass" />
         </div>
         <div>
-          <div class="text-sm tracking-wider uppercase text-gray-600 dark:text-surface-400">
+          <div class="text-sm tracking-wider uppercase text-content-secondary">
             {{ label }}
           </div>
-          <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ completed }}/{{ total }}</div>
+          <div class="text-2xl font-bold text-content-primary">{{ completed }}/{{ total }}</div>
         </div>
       </div>
       <div class="text-3xl font-bold" :class="percentageColorClass">{{ percentageDisplay }}%</div>
     </div>
-    <div class="relative h-3 overflow-hidden rounded-full bg-gray-200 dark:bg-surface-800">
+    <div class="relative h-3 overflow-hidden rounded-full bg-surface-200 dark:bg-surface-800">
       <div
         class="absolute inset-y-0 left-0 rounded-full transition-all duration-1000 ease-out"
         :class="holidayEffectsEnabled ? 'candy-cane' : barGradientClass"

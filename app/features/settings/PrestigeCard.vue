@@ -11,7 +11,7 @@
       <div class="space-y-4 px-4 py-4">
         <!-- Prestige Level Selector -->
         <div class="space-y-2">
-          <p class="text-surface-200 text-sm font-semibold">
+          <p class="text-sm font-semibold text-content-secondary">
             {{ $t('settings.prestige.current_level', 'Current Prestige Level') }}
           </p>
           <USelectMenu
@@ -26,7 +26,7 @@
               <UIcon name="i-mdi-trophy" class="text-gold-400 h-4 w-4" />
             </template>
           </USelectMenu>
-          <p class="text-surface-400 text-xs">
+          <p class="text-xs text-content-tertiary">
             {{
               $t(
                 'settings.prestige.hint',
@@ -64,16 +64,16 @@
   const selectUi = {};
   const selectMenuUi = {
     container: 'z-[9999]',
-    background: 'bg-surface-900',
+    background: 'bg-surface-floating',
     shadow: 'shadow-xl',
     rounded: 'rounded-lg',
-    ring: 'ring-1 ring-white/10',
+    ring: 'ring-1 ring-base',
     padding: 'p-1',
     option: {
       base: 'px-3 py-2 text-sm cursor-pointer transition-colors rounded',
-      inactive: 'text-surface-200 hover:bg-surface-800 hover:text-white',
-      active: 'bg-surface-800 text-white',
-      selected: 'bg-primary-500/10 text-primary-100 ring-1 ring-primary-500',
+      inactive: 'text-content-secondary hover:bg-surface-elevated hover:text-content-primary',
+      active: 'bg-surface-elevated text-content-primary',
+      selected: 'bg-primary-500/10 text-primary-500 ring-1 ring-primary-500',
     },
   };
 </script>

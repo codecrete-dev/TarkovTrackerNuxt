@@ -26,34 +26,34 @@
         <div class="p-4">
           <!-- Logged out state -->
           <template v-if="!isLoggedIn">
-            <div class="mb-6 rounded-lg border border-gray-700 bg-gray-800/30 p-4 opacity-60">
-              <div class="mb-3 text-base font-bold text-gray-500">Account Information</div>
+            <div class="mb-6 rounded-lg border border-base bg-surface-elevated p-4 opacity-60">
+              <div class="mb-3 text-base font-bold text-content-secondary">Account Information</div>
               <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <div class="mb-2 flex items-center">
-                    <UIcon name="i-mdi-account" class="mr-2 h-4.5 w-4.5 text-gray-500" />
-                    <span class="text-sm text-gray-500">Username: —</span>
+                    <UIcon name="i-mdi-account" class="mr-2 h-4.5 w-4.5 text-content-tertiary" />
+                    <span class="text-sm text-content-tertiary">Username: —</span>
                   </div>
                   <div class="mb-2 flex items-center">
-                    <UIcon name="i-mdi-email" class="mr-2 h-4.5 w-4.5 text-gray-500" />
-                    <span class="text-sm text-gray-500">Email: —</span>
+                    <UIcon name="i-mdi-email" class="mr-2 h-4.5 w-4.5 text-content-tertiary" />
+                    <span class="text-sm text-content-tertiary">Email: —</span>
                   </div>
                 </div>
                 <div>
                   <div class="mb-2 flex items-center">
-                    <UIcon name="i-mdi-login" class="mr-2 h-4.5 w-4.5 text-gray-500" />
-                    <span class="text-sm text-gray-500">Auth Method: —</span>
+                    <UIcon name="i-mdi-login" class="mr-2 h-4.5 w-4.5 text-content-tertiary" />
+                    <span class="text-sm text-content-tertiary">Auth Method: —</span>
                   </div>
                   <div class="flex items-center">
-                    <UIcon name="i-mdi-calendar" class="mr-2 h-4.5 w-4.5 text-gray-500" />
-                    <span class="text-sm text-gray-500">Member since: —</span>
+                    <UIcon name="i-mdi-calendar" class="mr-2 h-4.5 w-4.5 text-content-tertiary" />
+                    <span class="text-sm text-content-tertiary">Member since: —</span>
                   </div>
                 </div>
               </div>
-              <div class="my-3 border-t border-gray-700"></div>
+              <div class="my-3 border-t border-base"></div>
               <div class="flex items-center">
-                <UIcon name="i-mdi-identifier" class="mr-2 h-4.5 w-4.5 text-gray-500" />
-                <span class="text-sm text-gray-500">Account ID: —</span>
+                <UIcon name="i-mdi-identifier" class="mr-2 h-4.5 w-4.5 text-content-tertiary" />
+                <span class="text-sm text-content-tertiary">Account ID: —</span>
               </div>
             </div>
             <!-- Deletion Warning (disabled state) -->
@@ -97,14 +97,14 @@
           <!-- Logged in state -->
           <template v-else>
             <!-- Account Information (Moved to Top) -->
-            <div class="mb-6 rounded-lg border border-gray-700 bg-gray-800/50 p-4">
+            <div class="mb-6 rounded-lg border border-base bg-surface-elevated p-4">
               <div class="mb-3 text-base font-bold">Account Information</div>
               <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <div class="mb-2 flex items-center">
-                    <UIcon name="i-mdi-account" class="mr-2 h-4.5 w-4.5 text-gray-400" />
+                    <UIcon name="i-mdi-account" class="mr-2 h-4.5 w-4.5 text-content-tertiary" />
                     <span class="text-sm">
-                      <span class="text-gray-400">Username:</span>
+                      <span class="text-content-secondary">Username:</span>
                       <span class="ml-1 font-mono font-medium">{{ maskedUsername }}</span>
                     </span>
                     <AppTooltip :text="showUsername ? 'Hide' : 'Show'">
@@ -119,9 +119,9 @@
                     </AppTooltip>
                   </div>
                   <div class="mb-2 flex items-center">
-                    <UIcon name="i-mdi-email" class="mr-2 h-4.5 w-4.5 text-gray-400" />
+                    <UIcon name="i-mdi-email" class="mr-2 h-4.5 w-4.5 text-content-tertiary" />
                     <span class="text-sm">
-                      <span class="text-gray-400">Email:</span>
+                      <span class="text-content-secondary">Email:</span>
                       <span class="ml-1 font-mono font-medium">{{ maskedEmail }}</span>
                     </span>
                     <AppTooltip :text="showEmail ? 'Hide' : 'Show'">
@@ -138,9 +138,9 @@
                 </div>
                 <div>
                   <div class="mb-2 flex items-center">
-                    <UIcon name="i-mdi-login" class="mr-2 h-4.5 w-4.5 text-gray-400" />
+                    <UIcon name="i-mdi-login" class="mr-2 h-4.5 w-4.5 text-content-tertiary" />
                     <span class="flex items-center text-sm">
-                      <span class="mr-2 text-gray-400">Auth Method:</span>
+                      <span class="mr-2 text-content-secondary">Auth Method:</span>
                       <UBadge size="xs" :color="providerColor" variant="solid" class="text-white">
                         <UIcon :name="providerIcon" class="mr-1 h-4 w-4" />
                         {{ providerLabel }}
@@ -148,9 +148,9 @@
                     </span>
                   </div>
                   <div class="flex items-center">
-                    <UIcon name="i-mdi-calendar" class="mr-2 h-4.5 w-4.5 text-gray-400" />
+                    <UIcon name="i-mdi-calendar" class="mr-2 h-4.5 w-4.5 text-content-tertiary" />
                     <span class="text-sm">
-                      <span class="text-gray-400">Member since:</span>
+                      <span class="text-content-secondary">Member since:</span>
                       <span class="ml-1 font-medium">
                         {{ formatDate($supabase.user.createdAt) }}
                       </span>
@@ -158,11 +158,11 @@
                   </div>
                 </div>
               </div>
-              <div class="my-3 border-t border-gray-700"></div>
+              <div class="my-3 border-t border-base"></div>
               <div class="flex items-center">
-                <UIcon name="i-mdi-identifier" class="mr-2 h-4.5 w-4.5 text-gray-400" />
-                <span class="mr-2 text-sm text-gray-400">Account ID:</span>
-                <code class="rounded bg-gray-700 px-2 py-1 text-xs">{{ maskedAccountId }}</code>
+                <UIcon name="i-mdi-identifier" class="mr-2 h-4.5 w-4.5 text-content-tertiary" />
+                <span class="mr-2 text-sm text-content-secondary">Account ID:</span>
+                <code class="rounded bg-surface-200 px-2 py-1 text-xs dark:bg-surface-700">{{ maskedAccountId }}</code>
                 <AppTooltip :text="showAccountId ? 'Hide' : 'Show'">
                   <UButton
                     size="xs"

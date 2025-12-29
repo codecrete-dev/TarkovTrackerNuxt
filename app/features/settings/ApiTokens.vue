@@ -2,7 +2,7 @@
   <div class="space-y-4">
     <div class="flex flex-wrap items-start justify-between gap-3">
       <div>
-        <p class="text-surface-400 max-w-3xl text-sm">
+        <p class="max-w-3xl text-sm text-content-secondary">
           {{
             t('page.settings.card.apitokens.description', {
               openAPI_documentation: t('page.settings.card.apitokens.openAPI_documentation'),
@@ -36,10 +36,10 @@
         "
       />
       <div v-if="loading" class="space-y-2">
-        <div class="h-12 animate-pulse rounded-lg bg-white/5"></div>
-        <div class="h-12 animate-pulse rounded-lg bg-white/5"></div>
+        <div class="h-12 animate-pulse rounded-lg bg-surface-elevated"></div>
+        <div class="h-12 animate-pulse rounded-lg bg-surface-elevated"></div>
       </div>
-      <div v-else-if="!tokens.length" class="bg-surface-900 rounded-lg border border-white/5 p-4">
+      <div v-else-if="!tokens.length" class="rounded-lg border border-base bg-surface-elevated p-4">
         <UAlert
           color="primary"
           variant="soft"
@@ -50,14 +50,14 @@
         <UCard
           v-for="token in tokens"
           :key="token.id"
-          class="bg-surface-900 border border-white/10"
+          class="border border-base bg-surface-elevated"
           :ui="{ body: 'space-y-3' }"
         >
           <div class="flex flex-wrap items-start justify-between gap-3">
             <div class="w-full space-y-2">
               <div class="flex items-center gap-2">
-                <UIcon name="i-mdi-key-variant" class="text-primary-400 h-5 w-5" />
-                <span class="text-surface-50 font-medium">
+                <UIcon name="i-mdi-key-variant" class="h-5 w-5 text-primary-400" />
+                <span class="font-medium text-content-primary">
                   {{ token.note || t('page.settings.card.apitokens.default_note') }}
                 </span>
               </div>
@@ -84,10 +84,10 @@
                 </UBadge>
               </div>
               <div
-                class="bg-surface-950/50 flex items-center gap-2 rounded border border-white/5 p-2"
+                class="flex items-center gap-2 rounded border border-base bg-surface-floating p-2"
                 :class="{ 'opacity-70': !token.tokenValue }"
               >
-                <code class="text-surface-300 flex-1 font-mono text-xs">
+                <code class="flex-1 font-mono text-xs text-content-secondary">
                   <template v-if="token.tokenValue">
                     {{
                       visibleTokens.has(token.id) ? token.tokenValue : maskToken(token.tokenValue)
@@ -128,7 +128,7 @@
                   />
                 </div>
               </div>
-              <div class="text-surface-400 flex flex-wrap gap-3 text-xs">
+              <div class="flex flex-wrap gap-3 text-xs text-content-tertiary">
                 <span>
                   {{ t('page.settings.card.apitokens.list.created') }}:
                   {{ formatDate(token.createdAt) }}
@@ -181,7 +181,7 @@
       <template #body>
         <div class="space-y-4">
           <div class="space-y-3">
-            <p class="text-surface-200 text-sm font-semibold">
+            <p class="text-sm font-semibold text-content-secondary">
               {{ t('page.settings.card.apitokens.form.gamemode_title') }}
               <span class="text-red-400">*</span>
             </p>
@@ -193,7 +193,7 @@
                 :class="
                   selectedGameMode === mode.value
                     ? 'border-primary-500 bg-primary-500/10'
-                    : 'border-gray-700 bg-gray-800/50 hover:border-gray-600'
+                    : 'border-base bg-surface-elevated hover:bg-surface-200'
                 "
                 @click="selectedGameMode = mode.value"
               >
@@ -203,7 +203,7 @@
                     :class="
                       selectedGameMode === mode.value
                         ? 'border-primary-500 bg-primary-500'
-                        : 'border-gray-600'
+                        : 'border-content-tertiary'
                     "
                   >
                     <div
@@ -212,15 +212,15 @@
                     />
                   </div>
                   <div class="flex-1">
-                    <div class="font-medium text-white">{{ mode.label }}</div>
-                    <div class="text-xs text-gray-400">{{ mode.description }}</div>
+                    <div class="font-medium text-content-primary">{{ mode.label }}</div>
+                    <div class="text-xs text-content-tertiary">{{ mode.description }}</div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
           <div class="space-y-2">
-            <p class="text-surface-200 text-sm font-semibold">
+            <p class="text-sm font-semibold text-content-secondary">
               {{ t('page.settings.card.apitokens.form.permissions_title') }}
             </p>
             <UCheckbox
@@ -234,12 +234,12 @@
               "
             >
               <template #description>
-                <span class="text-surface-400 text-xs">{{ permission.description }}</span>
+                <span class="text-xs text-content-tertiary">{{ permission.description }}</span>
               </template>
             </UCheckbox>
           </div>
           <div class="space-y-2">
-            <p class="text-surface-200 text-sm font-semibold">
+            <p class="text-sm font-semibold text-content-secondary">
               {{ t('page.settings.card.apitokens.form.note_label') }}
             </p>
             <UInput
@@ -283,7 +283,7 @@
       </template>
       <template #body>
         <div class="space-y-3">
-          <p class="text-surface-300 text-sm">
+          <p class="text-sm text-content-secondary">
             {{ t('page.settings.card.apitokens.token_created_description') }}
           </p>
           <UInput v-model="generatedToken" readonly>

@@ -23,7 +23,7 @@
         <span
           :class="[
             'ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-xs font-bold text-white sm:ml-2 sm:h-7 sm:min-w-7 sm:px-1.5 sm:text-sm',
-            modelValue === tab.value ? 'bg-primary-500' : 'bg-gray-600',
+            modelValue === tab.value ? 'bg-primary-500' : 'bg-surface-400',
           ]"
         >
           {{ tab.count }}
@@ -81,7 +81,7 @@
           </UButton>
           <template #content>
             <div class="w-80 space-y-3 p-3">
-              <div class="text-xs font-medium text-gray-500 dark:text-surface-400">
+              <div class="text-xs font-medium text-content-tertiary">
                 {{ $t('page.neededitems.filters.sections.items', 'ITEMS') }}
               </div>
               <div class="flex flex-wrap gap-2">
@@ -126,8 +126,8 @@
                   </UButton>
                 </AppTooltip>
               </div>
-              <div class="border-t border-gray-200 pt-3 dark:border-white/10">
-                <div class="mb-2 text-xs font-medium text-gray-500 dark:text-surface-400">
+              <div class="border-t border-base pt-3">
+                <div class="mb-2 text-xs font-medium text-content-tertiary">
                   {{ $t('page.neededitems.filters.sections.team', 'TEAM') }}
                 </div>
                 <UButton
@@ -157,7 +157,7 @@
           </template>
           <template v-else>{{ totalCount }} {{ $t('page.neededitems.items', 'items') }}</template>
         </UBadge>
-        <div class="flex gap-1 border-l border-gray-300 pl-3 dark:border-white/10">
+        <div class="flex gap-1 border-l border-base pl-3">
           <UButton
             icon="i-mdi-view-list"
             :color="!groupByItem && viewMode === 'list' ? 'primary' : 'neutral'"

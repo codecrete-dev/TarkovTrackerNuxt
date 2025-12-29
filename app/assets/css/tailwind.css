@@ -481,6 +481,11 @@ html {
   .border-base {
     @apply border-gray-200 dark:border-white/10;
   }
+  
+  /* Semantic Divider (background) */
+  .bg-divider {
+    @apply bg-gray-200 dark:bg-white/10;
+  }
 }
 
 /* Light Mode Leaflet Overrides (when not .dark) */
