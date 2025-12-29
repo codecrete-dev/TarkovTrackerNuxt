@@ -5,6 +5,17 @@ html {
   scroll-behavior: smooth;
 }
 /* Tailwind v4 + Nuxt UI v4 theme tokens */
+@layer base {
+  /* Apply a global focus ring that matches the "Trader Progress" style (primary-500) */
+  button,
+  a,
+  input,
+  select,
+  textarea,
+  [tabindex]:not([tabindex='-1']) {
+    @apply focus-visible:ring-primary-500 focus:outline-none focus-visible:ring-2;
+  }
+}
 @theme {
   --font-sans: 'Share Tech Mono', ui-sans-serif, system-ui, sans-serif;
   --font-mono:
