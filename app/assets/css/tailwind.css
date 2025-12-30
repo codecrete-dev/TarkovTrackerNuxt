@@ -4,6 +4,27 @@
 html {
   scroll-behavior: smooth;
 }
+
+/* Global Interactive & Cursor Fixes */
+button,
+[role="button"],
+input[type="submit"],
+input[type="reset"],
+input[type="button"],
+label[for],
+select,
+a {
+  cursor: pointer;
+}
+
+button:disabled,
+[role="button"][aria-disabled="true"],
+input:disabled,
+select:disabled,
+.disabled,
+.leaflet-disabled {
+  cursor: not-allowed !important;
+}
 /* Tailwind v4 + Nuxt UI v4 theme tokens */
 @theme {
   --font-sans: 'Share Tech Mono', ui-sans-serif, system-ui, sans-serif;

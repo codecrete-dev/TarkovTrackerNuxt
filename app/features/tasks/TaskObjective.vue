@@ -10,7 +10,7 @@
       :name="objectiveIcon.startsWith('mdi-') ? `i-${objectiveIcon}` : objectiveIcon"
       aria-hidden="true"
       class="h-5 w-5 shrink-0"
-      :class="isComplete ? 'text-success-500 dark:text-success-300' : 'text-content-tertiary group-hover:text-content-secondary'"
+      :class="isComplete ? 'text-success-500 dark:text-success-300' : 'text-gray-500 group-hover:text-gray-700 dark:text-content-tertiary dark:group-hover:text-content-secondary'"
     />
     <div class="flex flex-1 flex-wrap items-center gap-2">
       <div class="min-w-0">
@@ -46,13 +46,13 @@
         >
           <button
             type="button"
-            class="focus-visible:ring-primary-500 focus-visible:ring-offset-surface-900 flex h-7 w-7 items-center justify-center rounded-md border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+            class="cursor-pointer focus-visible:ring-primary-500 focus-visible:ring-offset-surface-900 flex h-7 w-7 items-center justify-center rounded-md border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
             :aria-label="toggleObjectiveLabel"
             :aria-pressed="isComplete"
             :class="
               isComplete
                 ? 'bg-success-600 border-success-500 hover:bg-success-500 text-white'
-                : 'border-base bg-surface-floating text-content-tertiary hover:bg-surface-elevated'
+                : 'border-gray-300 bg-white text-gray-500 hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10'
             "
             @click="toggleObjectiveCompletion()"
           >

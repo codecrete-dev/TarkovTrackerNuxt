@@ -1,9 +1,10 @@
 <template>
   <div class="mb-6 space-y-3">
     <!-- Top Bar: Search (left) | Primary View Tabs (center) | Settings (right) -->
-    <div class="flex items-center gap-3 rounded-lg bg-surface-elevated px-4 py-2.5">
+    <!-- Top Bar: Search (left) | Primary View Tabs (center) | Settings (right) -->
+    <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-lg bg-surface-elevated px-4 py-2.5">
       <!-- Search - larger width -->
-      <div class="w-56 shrink-0 sm:w-64 lg:w-72">
+      <div class="w-56 shrink-0 justify-self-start sm:w-64 lg:w-72">
         <UInput
           :model-value="searchQuery"
           :placeholder="t('page.tasks.search.placeholder', 'Search...')"
@@ -27,7 +28,7 @@
         </UInput>
       </div>
       <!-- Primary View Tabs - centered -->
-      <div class="flex flex-1 items-center justify-center gap-1">
+      <div class="flex items-center justify-center gap-1 justify-self-center">
         <UButton
           variant="ghost"
           color="neutral"
@@ -69,7 +70,7 @@
         </UButton>
       </div>
       <!-- Settings button -->
-      <div class="shrink-0">
+      <div class="shrink-0 justify-self-end">
         <TaskSettingsModal />
       </div>
     </div>

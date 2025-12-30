@@ -1,8 +1,8 @@
 <template>
   <div
     v-if="hasRewardsSummary || hasExpandableDetails"
-    class="rounded-md border-t border-white/5 p-2 transition-colors"
-    :class="{ 'cursor-pointer hover:bg-white/5': hasExpandableDetails }"
+    class="rounded-md border border-gray-200 p-2 transition-colors dark:border-white/5"
+    :class="{ 'cursor-pointer hover:bg-gray-100 dark:hover:bg-white/5': hasExpandableDetails }"
     @click="onAreaClick"
   >
     <div class="flex flex-wrap items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
@@ -14,8 +14,8 @@
       <!-- Trader Standing Rewards -->
       <template v-for="standing in traderStandingRewards" :key="`standing-${standing.trader.id}`">
         <span class="inline-flex items-center gap-1.5 rounded bg-blue-500/10 px-2 py-0.5">
-          <UIcon name="i-mdi-handshake" aria-hidden="true" class="h-4 w-4 text-blue-300" />
-          <span :class="standing.standing >= 0 ? 'text-green-400' : 'text-red-400'">
+          <UIcon name="i-mdi-handshake" aria-hidden="true" class="h-4 w-4 text-blue-500 dark:text-blue-300" />
+          <span :class="standing.standing >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'">
             {{ standing.standing >= 0 ? '+' : '' }}{{ standing.standing.toFixed(2) }}
           </span>
           <span class="text-gray-700 dark:text-gray-300">{{ standing.trader.name }}</span>
@@ -24,8 +24,8 @@
       <!-- Skill Rewards -->
       <template v-for="skill in skillRewards" :key="`skill-${skill.name}`">
         <span class="inline-flex items-center gap-1">
-          <UIcon name="i-mdi-arm-flex" aria-hidden="true" class="h-3.5 w-3.5 text-purple-400" />
-          <span class="text-purple-300">+{{ skill.level }}</span>
+          <UIcon name="i-mdi-arm-flex" aria-hidden="true" class="h-3.5 w-3.5 text-purple-500 dark:text-purple-400" />
+          <span class="text-purple-600 dark:text-purple-300">+{{ skill.level }}</span>
           <span>{{ skill.name }}</span>
         </span>
       </template>
@@ -34,16 +34,16 @@
         v-if="displayedTraderUnlock?.name"
         class="inline-flex items-center gap-1.5 rounded bg-amber-500/10 px-2 py-0.5"
       >
-        <UIcon name="i-mdi-lock-open-variant" aria-hidden="true" class="h-4 w-4 text-amber-400" />
-        <span class="text-amber-300">{{ displayedTraderUnlock.name }}</span>
+        <UIcon name="i-mdi-lock-open-variant" aria-hidden="true" class="h-4 w-4 text-amber-500 dark:text-amber-400" />
+        <span class="text-amber-600 dark:text-amber-300">{{ displayedTraderUnlock.name }}</span>
       </span>
       <!-- Item Rewards Summary -->
       <AppTooltip v-if="itemRewards.length > 0" :text="itemRewardsSummaryTooltip">
         <span
           class="inline-flex cursor-help items-center gap-1.5 rounded bg-emerald-500/10 px-2 py-0.5"
         >
-          <UIcon name="i-mdi-package-variant" aria-hidden="true" class="h-4 w-4 text-emerald-400" />
-          <span class="text-emerald-300">
+          <UIcon name="i-mdi-package-variant" aria-hidden="true" class="h-4 w-4 text-emerald-500 dark:text-emerald-400" />
+          <span class="text-emerald-600 dark:text-emerald-300">
             {{
               t(
                 'page.tasks.questcard.itemsCount',
@@ -59,8 +59,8 @@
         <span
           class="inline-flex cursor-help items-center gap-1.5 rounded bg-cyan-500/10 px-2 py-0.5"
         >
-          <UIcon name="i-mdi-cart-check" aria-hidden="true" class="h-4 w-4 text-cyan-400" />
-          <span class="text-cyan-300">
+          <UIcon name="i-mdi-cart-check" aria-hidden="true" class="h-4 w-4 text-cyan-500 dark:text-cyan-400" />
+          <span class="text-cyan-600 dark:text-cyan-300">
             {{
               t(
                 'page.tasks.questcard.unlocksCount',
@@ -77,7 +77,7 @@
           size="xs"
           color="neutral"
           variant="ghost"
-          class="shrink-0"
+          class="shrink-0 cursor-pointer"
           :aria-label="toggleDetailsLabel"
           :aria-expanded="showDetails"
           :aria-controls="detailsId"
@@ -248,7 +248,7 @@
   const rewardLinkClass =
     'text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 inline-flex items-center gap-1.5 text-xs';
   const rewardItemCardClass = [
-    'group relative flex flex-col items-center gap-1 rounded-lg border border-gray-200 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-white/5 dark:shadow-none',
+    'group relative flex flex-col items-center gap-1 rounded-lg border border-gray-200 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-white/5 dark:shadow-none cursor-pointer',
     'transition-colors hover:shadow-md dark:hover:bg-white/10 focus:outline-none',
     'focus-visible:ring-primary-500 focus-visible:ring-offset-surface-900',
     'focus-visible:ring-2 focus-visible:ring-offset-2',

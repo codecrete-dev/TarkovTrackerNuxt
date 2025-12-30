@@ -87,7 +87,7 @@
       <!-- Legend -->
       <div
         v-if="props.showLegend"
-        class="mt-2 flex flex-wrap items-center gap-4 text-xs text-gray-600 dark:text-gray-400"
+        class="mt-2 flex flex-wrap items-center gap-4 text-xs text-gray-600 dark:text-gray-300"
       >
         <div class="flex items-center gap-1">
           <div class="h-3 w-3 rounded-full bg-red-500" />
@@ -121,6 +121,21 @@
         </div>
       </div>
     </template>
+    
+    <!-- Controls Legend (Bottom Right) -->
+    <div
+      v-if="!isMapUnavailable"
+      class="pointer-events-none absolute right-2 bottom-2 z-[900] flex flex-col items-end gap-1 rounded bg-white/80 p-1.5 text-[10px] font-medium text-gray-500 backdrop-blur-sm dark:bg-surface-900/80 dark:text-gray-400"
+    >
+      <div class="flex items-center gap-1">
+        <kbd class="rounded bg-gray-200 px-1 py-0.5 font-mono text-gray-700 dark:bg-surface-700 dark:text-gray-300">Shift</kbd>
+        <span>+ Scroll to Zoom</span>
+      </div>
+      <div v-if="hasMultipleFloors" class="flex items-center gap-1">
+        <kbd class="rounded bg-gray-200 px-1 py-0.5 font-mono text-gray-700 dark:bg-surface-700 dark:text-gray-300">Ctrl</kbd>
+        <span>+ Scroll to Cycle Floors</span>
+      </div>
+    </div>
   </div>
 </template>
 <script setup lang="ts">

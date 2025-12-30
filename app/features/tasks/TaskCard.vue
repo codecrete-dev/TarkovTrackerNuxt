@@ -8,7 +8,7 @@
   >
     <div
       v-if="showBackgroundIcon"
-      class="text-brand-200 pointer-events-none absolute inset-0 z-0 flex rotate-12 transform items-center justify-center p-8 opacity-15"
+      class="text-brand-200 pointer-events-none absolute inset-0 z-0 flex rotate-12 transform items-center justify-center p-8 opacity-30"
     >
       <UIcon
         :name="backgroundIcon.startsWith('mdi-') ? `i-${backgroundIcon}` : backgroundIcon"
@@ -55,7 +55,7 @@
                 :href="task.wikiLink"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="focus-visible:ring-primary-500 focus-visible:ring-offset-surface-900 inline-flex items-center justify-center rounded p-1 text-content-tertiary transition-colors hover:bg-surface-200 hover:text-content-secondary focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                class="focus-visible:ring-primary-500 focus-visible:ring-offset-surface-900 inline-flex items-center justify-center rounded p-1 text-gray-500 transition-colors hover:bg-surface-200 hover:text-content-secondary focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:text-gray-400"
                 :aria-label="t('page.tasks.questcard.viewOnWiki', 'View on Wiki')"
                 @click.stop
               >
@@ -67,7 +67,7 @@
                 :href="tarkovDevTaskUrl"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="focus-visible:ring-primary-500 focus-visible:ring-offset-surface-900 inline-flex items-center justify-center rounded p-1 text-content-tertiary transition-colors hover:bg-surface-200 hover:text-content-secondary focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                class="focus-visible:ring-primary-500 focus-visible:ring-offset-surface-900 inline-flex items-center justify-center rounded p-1 text-gray-500 transition-colors hover:bg-surface-200 hover:text-content-secondary focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:text-gray-400"
                 :aria-label="t('page.tasks.questcard.viewOnTarkovDev', 'View on tarkov.dev')"
                 @click.stop
               >
@@ -163,7 +163,7 @@
               v-if="isLocked"
               :size="actionButtonSize"
               color="primary"
-              variant="soft"
+              variant="solid"
               class="shrink-0"
               @click.stop="markTaskAvailable()"
             >
@@ -173,7 +173,7 @@
               v-if="isComplete"
               :size="actionButtonSize"
               color="primary"
-              variant="soft"
+              variant="solid"
               class="shrink-0"
               @click.stop="markTaskUncomplete()"
             >
@@ -208,11 +208,11 @@
       <!-- 2) Metadata Row: Requires (Left) & Chain Info (Right) -->
       <div
         v-if="lockedBefore > 0 || afterHasContent"
-        class="flex flex-nowrap items-center justify-between gap-4 text-xs text-content-tertiary dark:text-content-secondary"
+        class="flex flex-nowrap items-center justify-between gap-4 text-xs text-gray-600 dark:text-content-secondary"
       >
         <!-- Requires strip (Left) -->
         <div v-if="lockedBefore > 0" class="flex min-w-0 items-center">
-          <span class="shrink-0 text-content-secondary dark:text-content-primary">
+          <span class="shrink-0 text-gray-700 dark:text-content-primary">
             {{ t('page.tasks.questcard.requires', 'Requires') }}:
           </span>
           <template v-if="pendingParentTasks.length">
@@ -235,7 +235,7 @@
             </span>
           </template>
           <template v-else>
-            <span class="ml-2 text-gray-300">{{ lockedBefore }}</span>
+            <span class="ml-2 text-gray-600 dark:text-gray-300">{{ lockedBefore }}</span>
           </template>
         </div>
         <div v-else />
@@ -251,7 +251,7 @@
               )
             "
           >
-            <span class="cursor-help border-b border-dotted border-gray-500">
+            <span class="cursor-help border-b border-dotted border-gray-400 text-gray-600 dark:border-gray-500 dark:text-gray-400">
               {{ t('page.tasks.questcard.unlocksNext', 'Unlocks next') }}: {{ unlocksNextCount }}
             </span>
           </AppTooltip>
@@ -265,7 +265,7 @@
               )
             "
           >
-            <span class="cursor-help border-b border-dotted border-gray-500">
+            <span class="cursor-help border-b border-dotted border-gray-400 text-gray-600 dark:border-gray-500 dark:text-gray-400">
               {{ t('page.tasks.questcard.impact', 'Impact') }}: {{ impactCount }}
             </span>
           </AppTooltip>
@@ -301,7 +301,7 @@
       >
         <!-- Left: Previous Quests -->
         <div v-if="parentTasks.length > 0" class="flex min-w-0 flex-col gap-1.5">
-          <div class="text-[10px] font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+          <div class="text-[10px] font-medium uppercase tracking-wider text-gray-600 dark:text-gray-400">
             {{ t('page.tasks.questcard.previousQuests', 'Previous Quests') }}:
           </div>
           <div class="flex flex-col items-start gap-1">
@@ -320,7 +320,7 @@
 
         <!-- Right: Next Quests -->
         <div v-if="childTasks.length > 0" class="flex min-w-0 flex-col items-end gap-1.5 text-right">
-          <div class="text-[10px] font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+          <div class="text-[10px] font-medium uppercase tracking-wider text-gray-600 dark:text-gray-400">
             {{ t('page.tasks.questcard.nextQuests', 'Next Quests') }}:
           </div>
           <div class="flex flex-col items-end gap-1">

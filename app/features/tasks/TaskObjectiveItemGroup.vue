@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-2 px-2 py-2">
     <div class="flex items-start gap-4">
-      <UIcon :name="`i-${iconName}`" aria-hidden="true" class="h-5 w-5 shrink-0 text-gray-400" />
+      <UIcon :name="`i-${iconName}`" aria-hidden="true" class="h-5 w-5 shrink-0 text-gray-500 dark:text-gray-400" />
       <div class="min-w-0 pt-0.5">
         <div class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ title }}</div>
       </div>
@@ -46,7 +46,7 @@
         <button
           v-else
           type="button"
-          class="focus-visible:ring-primary-500 focus-visible:ring-offset-surface-900 flex h-7 w-7 items-center justify-center rounded-md border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+          class="cursor-pointer focus-visible:ring-primary-500 focus-visible:ring-offset-surface-900 flex h-7 w-7 items-center justify-center rounded-md border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
           :aria-label="
             row.allComplete
               ? t('page.tasks.questcard.uncomplete', 'Uncomplete')
