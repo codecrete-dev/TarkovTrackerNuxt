@@ -234,7 +234,7 @@
             >
               <router-link
                 :to="`/tasks?task=${parent.id}`"
-                class="inline-flex max-w-[12rem] items-center rounded-md border border-base bg-surface-elevated px-2 py-0.5 text-[11px] text-content-secondary hover:bg-surface-200 dark:hover:bg-white/5"
+                class="inline-flex max-w-[12rem] items-center rounded-md border border-base bg-surface-200 px-2 py-0.5 text-[11px] text-content-secondary hover:bg-surface-300 dark:bg-white/5 dark:hover:bg-white/10"
               >
                 <span class="truncate">{{ parent.name }}</span>
               </router-link>
