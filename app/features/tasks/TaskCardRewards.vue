@@ -52,9 +52,9 @@
       <!-- Item Rewards Summary -->
       <AppTooltip v-if="itemRewards.length > 0" :text="itemRewardsSummaryTooltip">
         <span
-          class="inline-flex cursor-help items-center gap-1.5 rounded !bg-blue-300 px-2 py-0.5 !text-blue-950"
+          class="inline-flex cursor-help items-center gap-1.5 rounded !bg-blue-400 px-2 py-0.5 !text-blue-50"
         >
-          <UIcon name="i-mdi-package-variant" aria-hidden="true" class="h-4 w-4 !text-blue-950" />
+          <UIcon name="i-mdi-package-variant" aria-hidden="true" class="h-4 w-4 !text-blue-50" />
           <span>
             {{
               t(
@@ -69,9 +69,9 @@
       <!-- Offer Unlock Summary -->
       <AppTooltip v-if="offerUnlockRewards.length > 0" :text="offerUnlockSummaryTooltip">
         <span
-          class="inline-flex cursor-help items-center gap-1.5 rounded !bg-cyan-300 px-2 py-0.5 !text-cyan-950"
+          class="inline-flex cursor-help items-center gap-1.5 rounded !bg-indigo-400 px-2 py-0.5 !text-indigo-50"
         >
-          <UIcon name="i-mdi-cart-check" aria-hidden="true" class="h-4 w-4 !text-cyan-950" />
+          <UIcon name="i-mdi-cart-check" aria-hidden="true" class="h-4 w-4 !text-indigo-50" />
           <span>
             {{
               t(

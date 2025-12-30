@@ -245,7 +245,7 @@
               >
                 <router-link
                   :to="`/tasks?task=${parent.id}`"
-                  class="inline-flex max-w-[12rem] items-center rounded-md border border-base bg-surface-elevated px-2 py-0.5 text-[11px] text-content-secondary hover:bg-surface-200"
+                  class="inline-flex max-w-[12rem] items-center rounded-md border border-base bg-surface-elevated px-2 py-0.5 text-[11px] text-content-secondary hover:bg-surface-200 dark:hover:bg-white/5"
                 >
                   <span class="truncate">{{ parent.name }}</span>
                 </router-link>
@@ -318,7 +318,7 @@
       <!-- 6) Progress Footer: Previous & Next Quests Links -->
       <div
         v-if="parentTasks.length > 0 || childTasks.length > 0"
-        class="flex flex-nowrap items-start justify-between gap-4 border border-white/5 pt-2"
+        class="flex flex-nowrap items-start justify-between gap-4"
       >
         <!-- Left: Previous Quests -->
         <div v-if="parentTasks.length > 0" class="flex min-w-0 flex-col gap-1.5">
