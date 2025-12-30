@@ -183,9 +183,9 @@
             <UButton
               v-if="isLocked"
               :size="actionButtonSize"
-              color="white"
+              color="primary"
               variant="solid"
-              class="shrink-0 text-gray-900 dark:bg-surface-700 dark:text-white dark:hover:bg-surface-600 ring-1 ring-gray-300 dark:ring-gray-600"
+              class="shrink-0 !bg-primary-600 hover:!bg-primary-700 !text-white shadow-sm"
               @click.stop="markTaskAvailable()"
             >
               {{ t('page.tasks.questcard.availablebutton', 'Mark Available') }}
