@@ -10,14 +10,28 @@ We are performing a visual audit to fix contrast issues in Light Mode and ensuri
 
 ## Progress So Far
 
-### 1. Tasks Page Audit
+### 1. Tasks Page (Verified)
 
-- **Refined Task Cards**:
-  - **Completed Tasks**: Updated background/border in Light Mode (`bg-success-50`, `border-success-200`) for a cleaner look.
-  - **Rewards Section**: Darkened text/backgrounds in Light Mode (`TaskCardRewards.vue`) to fix readability.
-  - **Suggested Keys**: Darkened header text in Light Mode (`QuestKeys.vue`).
-- **Components**:
-  - **GameItem.vue**: Fixed "invisible text" issue in Light Mode by changing text color from fixed white to `text-gray-900 dark:text-white`.
+- **Status**: **Complete**
+- **Components Audited**: `TaskCard.vue`, `TaskCardRewards.vue`, `QuestObjectives.vue`, `QuestKeys.vue`, `TaskFilterBar.vue`.
+- **Fixes Applied**:
+  - `TaskCardRewards`: Refined Light Mode contrast.
+    - Expanded Rewards container: `bg-gray-50` with `border-gray-200`.
+    - Reward Item Cards: `bg-white`, `shadow-sm`, `border-gray-200` for clear separation.
+    - Links: Darkened to `text-primary-600` (Light Mode) for readability.
+  - `QuestKeys`: Darkened header text for better visibility in Light Mode.
+  - `TaskObjectiveItemGroup`: Removed blending issues by using semantic borders and text colors.
+  - `QuestKeys`: Fixed gap between "One of" and first key in multi-key lists.
+  - `GameItem`:
+    - Fixed item image squishing by applying `object-contain`.
+    - Optimized external link overlay for small sizes (`xs`) by reducing icon size and gaps, preventing layout breakage and ensuring a cleaner look.
+- **Verification**: Confirmed "Background Check" task visuals in both Light and Dark modes.
+
+### 2. Hideout Page (Next)
+
+- **Components**: `HideoutModuleCard.vue`, `HideoutRequirements.vue`.
+- **Focus**: Module levels, crafting queues, and requirements visibility in Light Mode. of suggested keys and headers.
+- **Verification**: Verified in browser (Light/Dark) across Debut and other tasks. Contrast and readability are now high-quality.
 
 ### 2. Loading Screen Fix
 

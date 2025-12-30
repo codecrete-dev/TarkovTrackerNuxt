@@ -18,7 +18,7 @@
     </div>
     <div class="relative z-10 flex h-full flex-col" :class="isCompact ? 'gap-3' : 'gap-4'">
       <!--1) Header: identity + state -->
-      <div class="flex items-start justify-between gap-3">
+      <div class="flex flex-nowrap items-center justify-between gap-3">
         <div class="flex min-w-0 items-center gap-2">
           <AppTooltip :text="task?.name">
             <router-link
@@ -81,7 +81,7 @@
             </AppTooltip>
           </div>
         </div>
-        <div class="flex flex-wrap items-center justify-end gap-1.5">
+        <div class="flex shrink-0 flex-nowrap items-center justify-end gap-1.5">
           <AppTooltip
             v-if="(task.minPlayerLevel ?? 0) > 0"
             :text="
@@ -205,34 +205,74 @@
           </AppTooltip>
         </div>
       </div>
-      <!-- 2) Top strip: Before (only show when there are pending prerequisites) -->
-      <div v-if="lockedBefore > 0" class="text-xs text-content-tertiary dark:text-content-secondary">
-        <span class="text-content-secondary dark:text-content-primary">{{ t('page.tasks.questcard.requires', 'Requires') }}:</span>
-        <template v-if="pendingParentTasks.length">
-          <span class="ml-2 inline-flex flex-wrap items-center gap-1.5">
-            <AppTooltip
-              v-for="parent in displayedPendingParents"
-              :key="parent.id"
-              :text="parent.name"
-            >
-              <router-link
-                :to="`/tasks?task=${parent.id}`"
-                class="inline-flex max-w-[16rem] items-center rounded-md border border-base bg-surface-elevated px-2 py-0.5 text-[11px] text-content-secondary hover:bg-surface-200"
-              >
-                <span class="truncate">{{ parent.name }}</span>
-              </router-link>
-            </AppTooltip>
-            <span v-if="extraPendingParentsCount > 0" class="text-gray-500">
-              +{{ extraPendingParentsCount }}
-            </span>
+      <!-- 2) Metadata Row: Requires (Left) & Chain Info (Right) -->
+      <div
+        v-if="lockedBefore > 0 || afterHasContent"
+        class="flex flex-nowrap items-center justify-between gap-4 text-xs text-content-tertiary dark:text-content-secondary"
+      >
+        <!-- Requires strip (Left) -->
+        <div v-if="lockedBefore > 0" class="flex min-w-0 items-center">
+          <span class="shrink-0 text-content-secondary dark:text-content-primary">
+            {{ t('page.tasks.questcard.requires', 'Requires') }}:
           </span>
-        </template>
-        <template v-else>
-          <span class="ml-2 text-gray-300">{{ lockedBefore }}</span>
-        </template>
+          <template v-if="pendingParentTasks.length">
+            <span class="ml-2 inline-flex flex-nowrap items-center rounded-md gap-1.5 overflow-hidden">
+              <AppTooltip
+                v-for="parent in displayedPendingParents"
+                :key="parent.id"
+                :text="parent.name"
+              >
+                <router-link
+                  :to="`/tasks?task=${parent.id}`"
+                  class="inline-flex max-w-[12rem] items-center rounded-md border border-base bg-surface-elevated px-2 py-0.5 text-[11px] text-content-secondary hover:bg-surface-200"
+                >
+                  <span class="truncate">{{ parent.name }}</span>
+                </router-link>
+              </AppTooltip>
+              <span v-if="extraPendingParentsCount > 0" class="shrink-0 text-gray-500">
+                +{{ extraPendingParentsCount }}
+              </span>
+            </span>
+          </template>
+          <template v-else>
+            <span class="ml-2 text-gray-300">{{ lockedBefore }}</span>
+          </template>
+        </div>
+        <div v-else />
+
+        <!-- Chain info (Right) -->
+        <div v-if="afterHasContent" class="flex shrink-0 items-center">
+          <AppTooltip
+            v-if="unlocksNextCount > 0"
+            :text="
+              t(
+                'page.tasks.questcard.unlocksNextTooltip',
+                'Number of quests that become available after completing this task'
+              )
+            "
+          >
+            <span class="cursor-help border-b border-dotted border-gray-500">
+              {{ t('page.tasks.questcard.unlocksNext', 'Unlocks next') }}: {{ unlocksNextCount }}
+            </span>
+          </AppTooltip>
+          <span v-if="unlocksNextCount > 0 && impactCount > 0" class="mx-2 text-gray-600">•</span>
+          <AppTooltip
+            v-if="impactCount > 0"
+            :text="
+              t(
+                'page.tasks.questcard.impactTooltip',
+                'Number of incomplete quests that depend on this task being completed'
+              )
+            "
+          >
+            <span class="cursor-help border-b border-dotted border-gray-500">
+              {{ t('page.tasks.questcard.impact', 'Impact') }}: {{ impactCount }}
+            </span>
+          </AppTooltip>
+        </div>
       </div>
       <!-- 3) Body: objectives -->
-      <div class="space-y-3">
+      <div :class="isCompact ? 'space-y-3' : 'space-y-4'">
         <QuestKeys v-if="task?.neededKeys?.length" :needed-keys="task.neededKeys" />
         <QuestObjectives
           :objectives="relevantViewObjectives"
@@ -240,36 +280,7 @@
           :uncompleted-irrelevant="uncompletedIrrelevantObjectives.length"
         />
       </div>
-      <!-- 4) Chain info -->
-      <div v-if="afterHasContent" class="text-xs text-content-tertiary dark:text-content-secondary">
-        <AppTooltip
-          v-if="unlocksNextCount > 0"
-          :text="
-            t(
-              'page.tasks.questcard.unlocksNextTooltip',
-              'Number of quests that become available after completing this task'
-            )
-          "
-        >
-          <span class="cursor-help border-b border-dotted border-gray-500">
-            {{ t('page.tasks.questcard.unlocksNext', 'Unlocks next') }}: {{ unlocksNextCount }}
-          </span>
-        </AppTooltip>
-        <span v-if="unlocksNextCount > 0 && impactCount > 0" class="mx-2 text-gray-600">•</span>
-        <AppTooltip
-          v-if="impactCount > 0"
-          :text="
-            t(
-              'page.tasks.questcard.impactTooltip',
-              'Number of incomplete quests that depend on this task being completed'
-            )
-          "
-        >
-          <span class="cursor-help border-b border-dotted border-gray-500">
-            {{ t('page.tasks.questcard.impact', 'Impact') }}: {{ impactCount }}
-          </span>
-        </AppTooltip>
-      </div>
+
       <!--5) Rewards Summary Section -->
       <TaskCardRewards
         :task-id="task.id"
@@ -282,6 +293,49 @@
         :child-tasks="childTasks"
         @item-context-menu="openItemContextMenu"
       />
+
+      <!-- 6) Progress Footer: Previous & Next Quests Links -->
+      <div
+        v-if="parentTasks.length > 0 || childTasks.length > 0"
+        class="flex flex-nowrap items-start justify-between gap-4 border-t border-white/5 pt-2"
+      >
+        <!-- Left: Previous Quests -->
+        <div v-if="parentTasks.length > 0" class="flex min-w-0 flex-col gap-1.5">
+          <div class="text-[10px] font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+            {{ t('page.tasks.questcard.previousQuests', 'Previous Quests') }}:
+          </div>
+          <div class="flex flex-col items-start gap-1">
+            <router-link
+              v-for="parent in parentTasks"
+              :key="parent.id"
+              :to="`/tasks?task=${parent.id}`"
+              class="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 inline-flex items-center gap-1.5 text-xs no-underline"
+            >
+              <UIcon name="i-mdi-arrow-left" aria-hidden="true" class="h-3 w-3 shrink-0" />
+              <span>{{ parent.name }}</span>
+            </router-link>
+          </div>
+        </div>
+        <div v-else />
+
+        <!-- Right: Next Quests -->
+        <div v-if="childTasks.length > 0" class="flex min-w-0 flex-col items-end gap-1.5 text-right">
+          <div class="text-[10px] font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+            {{ t('page.tasks.questcard.nextQuests', 'Next Quests') }}:
+          </div>
+          <div class="flex flex-col items-end gap-1">
+            <router-link
+              v-for="child in childTasks"
+              :key="child.id"
+              :to="`/tasks?task=${child.id}`"
+              class="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 inline-flex items-center justify-end gap-1.5 text-xs no-underline"
+            >
+              <span>{{ child.name }}</span>
+              <UIcon name="i-mdi-arrow-right" aria-hidden="true" class="h-3 w-3 shrink-0" />
+            </router-link>
+          </div>
+        </div>
+      </div>
     </div>
     <!-- Overflow / Context Menu -->
     <ContextMenu ref="taskContextMenu">

@@ -33,7 +33,7 @@
           color="neutral"
           size="sm"
           :aria-pressed="primaryView === 'all'"
-          :class="['focus:ring-primary-500 focus:ring-1 focus:outline-none rounded-md', primaryView === 'all' ? 'bg-primary-100 text-primary-900 shadow-sm dark:bg-primary-500/20 dark:text-primary-100 dark:shadow-none' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white']"
+          :class="['focus:ring-primary-500 focus:ring-1 focus:outline-none rounded-md', primaryView === 'all' ? 'bg-primary-100 text-primary-900 shadow-sm dark:bg-primary-500/20 dark:text-primary-100 dark:shadow-none' : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white']"
           @click="setPrimaryView('all')"
         >
           <UIcon name="i-mdi-checkbox-multiple-marked" class="h-4 w-4 sm:mr-1.5" />
@@ -46,7 +46,7 @@
           color="neutral"
           size="sm"
           :aria-pressed="primaryView === 'traders'"
-          :class="['focus:ring-primary-500 focus:ring-1 focus:outline-none rounded-md', primaryView === 'traders' ? 'bg-primary-100 text-primary-900 shadow-sm dark:bg-primary-500/20 dark:text-primary-100 dark:shadow-none' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white']"
+          :class="['focus:ring-primary-500 focus:ring-1 focus:outline-none rounded-md', primaryView === 'traders' ? 'bg-primary-100 text-primary-900 shadow-sm dark:bg-primary-500/20 dark:text-primary-100 dark:shadow-none' : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white']"
           @click="setPrimaryView('traders')"
         >
           <UIcon name="i-mdi-account-group" class="h-4 w-4 sm:mr-1.5" />
@@ -59,7 +59,7 @@
           color="neutral"
           size="sm"
           :aria-pressed="primaryView === 'maps'"
-          :class="['focus:ring-primary-500 focus:ring-1 focus:outline-none rounded-md', primaryView === 'maps' ? 'bg-primary-100 text-primary-900 shadow-sm dark:bg-primary-500/20 dark:text-primary-100 dark:shadow-none' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white']"
+          :class="['focus:ring-primary-500 focus:ring-1 focus:outline-none rounded-md', primaryView === 'maps' ? 'bg-primary-100 text-primary-900 shadow-sm dark:bg-primary-500/20 dark:text-primary-100 dark:shadow-none' : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white']"
           @click="setPrimaryView('maps')"
         >
           <UIcon name="i-mdi-map" class="h-4 w-4 sm:mr-1.5" />
@@ -82,7 +82,7 @@
           color="neutral"
           size="sm"
           :aria-pressed="secondaryView === 'all'"
-          :class="['focus:ring-primary-500 focus:ring-1 focus:outline-none rounded-md', secondaryView === 'all' ? 'bg-primary-100 text-primary-900 shadow-sm dark:bg-primary-500/20 dark:text-primary-100 dark:shadow-none' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white']"
+          :class="['focus:ring-primary-500 focus:ring-1 focus:outline-none rounded-md', secondaryView === 'all' ? 'bg-primary-100 text-primary-900 shadow-sm dark:bg-primary-500/20 dark:text-primary-100 dark:shadow-none' : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white']"
           @click="setSecondaryView('all')"
         >
           <UIcon name="i-mdi-format-list-bulleted" class="hidden h-4 w-4 sm:mr-1 sm:block" />
@@ -98,7 +98,7 @@
           color="neutral"
           size="sm"
           :aria-pressed="secondaryView === 'available'"
-          :class="['focus:ring-primary-500 focus:ring-1 focus:outline-none rounded-md', secondaryView === 'available' ? 'bg-primary-100 text-primary-900 shadow-sm dark:bg-primary-500/20 dark:text-primary-100 dark:shadow-none' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white']"
+          :class="['focus:ring-primary-500 focus:ring-1 focus:outline-none rounded-md', secondaryView === 'available' ? 'bg-primary-100 text-primary-900 shadow-sm dark:bg-primary-500/20 dark:text-primary-100 dark:shadow-none' : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white']"
           @click="setSecondaryView('available')"
         >
           <UIcon name="i-mdi-clipboard-text" class="hidden h-4 w-4 sm:mr-1 sm:block" />
@@ -116,7 +116,7 @@
           color="neutral"
           size="sm"
           :aria-pressed="secondaryView === 'locked'"
-          :class="['focus:ring-primary-500 focus:ring-1 focus:outline-none rounded-md', secondaryView === 'locked' ? 'bg-primary-100 text-primary-900 shadow-sm dark:bg-primary-500/20 dark:text-primary-100 dark:shadow-none' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white']"
+          :class="['focus:ring-primary-500 focus:ring-1 focus:outline-none rounded-md', secondaryView === 'locked' ? 'bg-primary-100 text-primary-900 shadow-sm dark:bg-primary-500/20 dark:text-primary-100 dark:shadow-none' : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white']"
           @click="setSecondaryView('locked')"
         >
           <UIcon name="i-mdi-lock" class="hidden h-4 w-4 sm:mr-1 sm:block" />
@@ -134,7 +134,7 @@
           color="neutral"
           size="sm"
           :aria-pressed="secondaryView === 'completed'"
-          :class="['focus:ring-primary-500 focus:ring-1 focus:outline-none rounded-md', secondaryView === 'completed' ? 'bg-primary-100 text-primary-900 shadow-sm dark:bg-primary-500/20 dark:text-primary-100 dark:shadow-none' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white']"
+          :class="['focus:ring-primary-500 focus:ring-1 focus:outline-none rounded-md', secondaryView === 'completed' ? 'bg-primary-100 text-primary-900 shadow-sm dark:bg-primary-500/20 dark:text-primary-100 dark:shadow-none' : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white']"
           @click="setSecondaryView('completed')"
         >
           <UIcon name="i-mdi-check-circle" class="hidden h-4 w-4 sm:mr-1 sm:block" />

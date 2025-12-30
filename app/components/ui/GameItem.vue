@@ -37,16 +37,44 @@
     </div>
     <!-- Full item display mode (for TarkovItem compatibility) -->
     <div v-else class="relative flex h-full w-full items-center justify-start">
-      <div class="mr-2 flex shrink-0 items-center justify-center">
+      <div class="relative mr-2 flex shrink-0 items-center justify-center">
         <img
           :width="imageSize"
           :height="imageSize"
           :src="computedImageSrc"
           :class="imageClasses"
-          class="rounded"
+          class="rounded object-contain"
           alt="Item Icon"
           @error="handleImgError"
         />
+        <!-- Hover action buttons - centered overlay on image -->
+        <div
+          v-if="showActions && (props.devLink || props.wikiLink)"
+          class="absolute inset-0 z-20 flex items-center justify-center gap-1 rounded bg-surface-900/80 opacity-0 transition-opacity group-hover:opacity-100"
+        >
+          <AppTooltip v-if="props.wikiLink" text="View on Wiki">
+            <a
+              :href="props.wikiLink"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center justify-center rounded p-0.5 text-gray-200 transition-colors hover:bg-white/20 hover:text-white"
+              @click.stop
+            >
+              <img src="/img/logos/wikilogo.webp" alt="Wiki" :class="overlayIconClasses" />
+            </a>
+          </AppTooltip>
+          <AppTooltip v-if="props.devLink" text="View on tarkov.dev">
+            <a
+              :href="props.devLink"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center justify-center rounded p-0.5 text-gray-200 transition-colors hover:bg-white/20 hover:text-white"
+              @click.stop
+            >
+              <img src="/img/logos/tarkovdevlogo.webp" alt="tarkov.dev" :class="overlayIconClasses" />
+            </a>
+          </AppTooltip>
+        </div>
       </div>
       <!-- Counter controls for multi-item objectives -->
       <div v-if="showCounter" class="mr-2" @click.stop>
@@ -67,34 +95,6 @@
         class="flex items-center justify-center text-center text-sm leading-tight font-bold text-gray-900 dark:text-white"
       >
         {{ props.itemName }}
-      </div>
-      <!-- Hover action buttons - covers entire row -->
-      <div
-        v-if="showActions && (props.devLink || props.wikiLink)"
-        class="absolute inset-0 flex items-center justify-center gap-2 rounded bg-black/80 opacity-0 transition-opacity group-hover:opacity-100"
-      >
-        <AppTooltip v-if="props.devLink" text="View on tarkov.dev">
-          <a
-            :href="props.devLink"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center justify-center rounded p-1.5 text-gray-200 transition-colors hover:bg-white/20 hover:text-white"
-            @click.stop
-          >
-            <img src="/img/logos/tarkovdevlogo.webp" alt="tarkov.dev" class="h-5 w-5" />
-          </a>
-        </AppTooltip>
-        <AppTooltip v-if="props.wikiLink" text="View on Wiki">
-          <a
-            :href="props.wikiLink"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center justify-center rounded p-1.5 text-gray-200 transition-colors hover:bg-white/20 hover:text-white"
-            @click.stop
-          >
-            <img src="/img/logos/wikilogo.webp" alt="Wiki" class="h-5 w-5" />
-          </a>
-        </AppTooltip>
       </div>
     </div>
     <!-- Context Menu -->
@@ -276,7 +276,7 @@
   const imageSize = computed(() => {
     switch (props.size) {
       case 'xs':
-        return 32;
+        return 36;
       case 'small':
         return 64;
       case 'large':
@@ -299,7 +299,7 @@
     } else {
       classes.push('shrink-0');
       if (props.size === 'xs') {
-        classes.push('h-8 w-8'); // 32px - compact inline display
+        classes.push('h-9 w-9'); // 36px - compact inline display
       } else if (props.size === 'small') {
         classes.push('h-12 w-12 md:h-16 md:w-16'); // 48px -> 64px
       } else if (props.size === 'large') {
@@ -339,6 +339,12 @@
     return classes;
   });
   const imageElementClasses = ['rounded'];
+  const overlayIconClasses = computed(() => {
+    if (props.size === 'xs') {
+      return 'h-3.5 w-3.5';
+    }
+    return 'h-5 w-5';
+  });
   // Image error handling
   const handleImgError = () => {
     // Log error for debugging if needed

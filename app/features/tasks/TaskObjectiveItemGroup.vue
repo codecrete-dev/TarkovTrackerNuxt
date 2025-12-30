@@ -1,18 +1,20 @@
 <template>
-  <div class="space-y-2">
-    <div class="grid grid-cols-[16px_1fr] items-start gap-2">
-      <UIcon :name="`i-${iconName}`" aria-hidden="true" class="mt-0.5 h-4 w-4 text-gray-400" />
-      <div class="min-w-0">
-        <div class="text-sm font-medium text-gray-100">{{ title }}</div>
+  <div class="space-y-2 px-2 py-2">
+    <div class="flex items-start gap-4">
+      <UIcon :name="`i-${iconName}`" aria-hidden="true" class="h-5 w-5 shrink-0 text-gray-400" />
+      <div class="min-w-0 pt-0.5">
+        <div class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ title }}</div>
       </div>
     </div>
-    <div class="flex flex-wrap gap-2 pl-6">
+    <div class="flex flex-wrap gap-2 pl-9">
       <div
         v-for="row in consolidatedRows"
         :key="row.itemKey"
         class="flex max-w-full items-center gap-2 rounded-md border px-2 py-1 transition-colors"
         :class="
-          row.allComplete ? 'border-success-500/50 bg-success-500/10' : 'border-white/10 bg-white/5'
+          row.allComplete
+            ? 'border-success-500/50 bg-success-100 text-success-900 dark:bg-success-500/10 dark:text-success-100'
+            : 'border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5'
         "
       >
         <img
@@ -22,13 +24,13 @@
           class="h-16 w-16 shrink-0 rounded-sm object-contain"
         />
         <AppTooltip :text="row.meta.itemName">
-          <span class="max-w-[12rem] truncate text-xs font-medium text-gray-100">
+          <span class="max-w-[12rem] truncate text-xs font-medium text-gray-900 dark:text-gray-100">
             {{ row.meta.itemName }}
           </span>
         </AppTooltip>
         <span
           v-if="row.meta.foundInRaid"
-          class="rounded bg-yellow-500/10 px-1 py-0.5 text-[10px] font-semibold text-yellow-300"
+          class="rounded bg-yellow-500/20 px-1 py-0.5 text-[10px] font-bold text-yellow-700 dark:bg-yellow-500/10 dark:text-yellow-300"
         >
           FiR
         </span>
@@ -54,7 +56,7 @@
           :class="
             row.allComplete
               ? 'bg-success-600 border-success-500 hover:bg-success-500 text-white'
-              : 'border-white/10 bg-white/5 text-gray-300 hover:bg-white/10'
+              : 'border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10'
           "
           @click="toggleCountForRow(row)"
         >

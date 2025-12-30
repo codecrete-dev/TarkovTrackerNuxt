@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="hasRewardsSummary || hasExpandableDetails"
-    class="rounded-md border-t border-white/5 pt-2 transition-colors"
+    class="rounded-md border-t border-white/5 p-2 transition-colors"
     :class="{ 'cursor-pointer hover:bg-white/5': hasExpandableDetails }"
     @click="onAreaClick"
   >
@@ -91,7 +91,6 @@
         </UButton>
       </AppTooltip>
     </div>
-    <!-- Detailed Rewards and Next Quests (Collapsible) -->
     <div
       v-if="showDetails && hasExpandableDetails"
       :id="detailsId"
@@ -99,31 +98,14 @@
       :aria-label="t('page.tasks.questcard.details', 'Task details')"
       class="mt-2 rounded-md bg-gray-50 p-2 dark:bg-white/5"
     >
-      <div class="flex flex-col gap-4 lg:flex-row">
-        <!-- Left: Previous Quests -->
-        <div v-if="parentTasks.length > 0" class="space-y-2 lg:w-64">
-          <div class="text-xs font-medium text-gray-500 dark:text-gray-400">
-            {{ t('page.tasks.questcard.previousQuests', 'Previous Quests') }}:
-          </div>
-          <div class="flex flex-col gap-1">
-            <router-link
-              v-for="parent in parentTasks"
-              :key="parent.id"
-              :to="`/tasks?task=${parent.id}`"
-              :class="rewardLinkClass"
-            >
-              <UIcon name="i-mdi-arrow-left" aria-hidden="true" class="h-3 w-3 shrink-0" />
-              <span>{{ parent.name }}</span>
-            </router-link>
-          </div>
-        </div>
-        <!-- Middle: Item Rewards and Offer Unlocks -->
+      <div class="flex flex-col gap-4">
+        <!-- Rewards Row (Items Left, Unlocks Right) -->
         <div
           v-if="itemRewards.length > 0 || offerUnlockRewards.length > 0"
-          class="flex flex-1 flex-col gap-4 sm:flex-row"
+          class="flex flex-wrap items-start justify-between gap-4"
         >
-          <!-- Item Rewards -->
-          <div v-if="itemRewards.length > 0" class="min-w-0 flex-1 space-y-2">
+          <!-- Item Rewards (Left) -->
+          <div v-if="itemRewards.length > 0" class="flex min-w-0 flex-1 flex-col gap-2">
             <div class="text-xs font-medium text-gray-500 dark:text-gray-400">
               {{ t('page.tasks.questcard.rewardItems', 'Items') }}:
             </div>
@@ -149,10 +131,15 @@
                     class="h-16 w-16 object-contain"
                   />
                   <div class="flex flex-col items-center gap-0.5">
-                    <span class="max-w-[72px] truncate text-center text-xs text-gray-700 dark:text-gray-300">
+                    <span
+                      class="max-w-[72px] truncate text-center text-xs text-gray-700 dark:text-gray-300"
+                    >
                       {{ reward.item?.shortName || reward.item?.name || '' }}
                     </span>
-                    <span v-if="reward.count > 1" class="text-xs font-medium text-gray-500 dark:text-gray-400">
+                    <span
+                      v-if="reward.count > 1"
+                      class="text-xs font-medium text-gray-500 dark:text-gray-400"
+                    >
                       x{{ formatNumber(reward.count) }}
                     </span>
                   </div>
@@ -160,12 +147,16 @@
               </AppTooltip>
             </div>
           </div>
-          <!-- Offer Unlocks -->
-          <div v-if="offerUnlockRewards.length > 0" class="min-w-0 flex-1 space-y-2">
+
+          <!-- Offer Unlocks (Right) -->
+          <div
+            v-if="offerUnlockRewards.length > 0"
+            class="flex min-w-0 flex-1 flex-col items-end gap-2 text-right"
+          >
             <div class="text-xs font-medium text-gray-500 dark:text-gray-400">
               {{ t('page.tasks.questcard.unlocksPurchase', 'Unlocks purchase') }}:
             </div>
-            <div class="flex flex-wrap gap-2">
+            <div class="flex flex-wrap justify-end gap-2 text-left">
               <AppTooltip
                 v-for="offer in offerUnlockRewards"
                 :key="`offer-${offer.id}`"
@@ -187,7 +178,9 @@
                     class="h-16 w-16 object-contain"
                   />
                   <div class="flex flex-col items-center gap-0.5">
-                    <span class="max-w-[72px] truncate text-center text-xs text-gray-700 dark:text-gray-300">
+                    <span
+                      class="max-w-[72px] truncate text-center text-xs text-gray-700 dark:text-gray-300"
+                    >
                       {{ offer.item?.shortName || offer.item?.name || '' }}
                     </span>
                     <span class="text-xs text-gray-500">
@@ -197,23 +190,6 @@
                 </component>
               </AppTooltip>
             </div>
-          </div>
-        </div>
-        <!-- Right: Next Quests -->
-        <div v-if="childTasks.length > 0" class="space-y-2 lg:w-64">
-          <div class="text-xs font-medium text-gray-500 dark:text-gray-400">
-            {{ t('page.tasks.questcard.nextQuests', 'Next Quests') }}:
-          </div>
-          <div class="flex flex-col gap-1">
-            <router-link
-              v-for="child in childTasks"
-              :key="child.id"
-              :to="`/tasks?task=${child.id}`"
-              :class="rewardLinkClass"
-            >
-              <UIcon name="i-mdi-arrow-right" aria-hidden="true" class="h-3 w-3 shrink-0" />
-              <span>{{ child.name }}</span>
-            </router-link>
           </div>
         </div>
       </div>
@@ -262,10 +238,10 @@
   const { t } = useI18n({ useScope: 'global' });
   const formatNumber = useLocaleNumberFormatter();
   const rewardLinkClass =
-    'text-primary-400 hover:text-primary-300 inline-flex items-center gap-1.5 text-xs';
+    'text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 inline-flex items-center gap-1.5 text-xs';
   const rewardItemCardClass = [
-    'group relative flex flex-col items-center gap-1 rounded-lg bg-gray-100 p-2 dark:bg-white/5',
-    'transition-colors hover:bg-white/10 focus:outline-none',
+    'group relative flex flex-col items-center gap-1 rounded-lg border border-gray-200 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-white/5 dark:shadow-none',
+    'transition-colors hover:shadow-md dark:hover:bg-white/10 focus:outline-none',
     'focus-visible:ring-primary-500 focus-visible:ring-offset-surface-900',
     'focus-visible:ring-2 focus-visible:ring-offset-2',
   ].join(' ');
