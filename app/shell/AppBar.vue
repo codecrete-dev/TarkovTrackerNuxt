@@ -113,7 +113,7 @@
   </header>
 </template>
 <script setup lang="ts">
-  import { useWindowSize } from '@vueuse/core';
+  import { usePreferredDark, useWindowSize } from '@vueuse/core';
   import { storeToRefs } from 'pinia';
   import { computed, onMounted, onUnmounted, ref } from 'vue';
   import { useI18n } from 'vue-i18n';
@@ -124,33 +124,40 @@
   import { useTarkovStore } from '@/stores/useTarkov';
   import { GAME_MODES, type GameMode } from '@/utils/constants';
   import { logger } from '@/utils/logger';
+
   const { t } = useI18n({ useScope: 'global' });
   const appStore = useAppStore();
   const tarkovStore = useTarkovStore();
   const metadataStore = useMetadataStore();
   const preferencesStore = usePreferencesStore();
   const route = useRoute();
+
   const { width } = useWindowSize();
   const mdAndDown = computed(() => width.value < 960); // md breakpoint at 960px
+
   const navBarIcon = computed(() => {
     if (mdAndDown.value) {
       return appStore.mobileDrawerExpanded ? 'i-mdi-menu-open' : 'i-mdi-menu';
     }
     return appStore.drawerRail ? 'i-mdi-menu' : 'i-mdi-menu-open';
   });
+
   const currentGameMode = computed(() => {
     return tarkovStore.getCurrentGameMode();
   });
+
   const pveClasses = computed(() =>
     currentGameMode.value === GAME_MODES.PVE
       ? 'bg-pve-600 hover:bg-pve-700 text-white shadow-[0_0_0_4px_rgba(0,0,0,0.15)] dark:shadow-[0_0_0_4px_rgba(0,0,0,0.45)] ring-2 ring-white/60 ring-inset outline outline-2 outline-white/40'
       : 'bg-gray-100 text-gray-900 hover:bg-gray-200 dark:bg-pve-950/80 dark:text-pve-400 dark:hover:bg-pve-900/90'
   );
+
   const pvpClasses = computed(() =>
     currentGameMode.value === GAME_MODES.PVP
       ? 'bg-pvp-600 hover:bg-pvp-700 text-white shadow-[0_0_0_4px_rgba(0,0,0,0.15)] dark:bg-pvp-800 dark:shadow-[0_0_0_4px_rgba(0,0,0,0.45)] ring-2 ring-white/60 ring-inset outline outline-2 outline-white/40'
       : 'bg-gray-100 text-gray-900 hover:bg-gray-200 dark:bg-pvp-950/80 dark:text-pvp-400 dark:hover:bg-pvp-900/90'
   );
+
   async function switchMode(mode: GameMode) {
     if (mode !== currentGameMode.value && !dataLoading.value) {
       dataLoading.value = true;
@@ -167,23 +174,29 @@
       }
     }
   }
+
   const { loading: dataLoading, hideoutLoading } = storeToRefs(metadataStore);
   const dataError = ref(false);
+
   const pageTitle = computed(() =>
     t(`page.${String(route.name || 'index').replace('-', '_')}.title`)
   );
+
   function handleKeydown(event: KeyboardEvent) {
     if (event.key === 'Escape' && appStore.mobileDrawerExpanded && mdAndDown.value) {
       event.preventDefault();
       appStore.setMobileDrawerExpanded(false);
     }
   }
+
   onMounted(() => {
     document.addEventListener('keydown', handleKeydown);
   });
+
   onUnmounted(() => {
     document.removeEventListener('keydown', handleKeydown);
   });
+
   function changeNavigationDrawer() {
     if (mdAndDown.value) {
       appStore.toggleMobileDrawerExpanded();
@@ -191,7 +204,9 @@
       appStore.toggleDrawerRail();
     }
   }
+
   const { locale, availableLocales } = useI18n({ useScope: 'global' });
+
   const localeItems = computed(() => {
     const languageNames = new Intl.DisplayNames([locale.value], { type: 'language' });
     return availableLocales.map((localeCode) => ({
@@ -199,6 +214,7 @@
       value: localeCode,
     }));
   });
+
   const selectedLocale = computed({
     get() {
       // Return the current locale string directly
@@ -209,13 +225,17 @@
       // Handle both string and object values
       const newLocale = typeof newValue === 'string' ? newValue : newValue.value;
       if (newLocale === locale.value) return;
+
       // Set the i18n locale (this updates the UI translations)
       locale.value = newLocale;
+
       // Persist in preferences
       preferencesStore.localeOverride = newLocale;
       logger.debug('[AppBar] Setting locale to:', newLocale);
+
       // Update metadata store and refetch data with new language
       metadataStore.updateLanguageAndGameMode(newLocale);
+
       // Use cached data if available (forceRefresh = false)
       metadataStore
         .fetchAllData(false)
@@ -230,6 +250,7 @@
   });
 
   // Theme Logic
+  const isPreferredDark = usePreferredDark();
   const themeModes = ['system', 'dark', 'light'] as const;
   type ThemeMode = (typeof themeModes)[number];
 
@@ -243,10 +264,18 @@
 
   const currentThemeIcon = computed(() => themeIconMap[currentTheme.value]);
 
-  const nextTheme = computed(() => {
-    const currentIndex = themeModes.indexOf(currentTheme.value);
-    const nextIndex = (currentIndex + 1) % themeModes.length;
-    return themeModes[nextIndex];
+  const nextTheme = computed<ThemeMode>(() => {
+    const isSystemDark = isPreferredDark.value;
+    const current = currentTheme.value;
+
+    if (current === 'system') {
+      return isSystemDark ? 'light' : 'dark';
+    }
+    if (current === 'light') {
+      return isSystemDark ? 'dark' : 'system';
+    }
+    // current === 'dark'
+    return isSystemDark ? 'system' : 'light';
   });
 
   const nextThemeLabel = computed(() => {

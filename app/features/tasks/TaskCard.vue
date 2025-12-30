@@ -8,7 +8,7 @@
   >
     <div
       v-if="showBackgroundIcon"
-      class="text-brand-200 pointer-events-none absolute inset-0 z-0 flex rotate-12 transform items-center justify-center p-8 opacity-30"
+      class="text-gray-300 pointer-events-none absolute inset-0 z-30 flex rotate-12 transform items-center justify-center p-8 opacity-50 dark:text-brand-200 dark:opacity-30"
     >
       <UIcon
         :name="backgroundIcon.startsWith('mdi-') ? `i-${backgroundIcon}` : backgroundIcon"
@@ -81,90 +81,111 @@
             </AppTooltip>
           </div>
         </div>
-        <div class="flex shrink-0 flex-nowrap items-center justify-end gap-1.5">
-          <AppTooltip
-            v-if="(task.minPlayerLevel ?? 0) > 0"
-            :text="
-              t(
-                'page.tasks.questcard.levelBadgeTooltip',
-                { level: task.minPlayerLevel },
-                `Minimum player level ${task.minPlayerLevel} required to unlock this quest`
-              )
-            "
-          >
-            <UBadge size="xs" color="neutral" variant="soft" class="cursor-help text-[11px]">
-              {{ t('page.tasks.questcard.levelBadge', { count: task.minPlayerLevel }) }}
-            </UBadge>
-          </AppTooltip>
-          <AppTooltip :text="task?.map?.name || t('page.tasks.questcard.anyMap', 'Any')">
+        <div class="flex shrink-0 flex-nowrap items-center justify-end gap-2.5">
+          <div class="flex items-center gap-1.5">
+            <AppTooltip
+              v-if="(task.minPlayerLevel ?? 0) > 0"
+              :text="
+                t(
+                  'page.tasks.questcard.levelBadgeTooltip',
+                  { level: task.minPlayerLevel },
+                  `Minimum player level ${task.minPlayerLevel} required to unlock this quest`
+                )
+              "
+            >
+              <UBadge
+                size="xs"
+                color="gray"
+                variant="solid"
+                class="cursor-help text-xs !bg-gray-500 !text-white"
+              >
+                {{ t('page.tasks.questcard.levelBadge', { count: task.minPlayerLevel }) }}
+              </UBadge>
+            </AppTooltip>
+            <AppTooltip :text="task?.map?.name || t('page.tasks.questcard.anyMap', 'Any')">
+              <UBadge
+                size="xs"
+                color="gray"
+                variant="solid"
+                class="inline-flex max-w-[10rem] items-center gap-1 text-xs !bg-gray-500 !text-white"
+              >
+                <UIcon
+                  :name="task?.map?.name ? 'i-mdi-map-marker' : 'i-mdi-earth'"
+                  aria-hidden="true"
+                  class="h-3 w-3"
+                />
+                <span class="truncate">
+                  {{ task?.map?.name || t('page.tasks.questcard.anyMap', 'Any') }}
+                </span>
+              </UBadge>
+            </AppTooltip>
             <UBadge
+              v-if="objectiveProgress.total > 0"
               size="xs"
-              color="neutral"
-              variant="soft"
-              class="inline-flex max-w-[10rem] items-center gap-1 text-[11px]"
+              color="gray"
+              variant="solid"
+              class="inline-flex items-center gap-1 text-xs !bg-gray-500 !text-white"
+            >
+              <UIcon name="i-mdi-progress-check" aria-hidden="true" class="h-3 w-3" />
+              {{ t('page.tasks.questcard.progress', objectiveProgress) }}
+            </UBadge>
+            <AppTooltip
+              v-if="preferencesStore.getShowRequiredLabels && task.kappaRequired"
+              :text="
+                t(
+                  'page.tasks.questcard.kappaTooltip',
+                  'This quest is required to obtain the Kappa Secure Container'
+                )
+              "
+            >
+              <UBadge
+                size="xs"
+                color="red"
+                variant="solid"
+                class="cursor-help text-xs !bg-red-300 !text-red-950"
+              >
+                {{ t('page.tasks.questcard.kappa', 'Kappa') }}
+              </UBadge>
+            </AppTooltip>
+            <AppTooltip
+              v-if="preferencesStore.getShowRequiredLabels && task.lightkeeperRequired"
+              :text="
+                t(
+                  'page.tasks.questcard.lightkeeperTooltip',
+                  'This quest is required to unlock the Lightkeeper trader'
+                )
+              "
+            >
+              <UBadge
+                size="xs"
+                color="amber"
+                variant="solid"
+                class="cursor-help text-xs !bg-amber-300 !text-amber-950"
+              >
+                {{ t('page.tasks.questcard.lightkeeper', 'Lightkeeper') }}
+              </UBadge>
+            </AppTooltip>
+            <!-- XP display - shown for all task statuses when setting is enabled -->
+            <div
+              v-if="preferencesStore.getShowExperienceRewards && task.experience"
+              class="flex items-center gap-1 text-xs text-gray-400"
             >
               <UIcon
-                :name="task?.map?.name ? 'i-mdi-map-marker' : 'i-mdi-earth'"
+                name="i-mdi-star"
                 aria-hidden="true"
-                class="h-3 w-3"
+                class="h-4 w-4 shrink-0 text-yellow-500"
               />
-              <span class="truncate">
-                {{ task?.map?.name || t('page.tasks.questcard.anyMap', 'Any') }}
-              </span>
-            </UBadge>
-          </AppTooltip>
-          <UBadge
-            v-if="objectiveProgress.total > 0"
-            size="xs"
-            color="neutral"
-            variant="soft"
-            class="inline-flex items-center gap-1 text-[11px]"
-          >
-            <UIcon name="i-mdi-progress-check" aria-hidden="true" class="h-3 w-3" />
-            {{ t('page.tasks.questcard.progress', objectiveProgress) }}
-          </UBadge>
-          <AppTooltip
-            v-if="preferencesStore.getShowRequiredLabels && task.kappaRequired"
-            :text="
-              t(
-                'page.tasks.questcard.kappaTooltip',
-                'This quest is required to obtain the Kappa Secure Container'
-              )
-            "
-          >
-            <UBadge size="xs" color="error" variant="soft" class="cursor-help text-[11px]">
-              {{ t('page.tasks.questcard.kappa', 'Kappa') }}
-            </UBadge>
-          </AppTooltip>
-          <AppTooltip
-            v-if="preferencesStore.getShowRequiredLabels && task.lightkeeperRequired"
-            :text="
-              t(
-                'page.tasks.questcard.lightkeeperTooltip',
-                'This quest is required to unlock the Lightkeeper trader'
-              )
-            "
-          >
-            <UBadge size="xs" color="warning" variant="soft" class="cursor-help text-[11px]">
-              {{ t('page.tasks.questcard.lightkeeper', 'Lightkeeper') }}
-            </UBadge>
-          </AppTooltip>
-          <!-- XP display - shown for all task statuses when setting is enabled -->
-          <div
-            v-if="preferencesStore.getShowExperienceRewards && task.experience"
-            class="flex items-center gap-1 text-xs text-gray-400"
-          >
-            <UIcon name="i-mdi-star" aria-hidden="true" class="h-4 w-4 shrink-0 text-yellow-500" />
-            <span>{{ formatNumber(task.experience) }} XP</span>
+              <span>{{ formatNumber(task.experience) }} XP</span>
+            </div>
           </div>
           <!-- Action buttons in header for consistent positioning -->
           <template v-if="isOurFaction">
             <UButton
               v-if="isLocked"
               :size="actionButtonSize"
-              color="primary"
+              color="white"
               variant="solid"
-              class="shrink-0"
+              class="shrink-0 text-gray-900 dark:bg-surface-700 dark:text-white dark:hover:bg-surface-600 ring-1 ring-gray-300 dark:ring-gray-600"
               @click.stop="markTaskAvailable()"
             >
               {{ t('page.tasks.questcard.availablebutton', 'Mark Available') }}
@@ -172,9 +193,9 @@
             <UButton
               v-if="isComplete"
               :size="actionButtonSize"
-              color="primary"
+              color="error"
               variant="solid"
-              class="shrink-0"
+              class="shrink-0 !bg-red-600 hover:!bg-red-700 text-white"
               @click.stop="markTaskUncomplete()"
             >
               {{ t('page.tasks.questcard.uncompletebutton', 'Mark Uncompleted') }}
@@ -212,7 +233,7 @@
       >
         <!-- Requires strip (Left) -->
         <div v-if="lockedBefore > 0" class="flex min-w-0 items-center">
-          <span class="shrink-0 text-gray-700 dark:text-content-primary">
+          <span class="shrink-0 text-gray-700 dark:text-gray-200">
             {{ t('page.tasks.questcard.requires', 'Requires') }}:
           </span>
           <template v-if="pendingParentTasks.length">
@@ -251,7 +272,7 @@
               )
             "
           >
-            <span class="cursor-help border-b border-dotted border-gray-400 text-gray-600 dark:border-gray-500 dark:text-gray-400">
+            <span class="cursor-help border-b border-dotted border-gray-400 text-gray-600 dark:border-gray-500 dark:text-gray-200">
               {{ t('page.tasks.questcard.unlocksNext', 'Unlocks next') }}: {{ unlocksNextCount }}
             </span>
           </AppTooltip>
@@ -265,7 +286,7 @@
               )
             "
           >
-            <span class="cursor-help border-b border-dotted border-gray-400 text-gray-600 dark:border-gray-500 dark:text-gray-400">
+            <span class="cursor-help border-b border-dotted border-gray-400 text-gray-600 dark:border-gray-500 dark:text-gray-200">
               {{ t('page.tasks.questcard.impact', 'Impact') }}: {{ impactCount }}
             </span>
           </AppTooltip>
@@ -297,11 +318,11 @@
       <!-- 6) Progress Footer: Previous & Next Quests Links -->
       <div
         v-if="parentTasks.length > 0 || childTasks.length > 0"
-        class="flex flex-nowrap items-start justify-between gap-4 border-t border-white/5 pt-2"
+        class="flex flex-nowrap items-start justify-between gap-4 border border-white/5 pt-2"
       >
         <!-- Left: Previous Quests -->
         <div v-if="parentTasks.length > 0" class="flex min-w-0 flex-col gap-1.5">
-          <div class="text-[10px] font-medium uppercase tracking-wider text-gray-600 dark:text-gray-400">
+          <div class="text-[10px] font-medium uppercase tracking-wider text-gray-600 dark:text-gray-300">
             {{ t('page.tasks.questcard.previousQuests', 'Previous Quests') }}:
           </div>
           <div class="flex flex-col items-start gap-1">
@@ -320,7 +341,7 @@
 
         <!-- Right: Next Quests -->
         <div v-if="childTasks.length > 0" class="flex min-w-0 flex-col items-end gap-1.5 text-right">
-          <div class="text-[10px] font-medium uppercase tracking-wider text-gray-600 dark:text-gray-400">
+          <div class="text-[10px] font-medium uppercase tracking-wider text-gray-600 dark:text-gray-300">
             {{ t('page.tasks.questcard.nextQuests', 'Next Quests') }}:
           </div>
           <div class="flex flex-col items-end gap-1">

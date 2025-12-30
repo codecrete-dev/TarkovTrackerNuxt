@@ -5,50 +5,62 @@
     :class="{ 'cursor-pointer hover:bg-gray-100 dark:hover:bg-white/5': hasExpandableDetails }"
     @click="onAreaClick"
   >
-    <div class="flex flex-wrap items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+    <div class="flex flex-wrap items-center gap-2 text-xs text-gray-500 dark:text-gray-300">
       <!-- Rewards title -->
-      <span class="font-medium text-gray-700 dark:text-gray-500">
+      <span class="font-medium text-gray-700 dark:text-gray-300">
         <UIcon name="i-mdi-gift" aria-hidden="true" class="mr-1 inline h-3.5 w-3.5" />
         {{ t('page.tasks.questcard.rewards', 'Rewards') }}:
       </span>
       <!-- Trader Standing Rewards -->
       <template v-for="standing in traderStandingRewards" :key="`standing-${standing.trader.id}`">
-        <span class="inline-flex items-center gap-1.5 rounded bg-blue-500/10 px-2 py-0.5">
-          <UIcon name="i-mdi-handshake" aria-hidden="true" class="h-4 w-4 text-blue-500 dark:text-blue-300" />
-          <span :class="standing.standing >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'">
+        <span
+          class="inline-flex items-center gap-1.5 rounded px-2 py-0.5"
+          :class="
+            standing.standing >= 0
+              ? '!bg-emerald-300 !text-emerald-950'
+              : '!bg-red-300 !text-red-950'
+          "
+        >
+          <UIcon
+            name="i-mdi-handshake"
+            aria-hidden="true"
+            class="h-4 w-4"
+            :class="standing.standing >= 0 ? '!text-emerald-950' : '!text-red-950'"
+          />
+          <span>
             {{ standing.standing >= 0 ? '+' : '' }}{{ standing.standing.toFixed(2) }}
           </span>
-          <span class="text-gray-700 dark:text-gray-300">{{ standing.trader.name }}</span>
+          <span>{{ standing.trader.name }}</span>
         </span>
       </template>
       <!-- Skill Rewards -->
       <template v-for="skill in skillRewards" :key="`skill-${skill.name}`">
-        <span class="inline-flex items-center gap-1">
-          <UIcon name="i-mdi-arm-flex" aria-hidden="true" class="h-3.5 w-3.5 text-purple-500 dark:text-purple-400" />
-          <span class="text-purple-600 dark:text-purple-300">+{{ skill.level }}</span>
+        <span class="inline-flex items-center gap-1.5 rounded !bg-purple-300 px-2 py-0.5 !text-purple-950">
+          <UIcon name="i-mdi-arm-flex" aria-hidden="true" class="h-3.5 w-3.5 !text-purple-950" />
+          <span>+{{ skill.level }}</span>
           <span>{{ skill.name }}</span>
         </span>
       </template>
       <!-- Trader Unlock -->
       <span
         v-if="displayedTraderUnlock?.name"
-        class="inline-flex items-center gap-1.5 rounded bg-amber-500/10 px-2 py-0.5"
+        class="inline-flex items-center gap-1.5 rounded !bg-amber-300 px-2 py-0.5 !text-amber-950"
       >
-        <UIcon name="i-mdi-lock-open-variant" aria-hidden="true" class="h-4 w-4 text-amber-500 dark:text-amber-400" />
-        <span class="text-amber-600 dark:text-amber-300">{{ displayedTraderUnlock.name }}</span>
+        <UIcon name="i-mdi-lock-open-variant" aria-hidden="true" class="h-4 w-4 !text-amber-950" />
+        <span>{{ displayedTraderUnlock.name }}</span>
       </span>
       <!-- Item Rewards Summary -->
       <AppTooltip v-if="itemRewards.length > 0" :text="itemRewardsSummaryTooltip">
         <span
-          class="inline-flex cursor-help items-center gap-1.5 rounded bg-emerald-500/10 px-2 py-0.5"
+          class="inline-flex cursor-help items-center gap-1.5 rounded !bg-blue-300 px-2 py-0.5 !text-blue-950"
         >
-          <UIcon name="i-mdi-package-variant" aria-hidden="true" class="h-4 w-4 text-emerald-500 dark:text-emerald-400" />
-          <span class="text-emerald-600 dark:text-emerald-300">
+          <UIcon name="i-mdi-package-variant" aria-hidden="true" class="h-4 w-4 !text-blue-950" />
+          <span>
             {{
               t(
                 'page.tasks.questcard.itemsCount',
                 { count: itemRewards.length },
-                `${itemRewards.length} item(s)`
+                `${itemRewards.length} item${itemRewards.length === 1 ? '' : 's'}`
               )
             }}
           </span>
@@ -57,22 +69,22 @@
       <!-- Offer Unlock Summary -->
       <AppTooltip v-if="offerUnlockRewards.length > 0" :text="offerUnlockSummaryTooltip">
         <span
-          class="inline-flex cursor-help items-center gap-1.5 rounded bg-cyan-500/10 px-2 py-0.5"
+          class="inline-flex cursor-help items-center gap-1.5 rounded !bg-cyan-300 px-2 py-0.5 !text-cyan-950"
         >
-          <UIcon name="i-mdi-cart-check" aria-hidden="true" class="h-4 w-4 text-cyan-500 dark:text-cyan-400" />
-          <span class="text-cyan-600 dark:text-cyan-300">
+          <UIcon name="i-mdi-cart-check" aria-hidden="true" class="h-4 w-4 !text-cyan-950" />
+          <span>
             {{
               t(
                 'page.tasks.questcard.unlocksCount',
                 { count: offerUnlockRewards.length },
-                `${offerUnlockRewards.length} unlock(s)`
+                `${offerUnlockRewards.length} unlock${offerUnlockRewards.length === 1 ? '' : 's'}`
               )
             }}
           </span>
         </span>
       </AppTooltip>
       <!-- Dropdown toggle -->
-      <AppTooltip v-if="hasExpandableDetails" :text="toggleDetailsLabel">
+      <AppTooltip v-if="hasExpandableDetails" :text="toggleDetailsLabel" class="ml-auto">
         <UButton
           size="xs"
           color="neutral"
@@ -96,7 +108,7 @@
       :id="detailsId"
       role="region"
       :aria-label="t('page.tasks.questcard.details', 'Task details')"
-      class="mt-2 rounded-md bg-gray-50 p-2 dark:bg-white/5"
+      class="mt-2 rounded-md bg-white p-2 dark:bg-white/5"
     >
       <div class="flex flex-col gap-4">
         <!-- Rewards Row (Items Left, Unlocks Right) -->
@@ -106,7 +118,7 @@
         >
           <!-- Item Rewards (Left) -->
           <div v-if="itemRewards.length > 0" class="flex min-w-0 flex-1 flex-col gap-2">
-            <div class="text-xs font-medium text-gray-500 dark:text-gray-400">
+            <div class="text-xs font-medium text-gray-500 dark:text-gray-300">
               {{ t('page.tasks.questcard.rewardItems', 'Items') }}:
             </div>
             <div class="flex flex-wrap gap-2">
@@ -153,7 +165,7 @@
             v-if="offerUnlockRewards.length > 0"
             class="flex min-w-0 flex-1 flex-col items-end gap-2 text-right"
           >
-            <div class="text-xs font-medium text-gray-500 dark:text-gray-400">
+            <div class="text-xs font-medium text-gray-500 dark:text-gray-300">
               {{ t('page.tasks.questcard.unlocksPurchase', 'Unlocks purchase') }}:
             </div>
             <div class="flex flex-wrap justify-end gap-2 text-left">
