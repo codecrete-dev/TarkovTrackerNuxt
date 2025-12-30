@@ -9,7 +9,7 @@
       <span class="hidden text-xs sm:inline">SETTINGS</span>
     </UButton>
     <template #content>
-      <UCard class="bg-contentbackground">
+      <UCard class="bg-white dark:bg-contentbackground">
         <template #header>
           <div class="flex items-center justify-between">
             <div>
@@ -24,6 +24,7 @@
               size="sm"
               :aria-label="t('page.tasks.filters.close', 'Close')"
               @click="isOpen = false"
+              class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
             />
           </div>
         </template>
@@ -31,7 +32,7 @@
           <!-- TASK FILTERS Section -->
           <section class="space-y-2">
             <div>
-              <p class="text-primary-400 text-xs font-semibold tracking-wide uppercase">
+              <p class="text-primary-600 dark:text-primary-400 text-xs font-semibold tracking-wide uppercase">
                 {{ t('page.tasks.settings.tabs.filters', 'TASK FILTERS') }}
               </p>
               <p class="mt-1 text-xs text-gray-500">
@@ -63,7 +64,7 @@
           <!-- APPEARANCE Section -->
           <section class="space-y-2">
             <div>
-              <p class="text-primary-400 text-xs font-semibold tracking-wide uppercase">
+              <p class="text-primary-600 dark:text-primary-400 text-xs font-semibold tracking-wide uppercase">
                 {{ t('page.tasks.settings.tabs.appearance', 'APPEARANCE') }}
               </p>
               <p class="mt-1 text-xs text-gray-500">

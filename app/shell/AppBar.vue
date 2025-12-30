@@ -149,13 +149,13 @@
   const pveClasses = computed(() =>
     currentGameMode.value === GAME_MODES.PVE
       ? 'bg-pve-600 hover:bg-pve-700 text-white shadow-[0_0_0_4px_rgba(0,0,0,0.15)] dark:shadow-[0_0_0_4px_rgba(0,0,0,0.45)] ring-2 ring-white/60 ring-inset outline outline-2 outline-white/40'
-      : 'bg-gray-100 text-gray-900 hover:bg-gray-200 dark:bg-pve-950/80 dark:text-pve-400 dark:hover:bg-pve-900/90'
+      : 'bg-pve-50 text-pve-600 hover:bg-pve-100 dark:bg-pve-950/80 dark:text-pve-400 dark:hover:bg-pve-900/90'
   );
 
   const pvpClasses = computed(() =>
     currentGameMode.value === GAME_MODES.PVP
       ? 'bg-pvp-600 hover:bg-pvp-700 text-white shadow-[0_0_0_4px_rgba(0,0,0,0.15)] dark:bg-pvp-800 dark:shadow-[0_0_0_4px_rgba(0,0,0,0.45)] ring-2 ring-white/60 ring-inset outline outline-2 outline-white/40'
-      : 'bg-gray-100 text-gray-900 hover:bg-gray-200 dark:bg-pvp-950/80 dark:text-pvp-400 dark:hover:bg-pvp-900/90'
+      : 'bg-pvp-50 text-pvp-600 hover:bg-pvp-100 dark:bg-pvp-950/80 dark:text-pvp-400 dark:hover:bg-pvp-900/90'
   );
 
   async function switchMode(mode: GameMode) {

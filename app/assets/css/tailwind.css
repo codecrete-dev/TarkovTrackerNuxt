@@ -390,7 +390,7 @@ select:disabled,
   --ui-color-neutral-700: var(--color-primary-700);
   
   /* Set Nuxt UI primary token used by dark theme buttons */
-  --ui-primary: hsl(150 60% 40%);
+  --ui-primary: var(--color-primary-500);
 }
 /* Utility: default ring color aligned to brand (darker primary) */
 .ring-default {
