@@ -7,7 +7,7 @@
       :class="[
         isActive
           ? 'border-l-2 border-primary-500 bg-primary-50 text-primary-700 dark:bg-surface-700 dark:text-white'
-          : 'border-l-2 border-transparent text-content-secondary hover:bg-surface-200 hover:text-content-primary',
+          : 'border-l-2 border-transparent text-content-secondary hover:bg-surface-200 dark:hover:bg-white/5 hover:text-content-primary',
         props.isCollapsed ? 'justify-center' : '',
       ]"
     >
@@ -42,7 +42,7 @@
       rel="noopener noreferrer"
       class="group flex cursor-pointer items-center rounded-md px-3 py-2.5 text-sm font-medium transition-colors duration-150"
       :class="[
-        'border-l-2 border-transparent text-content-secondary hover:bg-surface-200 hover:text-content-primary',
+        'border-l-2 border-transparent text-content-secondary hover:bg-surface-200 dark:hover:bg-white/5 hover:text-content-primary',
         props.isCollapsed ? 'justify-center' : '',
       ]"
       @click="visitHref()"
@@ -77,7 +77,7 @@
     </a>
     <div
       v-else
-      class="group flex cursor-pointer items-center rounded-md border-l-4 border-transparent px-3 py-2.5 text-base font-medium text-content-tertiary transition-colors duration-200 hover:bg-surface-200 hover:text-content-primary"
+      class="group flex cursor-pointer items-center rounded-md border-l-4 border-transparent px-3 py-2.5 text-base font-medium text-content-tertiary transition-colors duration-200 hover:bg-surface-200 dark:hover:bg-white/5 hover:text-content-primary"
       :class="[props.isCollapsed ? 'justify-center' : '']"
     >
       <!-- Icon / Avatar -->

@@ -58,18 +58,18 @@ html {
   --color-accent-800: hsl(190 34% 15%);
   --color-accent-900: hsl(192 38% 11%);
   --color-accent-950: hsl(192 42% 8%);
-  /* Surface = neutral grays */
-  --color-surface-50: hsl(0 0% 97.3%);
-  --color-surface-100: hsl(240 2.4% 92%);
-  --color-surface-200: hsl(240 2.4% 83.5%);
-  --color-surface-300: hsl(240 5% 64.9%);
-  --color-surface-400: hsl(240 3.8% 46.1%);
-  --color-surface-500: hsl(240 5.2% 33.9%);
-  --color-surface-600: hsl(240 5.3% 26.1%);
-  --color-surface-700: hsl(240 5.1% 19.4%);
-  --color-surface-800: hsl(240 5.1% 11.6%);
-  --color-surface-900: hsl(0 0% 7.1%);
-  --color-surface-950: hsl(60 5.3% 3.7%);
+  /* Surface = neutral grays (Warm/Bronze Tint) */
+  --color-surface-50: hsl(40 10% 97%);
+  --color-surface-100: hsl(40 8% 92%);
+  --color-surface-200: hsl(40 8% 83%);
+  --color-surface-300: hsl(40 6% 65%);
+  --color-surface-400: hsl(40 5% 46%);
+  --color-surface-500: hsl(40 5% 34%);
+  --color-surface-600: hsl(40 5% 26%);
+  --color-surface-700: hsl(40 6% 19%);
+  --color-surface-800: hsl(40 7% 11%);
+  --color-surface-900: hsl(40 8% 7%);
+  --color-surface-950: hsl(40 10% 3.5%);
   /* PvP (in-game tan) */
   --color-pvp-50: hsl(40 60% 99%);
   --color-pvp-100: hsl(38 44.4% 96.5%);
