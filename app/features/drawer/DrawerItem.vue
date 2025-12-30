@@ -6,7 +6,7 @@
       class="group flex cursor-pointer items-center rounded-md px-3 py-2.5 text-base font-medium transition-colors duration-150"
       :class="[
         isActive
-          ? 'border-l-2 border-primary-500 bg-primary-50 text-primary-700 dark:bg-surface-700 dark:text-white'
+          ? 'border-l-2 border-primary-500 bg-primary-100 text-primary-900 dark:bg-primary-500/20 dark:text-primary-100'
           : 'border-l-2 border-transparent text-content-secondary hover:bg-surface-200 dark:hover:bg-white/5 hover:text-content-primary',
         props.isCollapsed ? 'justify-center' : '',
       ]"
