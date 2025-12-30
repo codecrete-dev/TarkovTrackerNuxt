@@ -21,7 +21,7 @@
           </template>
         </UAlert>
         <!-- Automatic Level Calculation Toggle -->
-        <div class="rounded-lg border border-base bg-surface-elevated p-4">
+        <div class="rounded-lg border border-base bg-surface-elevated p-4 dark:border-primary-700/30">
           <div class="flex items-start justify-between gap-3">
             <div class="flex-1">
               <div class="mb-1 text-sm font-semibold text-content-primary">
@@ -59,7 +59,7 @@
           </UAlert>
         </div>
         <!-- Current Level Display -->
-        <div class="rounded-lg border border-base bg-surface-elevated p-4">
+        <div class="rounded-lg border border-base bg-surface-elevated p-4 dark:border-primary-700/30">
           <div class="mb-3 flex items-center justify-between">
             <span class="text-sm font-semibold text-content-primary">
               {{ $t('settings.experience.current_level', 'Current Level') }}
@@ -87,7 +87,7 @@
           </div>
         </div>
         <!-- XP Breakdown -->
-        <div class="rounded-lg border border-base bg-surface-elevated p-3">
+        <div class="rounded-lg border border-base bg-surface-elevated p-3 dark:border-primary-700/30">
           <div class="mb-2 text-sm font-semibold text-content-primary">
             {{ $t('settings.experience.breakdown', 'XP Breakdown') }}
           </div>
