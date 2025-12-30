@@ -1,11 +1,13 @@
 <template>
   <div class="flex items-center gap-0.5">
     <!-- Counter controls group with background -->
-    <div class="bg-surface-700 flex items-center rounded-lg border border-white/20 shadow-sm">
+    <div
+      class="bg-surface-elevated flex items-center rounded-lg border border-base shadow-sm transition-colors"
+    >
       <!-- Decrease button -->
       <AppTooltip text="Decrease count">
         <button
-          class="text-surface-200 hover:bg-surface-600 active:bg-surface-500 flex h-5 w-5 items-center justify-center rounded-l-lg transition-colors hover:text-white sm:h-6 sm:w-6 lg:h-8 lg:w-8"
+          class="text-content-secondary hover:bg-surface-hover active:bg-surface-active flex h-5 w-5 items-center justify-center rounded-l-lg transition-colors hover:text-content-primary sm:h-6 sm:w-6 lg:h-8 lg:w-8"
           aria-label="Decrease count"
           @click="$emit('decrease')"
         >
@@ -13,7 +15,7 @@
         </button>
       </AppTooltip>
       <div
-        class="bg-surface-800 flex h-5 min-w-8 items-center justify-center border-x border-white/20 sm:h-6 sm:min-w-10 lg:h-8 lg:min-w-16"
+        class="bg-surface-base flex h-5 min-w-8 items-center justify-center border-x border-base sm:h-6 sm:min-w-10 lg:h-8 lg:min-w-16"
       >
         <template v-if="isEditing">
           <input
@@ -22,7 +24,7 @@
             type="number"
             :min="0"
             :max="neededCount"
-            class="bg-surface-900 focus:ring-primary-500 h-full w-full px-0.5 text-center text-[10px] font-semibold text-white focus:ring-2 focus:outline-none focus:ring-inset sm:text-xs lg:px-2 lg:text-sm"
+            class="bg-surface-base focus:ring-primary-500 h-full w-full px-0.5 text-center text-[10px] font-semibold text-content-primary focus:ring-2 focus:outline-none focus:ring-inset sm:text-xs lg:px-2 lg:text-sm"
             @blur="submitEdit"
             @keydown.enter="submitEdit"
             @keydown.escape="cancelEdit"
@@ -31,7 +33,7 @@
         <template v-else>
           <AppTooltip text="Click to enter value">
             <button
-              class="hover:bg-surface-600 h-full w-full cursor-pointer px-0.5 text-[10px] font-semibold text-white transition-colors sm:text-xs lg:px-2 lg:text-sm"
+              class="hover:bg-surface-hover h-full w-full cursor-pointer px-0.5 text-[10px] font-semibold text-content-primary transition-colors sm:text-xs lg:px-2 lg:text-sm"
               aria-label="Click to enter value"
               @click="startEditing"
             >
@@ -43,7 +45,7 @@
       <!-- Increase button -->
       <AppTooltip text="Increase count">
         <button
-          class="text-surface-200 hover:bg-surface-600 active:bg-surface-500 flex h-5 w-5 items-center justify-center rounded-r-lg transition-colors hover:text-white sm:h-6 sm:w-6 lg:h-8 lg:w-8"
+          class="text-content-secondary hover:bg-surface-hover active:bg-surface-active flex h-5 w-5 items-center justify-center rounded-r-lg transition-colors hover:text-content-primary sm:h-6 sm:w-6 lg:h-8 lg:w-8"
           aria-label="Increase count"
           @click="$emit('increase')"
         >
@@ -61,7 +63,7 @@
         :class="
           currentCount >= neededCount
             ? 'bg-success-600 border-success-500 hover:bg-success-500 text-white'
-            : 'bg-surface-700 text-surface-200 hover:bg-surface-600 border-white/20 hover:text-white'
+            : 'bg-surface-elevated text-content-secondary hover:bg-surface-hover border-base hover:text-content-primary'
         "
         @click="$emit('toggle')"
       >

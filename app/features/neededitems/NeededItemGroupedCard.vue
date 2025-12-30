@@ -1,9 +1,9 @@
 <template>
-  <div class="flex h-full flex-col rounded-lg border border-base bg-surface-base shadow-sm">
+  <div class="flex h-full flex-col rounded-lg border border-base bg-surface-elevated shadow-sm">
     <!-- Top section: Image + Name side by side -->
     <div class="flex items-center gap-3 p-3">
       <!-- Item image -->
-      <div class="relative h-16 w-16 shrink-0 overflow-hidden rounded bg-surface-elevated">
+      <div class="relative h-16 w-16 shrink-0 overflow-hidden rounded bg-surface-base">
         <GameItem
           :src="groupedItem.item.image512pxLink || groupedItem.item.iconLink"
           :item-name="groupedItem.item.name"
@@ -20,7 +20,7 @@
       <!-- Item name + Total -->
       <div class="min-w-0 flex-1">
         <div class="flex min-w-0 items-start gap-1">
-          <div class="line-clamp-2 min-w-0 text-sm leading-tight font-semibold">
+          <div class="line-clamp-2 min-w-0 text-sm leading-tight font-semibold text-content-primary">
             {{ groupedItem.item.name }}
           </div>
           <AppTooltip v-if="isCraftable" :text="craftableTitle">
@@ -38,9 +38,9 @@
       </div>
     </div>
     <!-- Breakdown grid -->
-    <div class="grid grid-cols-2 gap-px border-t border-base bg-surface-elevated text-xs">
+    <div class="grid grid-cols-2 divide-x divide-base border-t border-base text-xs">
       <!-- Tasks section -->
-      <div class="bg-surface-base p-2">
+      <div class="bg-surface-elevated p-2">
         <div class="mb-1.5 flex items-center gap-1 text-content-tertiary">
           <UIcon name="i-mdi-clipboard-list" class="h-3.5 w-3.5" />
           <span class="font-medium">Tasks</span>
@@ -63,7 +63,7 @@
         </div>
       </div>
       <!-- Hideout section -->
-      <div class="bg-surface-base p-2">
+      <div class="bg-surface-elevated p-2">
         <div class="mb-1.5 flex items-center gap-1 text-content-tertiary">
           <UIcon name="i-mdi-home" class="h-3.5 w-3.5" />
           <span class="font-medium">Hideout</span>

@@ -1,26 +1,28 @@
 <template>
   <KeepAlive>
-    <AppTooltip
-      :text="
-        isSingleItem && !selfCompletedNeed
-          ? currentCount >= neededCount
-            ? 'Click to uncollect'
-            : 'Click to collect'
-          : ''
-      "
+    <div
+      class="flex h-full flex-col rounded-lg border shadow-sm transition-all duration-200"
+      :class="[
+        itemCardClasses,
+        {
+          'hover:ring-primary-400 hover:ring-opacity-50 cursor-pointer transition-all hover:ring-2 active:scale-[0.98]':
+            hasItem && isSingleItem && !selfCompletedNeed,
+        },
+      ]"
+      @click="handleCardClick"
     >
-      <div
-        class="flex h-full flex-col rounded-lg border shadow-sm transition-all duration-200"
-        :class="[
-          itemCardClasses,
-          {
-            'hover:ring-primary-400 hover:ring-opacity-50 cursor-pointer transition-all hover:ring-2 active:scale-[0.98]':
-              hasItem && isSingleItem && !selfCompletedNeed,
-          },
-        ]"
-        @click="handleCardClick"
-      >
-        <template v-if="hasItem">
+      <template v-if="hasItem">
+        <!-- Tooltip wrapper for the clickable area (Image + Content) -->
+        <AppTooltip
+          :text="
+            isSingleItem && !selfCompletedNeed
+              ? currentCount >= neededCount
+                ? 'Click to uncollect'
+                : 'Click to collect'
+              : ''
+          "
+          class="flex flex-1 flex-col"
+        >
           <!-- Item image with count badge -->
           <div :class="imageContainerClasses">
             <div class="absolute top-0 left-0 z-10">
@@ -61,7 +63,7 @@
             <!-- Item name -->
             <div class="flex min-h-10 items-start justify-center">
               <span
-                class="line-clamp-2 text-center text-[clamp(0.7rem,2.5vw,0.875rem)] leading-snug font-medium text-gray-900 dark:text-gray-100"
+                  class="line-clamp-2 text-center text-[clamp(0.7rem,2.5vw,0.875rem)] leading-snug font-medium text-content-primary"
               >
                 {{ item?.name ?? '' }}
               </span>
@@ -82,14 +84,14 @@
                   compact
                   class="max-w-full text-[clamp(0.625rem,2vw,0.75rem)]"
                 />
-                <span class="ml-1 text-[clamp(0.625rem,2vw,0.75rem)] text-gray-500 dark:text-gray-400">
+                <span class="ml-1 text-[clamp(0.625rem,2vw,0.75rem)] text-content-tertiary">
                   {{ props.need.hideoutModule.level }}
                 </span>
               </template>
             </div>
             <!-- Requirements (Level & Tasks Before) -->
             <div
-              class="flex min-h-10 flex-wrap items-center justify-center gap-x-3 gap-y-0.5 text-[clamp(0.625rem,1.8vw,0.75rem)] text-gray-500 dark:text-gray-400"
+                class="flex min-h-10 flex-wrap items-center justify-center gap-x-3 gap-y-0.5 text-[clamp(0.625rem,1.8vw,0.75rem)] text-content-tertiary"
             >
               <span
                 v-if="levelRequired > 0 && levelRequired > playerLevel"
@@ -103,46 +105,49 @@
                 {{ lockedBefore }} before
               </span>
             </div>
-            <!-- Controls - hide for single items since clicking image toggles -->
-            <div v-if="!isSingleItem" class="mt-auto flex items-center justify-center pt-2">
-              <template v-if="!selfCompletedNeed">
-                <ItemCountControls
-                  :current-count="currentCount"
-                  :needed-count="neededCount"
-                  @decrease="$emit('decreaseCount')"
-                  @increase="$emit('increaseCount')"
-                  @toggle="$emit('toggleCount')"
-                  @set-count="(count) => $emit('setCount', count)"
-                />
-              </template>
-              <span v-else class="text-sm font-bold text-success-600 dark:text-success-400">
-                {{ currentCount }}/{{ neededCount }} ✓
-              </span>
-            </div>
           </div>
-        </template>
-        <template v-else>
-          <div :class="imageContainerClasses">
-            <div class="h-full w-full animate-pulse rounded-t-lg bg-gray-200 dark:bg-surface-700"></div>
+        </AppTooltip>
+        <!-- Controls - outside tooltip wrapper to prevent overlap -->
+        <div v-if="!isSingleItem" class="mt-auto flex items-center justify-center pb-2 px-2">
+          <template v-if="!selfCompletedNeed">
+            <ItemCountControls
+              :current-count="currentCount"
+              :needed-count="neededCount"
+              @decrease="$emit('decreaseCount')"
+              @increase="$emit('increaseCount')"
+              @toggle="$emit('toggleCount')"
+              @set-count="(count) => $emit('setCount', count)"
+            />
+          </template>
+          <span v-else class="text-sm font-bold text-success-600 dark:text-success-400">
+            {{ currentCount }}/{{ neededCount }} ✓
+          </span>
+        </div>
+        <!-- For single items, show completed status at bottom if needed or just padding -->
+        <div v-else class="pb-2"></div>
+      </template>
+      <template v-else>
+        <div :class="imageContainerClasses">
+          <div class="h-full w-full animate-pulse rounded-t-lg bg-surface-elevated"></div>
+        </div>
+        <div class="flex flex-1 flex-col p-2">
+          <div class="flex min-h-10 items-start justify-center">
+            <span class="h-4 w-3/4 animate-pulse rounded bg-surface-elevated"></span>
           </div>
-          <div class="flex flex-1 flex-col p-2">
-            <div class="flex min-h-10 items-start justify-center">
-              <span class="h-4 w-3/4 animate-pulse rounded bg-gray-200 dark:bg-surface-700"></span>
-            </div>
-            <div class="flex min-h-7 w-full items-center justify-center">
-              <span class="h-3 w-1/2 animate-pulse rounded bg-gray-200 dark:bg-surface-700"></span>
-            </div>
-            <div class="flex min-h-10 flex-wrap items-center justify-center gap-x-3 gap-y-0.5">
-              <span class="h-3 w-1/3 animate-pulse rounded bg-gray-200 dark:bg-surface-700"></span>
-              <span class="h-3 w-1/3 animate-pulse rounded bg-gray-200 dark:bg-surface-700"></span>
-            </div>
-            <div class="mt-auto flex items-center justify-center pt-2">
-              <span class="h-4 w-10 animate-pulse rounded bg-gray-200 dark:bg-surface-700"></span>
-            </div>
+          <div class="flex min-h-7 w-full items-center justify-center">
+            <span class="h-3 w-1/2 animate-pulse rounded bg-surface-elevated"></span>
           </div>
-        </template>
-      </div>
-    </AppTooltip>
+          <div class="flex min-h-10 flex-wrap items-center justify-center gap-x-3 gap-y-0.5">
+            <span class="h-3 w-1/3 animate-pulse rounded bg-surface-elevated"></span>
+            <span class="h-3 w-1/3 animate-pulse rounded bg-surface-elevated"></span>
+          </div>
+          <div class="mt-auto flex items-center justify-center pt-2">
+            <span class="h-4 w-10 animate-pulse rounded bg-surface-elevated"></span>
+          </div>
+        </div>
+      </template>
+    </div>
+  </KeepAlive>
   </KeepAlive>
 </template>
 <script setup lang="ts">
@@ -192,7 +197,7 @@
     return {
       'bg-success-50/50 border-success-200 dark:bg-success-900/10 dark:border-success-500/30':
         isCompleted,
-      'bg-white border-gray-200 hover:border-primary-300 dark:bg-gray-800 dark:border-gray-700 dark:hover:border-gray-500':
+      'bg-surface-elevated border-base hover:border-primary-300':
         !isCompleted,
     };
   });
@@ -208,7 +213,7 @@
     const isCompleted = selfCompletedNeed.value || currentCount.value >= neededCount.value;
     return {
       'bg-clip-padding rounded-tl-[5px] rounded-br-[10px]': true,
-      'bg-white text-gray-900 shadow-md ring-1 ring-black/5 dark:bg-white dark:text-black dark:ring-0':
+      'bg-surface-elevated text-content-primary shadow-md ring-1 ring-black/5 dark:ring-0':
         !isCompleted,
       'bg-success-500 text-white shadow-md': isCompleted,
     };

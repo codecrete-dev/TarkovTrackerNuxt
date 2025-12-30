@@ -149,7 +149,7 @@
                             :class="
                               isCollected
                                 ? 'bg-success-600 border-success-500 hover:bg-success-500 text-white'
-                                : 'bg-surface-700 text-surface-200 hover:bg-surface-600 border-white/20 hover:text-white'
+                                : 'bg-surface-elevated text-content-secondary hover:bg-surface-hover border-base hover:text-content-primary'
                             "
                             :aria-label="isCollected ? 'Collected' : 'Mark as collected'"
                             icon-class="h-6 w-6"
@@ -218,7 +218,7 @@
                       :class="
                         isCollected
                           ? 'bg-success-600 border-success-500 hover:bg-success-500 text-white'
-                          : 'bg-surface-700 text-surface-200 hover:bg-surface-600 border-white/20 hover:text-white'
+                          : 'bg-surface-elevated text-content-secondary hover:bg-surface-hover border-base hover:text-content-primary'
                       "
                       :aria-label="isCollected ? 'Collected' : 'Mark as collected'"
                       icon-class="h-6 w-6"
@@ -293,9 +293,9 @@
   const { isVisible } = useItemRowIntersection(cardRef);
   const itemRowClasses = computed(() => {
     return {
-      'bg-gradient-to-l from-complete to-surface':
+      'bg-gradient-to-l from-success-100 dark:from-complete to-surface':
         selfCompletedNeed.value || currentCount.value >= neededCount.value,
-      'bg-gray-800': !(selfCompletedNeed.value || currentCount.value >= neededCount.value),
+      'bg-surface-elevated': !(selfCompletedNeed.value || currentCount.value >= neededCount.value),
     };
   });
   const isSingleItem = computed(() => neededCount.value === 1);
