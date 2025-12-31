@@ -9,48 +9,46 @@
     header-classes="pb-2"
   >
     <template #header>
-      <div class="flex items-center justify-between pb-2 text-xl">
-        <!-- Left side content (icon and title with level badge) -->
+      <div class="flex items-center justify-between pr-4 pb-2 gap-4">
         <div class="flex items-center gap-3">
           <!-- Station Avatar -->
-          <span :class="highlightClasses" class="inline-block rounded-br-lg px-3 py-1 shadow-lg dark:shadow-none">
+          <span :class="highlightClasses" class="inline-block rounded-tl-lg rounded-br-lg px-3 py-1 shadow-lg dark:shadow-none">
             <img :src="stationAvatar" :height="50" :style="{ height: '50px' }" class="block pt-0" />
           </span>
-          <!-- Title and Level Badge -->
-          <div class="flex items-center gap-2">
-            <span class="inline-block text-left leading-6 text-content-primary">
-              {{ station.name }}
-            </span>
-            <div
-              v-if="!upgradeDisabled"
-              class="rounded-md px-2.5 py-0.5"
-              :class="
-                prerequisitesMet
-                  ? 'bg-success-500/20 border-success-500/50 border'
-                  : 'border border-red-500/50 bg-red-500/20'
-              "
-            >
-              <span
-                class="text-xs font-semibold"
-                :class="prerequisitesMet ? 'text-success-400' : 'text-red-400'"
+          <!-- Title -->
+          <span class="inline-block text-left text-lg sm:text-xl font-bold leading-6 text-content-primary">
+            {{ station.name }}
+          </span>
+        </div>
+
+        <div
+          v-if="!upgradeDisabled"
+          class="flex shrink-0 items-center rounded-md border px-2 py-1 shadow-sm"
+          :class="
+            prerequisitesMet
+              ? 'bg-success-500/10 border-success-500/30'
+              : 'border-red-500/30 bg-red-500/10'
+          "
+        >
+          <span
+            class="text-[11px] font-bold uppercase tracking-tight"
+            :class="prerequisitesMet ? 'text-success-600 dark:text-success-400' : 'text-red-600 dark:text-red-400'"
+          >
+            <template v-if="prerequisitesMet">
+              <i18n-t
+                keypath="page.hideout.stationcard.level"
+                scope="global"
+                :plural="progressStore.hideoutLevels?.[props.station.id]?.self || 0"
               >
-                <template v-if="prerequisitesMet">
-                  <i18n-t
-                    keypath="page.hideout.stationcard.level"
-                    scope="global"
-                    :plural="progressStore.hideoutLevels?.[props.station.id]?.self || 0"
-                  >
-                    <template #level>
-                      {{ progressStore.hideoutLevels?.[props.station.id]?.self || 0 }}
-                    </template>
-                  </i18n-t>
+                <template #level>
+                  {{ progressStore.hideoutLevels?.[props.station.id]?.self || 0 }}
                 </template>
-                <template v-else>
-                  {{ $t('page.hideout.stationcard.levelnotready') }}
-                </template>
-              </span>
-            </div>
-          </div>
+              </i18n-t>
+            </template>
+            <template v-else>
+              {{ $t('page.hideout.stationcard.levelnotready') }}
+            </template>
+          </span>
         </div>
       </div>
       <!-- Divider -->
@@ -79,13 +77,13 @@
       <!-- Next level requirements -->
       <div v-if="nextLevel" class="space-y-3">
         <!-- Item Requirements Section -->
-        <div v-if="hasItemRequirements" class="rounded-lg border border-base bg-surface-elevated p-3">
+        <div v-if="hasItemRequirements" class="border-t border-b border-base bg-surface-elevated p-3">
           <div class="mb-3 flex items-center text-base font-medium text-content-primary">
             <UIcon name="i-mdi-package-variant-closed-check" class="mr-2 h-5 w-5 text-green-600 dark:text-green-500" />
             {{ $t('page.hideout.stationcard.nextlevel') }}
           </div>
           <!-- Item Requirements Grid -->
-          <div class="mb-3 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          <div class="mb-3 grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 md:grid-cols-4 lg:grid-cols-5">
             <HideoutRequirement
               v-for="requirement in nextLevel.itemRequirements"
               :key="requirement.id"
@@ -168,7 +166,7 @@
         </div>
       </div>
       <!-- Max level indicator -->
-      <div v-if="!nextLevel" class="rounded bg-gray-100 p-3 dark:bg-gray-800">
+      <div v-if="!nextLevel" class="border-t border-b border-base bg-gray-100 p-3 dark:bg-gray-800">
         <div
           class="flex items-center justify-center text-center text-base font-medium text-yellow-600 dark:text-yellow-500"
         >

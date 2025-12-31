@@ -12,7 +12,7 @@
         'relative overflow-hidden',
         imageContainerClasses,
         imageTileClasses,
-        fill ? 'flex items-center justify-center p-2 sm:p-3' : '',
+        fill ? 'flex items-center justify-center' : '',
       ]"
     >
       <img
@@ -322,11 +322,6 @@
       'default'
     ).toLowerCase() as BackgroundKey;
     const backgroundClass: string = backgroundClassMap[bgColor] ?? backgroundClassMap.default;
-    // In `fill` mode, treat a transparent/default background as grey to preserve visible contrast when
-    // the tile is expanded/filled. This is an intentional visual design decision to avoid invisible fills.
-    if (backgroundClass === backgroundClassMap.default && props.fill) {
-      return backgroundClassMap.grey;
-    }
     return backgroundClass;
   });
   const imageTileClasses = computed(() => {

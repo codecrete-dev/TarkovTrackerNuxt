@@ -1,54 +1,62 @@
 <template>
   <!-- Compact Card Layout - Works for ALL items -->
   <div
-    class="group relative flex cursor-pointer flex-col items-center rounded-lg border p-2 transition-all select-none hover:scale-105"
+    class="group relative flex h-full cursor-pointer flex-col items-center justify-center rounded-lg border p-2 transition-all select-none hover:bg-surface-elevated/50"
     :class="[
       isComplete
-        ? 'border-success-400 bg-success-50 dark:border-success-500/50 dark:bg-success-900/20'
-        : 'border-base bg-surface-floating hover:bg-surface-elevated',
+        ? 'border-success-400 bg-success-50 dark:border-success-500/30 dark:bg-success-900/10'
+        : 'border-base bg-surface-floating',
     ]"
     @click="toggleComplete"
     @contextmenu.prevent="openContextMenu"
   >
-    <!-- Item Image -->
-    <div class="relative mb-2 h-16 w-16 shrink-0">
-      <GameItem
-        :item-id="requirement.item.id"
-        :item-name="requirement.item.name"
-        :dev-link="requirement.item.link"
-        :wiki-link="requirement.item.wikiLink"
-        size="small"
-        :show-actions="false"
-        simple-mode
-      />
-      <!-- Complete Checkmark Overlay -->
-      <div
-        v-if="isComplete"
-        class="bg-success-500/40 absolute inset-0 flex items-center justify-center rounded"
-      >
-        <UIcon name="i-mdi-check-circle" class="text-success-300 h-8 w-8" />
-      </div>
-      <!-- FiR Badge -->
-      <AppTooltip v-if="isFoundInRaid" text="Found in Raid required">
-        <div class="absolute -top-1 -right-1 rounded bg-yellow-500/90 p-0.5">
-          <UIcon name="i-mdi-checkbox-marked-circle-outline" class="h-3 w-3 text-yellow-900" />
-        </div>
-      </AppTooltip>
-      <!-- Count Badge for multi-count items -->
-      <div v-if="requiredCount > 1" class="absolute right-0 -bottom-1 left-0 flex justify-center">
+    <!-- Content Cluster -->
+    <div class="flex h-full w-full flex-col items-center gap-1 pt-1">
+      <!-- Image Area -->
+      <div class="relative flex h-16 w-full shrink-0 items-center justify-center sm:h-20">
+        <GameItem
+          :item-id="requirement.item.id"
+          :item-name="requirement.item.name"
+          :dev-link="requirement.item.link"
+          :wiki-link="requirement.item.wikiLink"
+          size="small"
+          :show-actions="false"
+          simple-mode
+          fill
+        />
+        <!-- Complete Checkmark Overlay -->
         <div
-          class="rounded border border-base bg-surface-floating px-1.5 py-0.5 text-[10px] font-bold"
-          :class="isComplete ? 'text-success-600 dark:text-success-400' : 'text-content-secondary'"
+          v-if="isComplete"
+          class="bg-success-500/10 absolute inset-0 flex items-center justify-center rounded-lg"
         >
-          {{ formatNumber(currentCount) }}/{{ formatNumber(requiredCount) }}
+          <UIcon name="i-mdi-check-circle" class="text-success-500/50 h-10 w-10 sm:h-12 sm:w-12" />
+        </div>
+        <!-- FiR Badge -->
+        <AppTooltip v-if="isFoundInRaid" text="Found in Raid required">
+          <div class="absolute top-0 right-2 z-10 rounded bg-yellow-500/90 p-0.5 shadow-sm">
+            <UIcon name="i-mdi-checkbox-marked-circle-outline" class="h-3 w-3 text-yellow-950" />
+          </div>
+        </AppTooltip>
+        <!-- Count Badge -->
+        <div
+          v-if="requiredCount > 1"
+          class="absolute -bottom-1 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap"
+        >
+          <div
+            class="rounded-md border border-base bg-surface-elevated px-2 py-0.5 text-[10px] font-bold shadow-md"
+            :class="isComplete ? 'text-success-600 dark:text-success-400' : 'text-content-secondary'"
+          >
+            {{ formatNumber(currentCount) }}/{{ formatNumber(requiredCount) }}
+          </div>
         </div>
       </div>
-    </div>
-    <!-- Item Name -->
-    <div
-      class="line-clamp-2 w-full text-center text-xs leading-tight font-medium text-content-primary"
-    >
-      {{ requirement.item.name }}
+
+      <!-- Item Name -->
+      <div
+        class="line-clamp-2 w-full px-1 text-center text-[10px] leading-tight font-medium text-content-primary sm:text-xs"
+      >
+        {{ requirement.item.name }}
+      </div>
     </div>
   </div>
   <!-- Context Menu for Manual Count Adjustment -->
