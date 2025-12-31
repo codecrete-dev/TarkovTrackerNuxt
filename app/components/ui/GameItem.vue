@@ -1,7 +1,7 @@
 <template>
   <div
-    class="group relative cursor-default"
-    :class="[containerClasses, { 'h-full w-full': size !== 'small' }]"
+    class="group relative"
+    :class="[containerClasses, { 'h-full w-full': size !== 'small', 'cursor-pointer': clickable }]"
     @click="handleClick"
     @contextmenu="handleContextMenu"
   >

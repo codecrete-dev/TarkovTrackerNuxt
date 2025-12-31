@@ -92,11 +92,13 @@
               :requirement="requirement"
               :station-id="props.station.id"
               :level="nextLevel.level"
+              class="items-center" 
             />
           </div>
           <!-- Prerequisites Section -->
           <div v-if="hasPrerequisites" class="space-y-2 border-t border-base pt-3">
-            <div class="mb-2 text-xs font-medium tracking-wider uppercase text-content-tertiary">
+            <div class="mb-2 flex items-center gap-2 text-xs font-medium tracking-wider uppercase text-content-tertiary">
+              <UIcon name="i-mdi-clipboard-list" class="h-4 w-4" />
               {{ $t('page.hideout.stationcard.prerequisites') || 'Prerequisites' }}
             </div>
             <!-- Station Level Requirements -->
@@ -270,7 +272,7 @@
     base: 'bg-success-500 hover:bg-success-600 active:bg-success-700 text-white border border-success-700',
   };
   const downgradeButtonUi = {
-    base: 'bg-red-900/40 hover:bg-red-900/60 active:bg-red-900/80 text-red-300 border border-red-700/50',
+    base: 'bg-error-50 dark:bg-error-900/40 hover:bg-error-100 dark:hover:bg-error-900/60 active:bg-error-200 dark:active:bg-error-900/80 text-error-600 dark:text-error-300 border border-error-200 dark:border-error-700/50',
   };
   const getHighlightColor = (): 'secondary' | 'green' | 'red' => {
     const level = progressStore.hideoutLevels?.[props.station.id]?.self ?? 0;
