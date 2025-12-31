@@ -173,6 +173,7 @@
             <UButton
               v-if="isLocked"
               :size="actionButtonSize"
+              icon="i-mdi-lock-open-variant"
               color="success"
               variant="solid"
               class="shrink-0 !bg-success-600 hover:!bg-success-700 !text-white shadow-sm"
@@ -185,6 +186,7 @@
             <UButton
               v-else-if="!isComplete"
               :size="actionButtonSize"
+              icon="i-mdi-check-circle"
               color="success"
               :ui="completeButtonUi"
               class="shrink-0"
@@ -197,6 +199,7 @@
             <UButton
               v-else
               :size="actionButtonSize"
+              icon="i-mdi-clipboard-text"
               color="error"
               variant="solid"
               class="shrink-0 !bg-error-600 hover:!bg-error-700 !text-white shadow-sm"
