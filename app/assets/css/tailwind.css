@@ -1,5 +1,9 @@
 @import 'tailwindcss';
 @import '@nuxt/ui';
+
+/* =========================================
+   1. GLOBAL RESETS
+   ========================================= */
 /* Smooth scrolling for hash anchor navigation */
 html {
   scroll-behavior: smooth;
@@ -25,12 +29,18 @@ select:disabled,
 .leaflet-disabled {
   cursor: not-allowed !important;
 }
+
+/* =========================================
+   2. THEME CONFIGURATION
+   ========================================= */
 /* Tailwind v4 + Nuxt UI v4 theme tokens */
 @theme {
   --font-sans: 'Share Tech Mono', ui-sans-serif, system-ui, sans-serif;
   --font-mono:
     'Share Tech Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
     'Courier New', monospace;
+
+  /* --- HSL Color Palettes --- */
   /* Primary (brand tan) */
   --color-primary-50: hsl(42 31.3% 93.7%);
   --color-primary-100: hsl(39 28.8% 88.4%);
@@ -43,6 +53,7 @@ select:disabled,
   --color-primary-800: hsl(37 17.3% 26.1%);
   --color-primary-900: hsl(33 10.6% 16.7%);
   --color-primary-950: hsl(40 13% 9%);
+
   /* Secondary (brand dark) */
   --color-secondary-50: hsl(222 33.3% 92.4%);
   --color-secondary-100: hsl(221 31.6% 84.5%);
@@ -55,6 +66,7 @@ select:disabled,
   --color-secondary-800: hsl(217 56.7% 11.8%);
   --color-secondary-900: hsl(218 62.8% 8.4%);
   --color-secondary-950: hsl(217 64.3% 5.5%);
+
   /* Brand aliases — keep a single source of truth (primary) */
   --color-brand-50: var(--color-primary-50);
   --color-brand-100: var(--color-primary-100);
@@ -67,6 +79,7 @@ select:disabled,
   --color-brand-800: var(--color-primary-800);
   --color-brand-900: var(--color-primary-900);
   --color-brand-950: var(--color-primary-950);
+
   /* Accent — deep forest/teal drawn from legacy UI */
   --color-accent-50: hsl(180 14% 94%);
   --color-accent-100: hsl(180 14% 86%);
@@ -79,6 +92,7 @@ select:disabled,
   --color-accent-800: hsl(190 34% 15%);
   --color-accent-900: hsl(192 38% 11%);
   --color-accent-950: hsl(192 42% 8%);
+
   /* Surface = neutral grays (Warm/Bronze Tint) */
   --color-surface-50: hsl(40 10% 97%);
   --color-surface-100: hsl(40 8% 92%);
@@ -91,6 +105,7 @@ select:disabled,
   --color-surface-800: hsl(40 7% 11%);
   --color-surface-900: hsl(40 8% 7%);
   --color-surface-950: hsl(40 10% 3.5%);
+
   /* PvP (in-game tan) */
   --color-pvp-50: hsl(40 60% 99%);
   --color-pvp-100: hsl(38 44.4% 96.5%);
@@ -103,6 +118,7 @@ select:disabled,
   --color-pvp-800: hsl(31 14.6% 36.3%);
   --color-pvp-900: hsl(32 14.7% 25.3%);
   --color-pvp-950: hsl(39 18.4% 14.9%);
+
   /* PvE (in-game blue) */
   --color-pve-50: hsl(196 57.9% 96.3%);
   --color-pve-100: hsl(196 57.9% 92.5%);
@@ -115,6 +131,7 @@ select:disabled,
   --color-pve-800: hsl(199 32.4% 27.3%);
   --color-pve-900: hsl(201 32% 19.6%);
   --color-pve-950: hsl(201 31.2% 12.5%);
+
   /* Success (green) */
   --color-success-50: hsl(150 42.9% 94.5%);
   --color-success-100: hsl(150 42.9% 89%);
@@ -127,6 +144,7 @@ select:disabled,
   --color-success-800: hsl(152 59.6% 18.4%);
   --color-success-900: hsl(155 60% 10.8%);
   --color-success-950: hsl(152 58.6% 5.7%);
+
   /* Warning (amber) */
   --color-warning-50: hsl(39 100% 96.1%);
   --color-warning-100: hsl(38 96.1% 90%);
@@ -139,6 +157,7 @@ select:disabled,
   --color-warning-800: hsl(23 82.5% 31.4%);
   --color-warning-900: hsl(22 77.8% 26.5%);
   --color-warning-950: hsl(21 91.7% 14.1%);
+
   /* Error (rose) */
   --color-error-50: hsl(356 100% 97.3%);
   --color-error-100: hsl(356 100% 94.7%);
@@ -151,6 +170,7 @@ select:disabled,
   --color-error-800: hsl(0 70% 35.3%);
   --color-error-900: hsl(0 62.8% 30.6%);
   --color-error-950: hsl(0 74.7% 15.5%);
+
   /* Legacy Tailwind aliases mapped to semantic palettes */
   --color-gray-50: var(--color-surface-50);
   --color-gray-100: var(--color-surface-100);
@@ -229,6 +249,7 @@ select:disabled,
   --color-cyan-800: var(--color-secondary-800);
   --color-cyan-900: var(--color-secondary-900);
   --color-cyan-950: var(--color-secondary-950);
+
   /* Custom semantic colors for Tarkov Tracker */
   --color-complete: #114200;
   --color-failed: #ffcccc;
@@ -246,6 +267,7 @@ select:disabled,
   --color-border: #1f1f1f;
   --color-link: hsl(187 100% 38%);
 }
+
 /* Modern override: use OKLCH where supported for better perceptual consistency */
 @supports (color: oklch(0 0 0)) {
   :root {
@@ -351,6 +373,7 @@ select:disabled,
     --color-error-950: oklch(0.257518 0.088559 26.04);
   }
 }
+
 /* Nuxt UI core tokens mapped to Tarkov Tracker theme */
 :root {
   /* Light Mode Defaults */
@@ -392,6 +415,10 @@ select:disabled,
   /* Set Nuxt UI primary token used by dark theme buttons */
   --ui-primary: var(--color-primary-500);
 }
+
+/* =========================================
+   3. COMPONENT & FRAMEWORK OVERRIDES
+   ========================================= */
 /* Utility: default ring color aligned to brand (darker primary) */
 .ring-default {
   --tw-ring-color: var(--color-primary-700);
@@ -400,6 +427,7 @@ select:disabled,
 .ring-accented {
   --tw-ring-color: var(--ui-border-accented);
 }
+
 /* Nav text overrides: replace gray-400 default with pure white at stepped opacities */
 /* Scoped to dark mode to prevent white-on-white in light mode */
 .dark .text-gray-400 {
@@ -415,8 +443,52 @@ select:disabled,
   color: rgba(255, 255, 255, 0.9);
 }
 
-/* Legacy effect utilities moved from scoped SFC styles */
+/* =========================================
+   4. SEMANTIC UTILITIES & EFFECTS
+   ========================================= */
 @layer utilities {
+  /* Semantic Backgrounds for Light/Dark switching */
+  .bg-surface-base {
+    @apply bg-gray-100 dark:bg-[#0a0a09]; /* Darkened base for OLED feel */
+  }
+  .bg-surface-elevated {
+    @apply bg-white shadow-sm dark:bg-[#151516]; /* Lighter than base */
+  }
+  .bg-surface-floating {
+    @apply bg-white shadow-md dark:bg-[#1e1e20]; /* Even lighter */
+  }
+  
+  /* Semantic Text */
+  .text-content-primary {
+    @apply text-gray-900;
+  }
+  .dark .text-content-primary {
+    color: rgba(255, 255, 255, 0.8);
+  }
+  .text-content-secondary {
+    @apply text-gray-600;
+  }
+  .dark .text-content-secondary {
+    color: rgba(255, 255, 255, 0.6); /* Matches legacy text-gray-300 override */
+  }
+
+  .text-content-tertiary {
+    @apply text-gray-500;
+  }
+  .dark .text-content-tertiary {
+    color: rgba(255, 255, 255, 0.6); /* Matches legacy text-gray-400 override */
+  }
+
+  /* Universal Border */
+  .border-base {
+    @apply border-gray-200 dark:border-white/10;
+  }
+  
+  /* Semantic Divider (background) */
+  .bg-divider {
+    @apply bg-gray-200 dark:bg-white/10;
+  }
+  
   /* Holiday candy cane progress bar effect */
   .candy-cane {
     background: repeating-linear-gradient(
@@ -428,15 +500,6 @@ select:disabled,
     ) !important;
     background-size: 200% 100%;
     animation: candy-cane-move 2s linear infinite;
-  }
-
-  @keyframes candy-cane-move {
-    0% {
-      background-position: 0 0;
-    }
-    100% {
-      background-position: 56px 0;
-    }
   }
 
   .scanline {
@@ -475,50 +538,11 @@ select:disabled,
   .fade-leave-to {
     opacity: 0;
   }
-
-  /* Semantic Backgrounds for Light/Dark switching */
-  .bg-surface-base {
-    @apply bg-gray-100 dark:bg-[#0a0a09]; /* Darkened base for OLED feel */
-  }
-  .bg-surface-elevated {
-    @apply bg-white shadow-sm dark:bg-[#151516]; /* Lighter than base */
-  }
-  .bg-surface-floating {
-    @apply bg-white shadow-md dark:bg-[#1e1e20]; /* Even lighter */
-  }
-  
-  /* Semantic Text */
-  .text-content-primary {
-    @apply text-gray-900;
-  }
-  .dark .text-content-primary {
-    color: rgba(255, 255, 255, 0.8);
-  }
-  .text-content-secondary {
-    @apply text-gray-600;
-  }
-  .dark .text-content-secondary {
-    color: rgba(255, 255, 255, 0.8); /* Matches legacy text-gray-300 override */
-  }
-
-  .text-content-tertiary {
-    @apply text-gray-500;
-  }
-  .dark .text-content-tertiary {
-    color: rgba(255, 255, 255, 0.6); /* Matches legacy text-gray-400 override */
-  }
-
-  /* Universal Border */
-  .border-base {
-    @apply border-gray-200 dark:border-white/10;
-  }
-  
-  /* Semantic Divider (background) */
-  .bg-divider {
-    @apply bg-gray-200 dark:bg-white/10;
-  }
 }
 
+/* =========================================
+   5. VENDOR OVERRIDES
+   ========================================= */
 /* Light Mode Leaflet Overrides (when not .dark) */
 :root:not(.dark) .leaflet-container {
   background-color: #f3f4f6 !important; /* gray-100 */
@@ -542,6 +566,18 @@ select:disabled,
 }
 :root:not(.dark) .leaflet-control-zoom a:hover {
   background-color: #f3f4f6 !important;
+}
+
+/* =========================================
+   6. ANIMATIONS
+   ========================================= */
+@keyframes candy-cane-move {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 56px 0;
+  }
 }
 
 @keyframes scanline {
