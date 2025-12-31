@@ -165,18 +165,7 @@
                 {{ t('page.tasks.questcard.lightkeeper', 'Lightkeeper') }}
               </UBadge>
             </AppTooltip>
-            <!-- XP display - shown for all task statuses when setting is enabled -->
-            <div
-              v-if="preferencesStore.getShowExperienceRewards && task.experience"
-              class="flex items-center gap-1 text-xs text-gray-400"
-            >
-              <UIcon
-                name="i-mdi-star"
-                aria-hidden="true"
-                class="h-4 w-4 shrink-0 text-yellow-500"
-              />
-              <span>{{ formatNumber(task.experience) }} XP</span>
-            </div>
+            <!-- XP display - moved to TaskCardRewards -->
           </div>
           <!-- Action buttons in header for consistent positioning -->
           <template v-if="isOurFaction">
@@ -258,6 +247,7 @@
       <!--5) Rewards Summary Section -->
       <TaskCardRewards
         :task-id="task.id"
+        :experience="task.experience || 0"
         :trader-standing-rewards="traderStandingRewards"
         :skill-rewards="skillRewards"
         :trader-unlock-reward="traderUnlockReward"

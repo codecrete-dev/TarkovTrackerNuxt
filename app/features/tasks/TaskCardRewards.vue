@@ -11,6 +11,14 @@
         <UIcon name="i-mdi-gift" aria-hidden="true" class="mr-1 inline h-3.5 w-3.5" />
         {{ t('page.tasks.questcard.rewards', 'Rewards') }}:
       </span>
+      <!-- XP Badge -->
+      <span
+        v-if="preferencesStore.getShowExperienceRewards && experience > 0"
+        class="inline-flex items-center gap-1 rounded !bg-yellow-600/20 px-2 py-0.5 text-yellow-700 dark:text-yellow-400"
+      >
+        <UIcon name="i-mdi-star" aria-hidden="true" class="h-3.5 w-3.5" />
+        <span class="font-bold">{{ formatNumber(experience) }} XP</span>
+      </span>
       <!-- Trader Standing Rewards -->
       <template v-for="standing in traderStandingRewards" :key="`standing-${standing.trader.id}`">
         <span class="inline-flex items-center gap-1.5 rounded !bg-gray-500 px-2 py-0.5 !text-white">
@@ -290,6 +298,7 @@
 <script setup lang="ts">
   import { computed, ref } from 'vue';
   import { useI18n } from 'vue-i18n';
+  import { usePreferencesStore } from '@/stores/usePreferences';
   import type { Task } from '@/types/tarkov';
   import { useLocaleNumberFormatter } from '@/utils/formatters';
 
@@ -321,6 +330,7 @@
 
   const props = defineProps<{
     taskId: string;
+    experience: number;
     traderStandingRewards: TraderStanding[];
     skillRewards: SkillReward[];
     traderUnlockReward?: TraderUnlock | TraderUnlock[] | null;
@@ -338,6 +348,7 @@
 
   const { t } = useI18n({ useScope: 'global' });
   const formatNumber = useLocaleNumberFormatter();
+  const preferencesStore = usePreferencesStore();
 
   const displayedTraderUnlock = computed(() => {
     if (Array.isArray(props.traderUnlockReward)) {
@@ -361,6 +372,7 @@
 
   const hasRewardsSummary = computed(() => {
     return (
+      (preferencesStore.getShowExperienceRewards && props.experience > 0) ||
       props.traderStandingRewards.length > 0 ||
       props.skillRewards.length > 0 ||
       displayedTraderUnlock.value != null
