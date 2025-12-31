@@ -17,11 +17,14 @@
             : 'border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5'
         "
       >
-        <img
+        <GameItem
           v-if="row.meta.itemIcon"
           :src="row.meta.itemIcon"
-          :alt="row.meta.itemName"
-          class="h-16 w-16 shrink-0 rounded-sm object-contain"
+          :item-name="row.meta.itemName"
+          :background-color="row.meta.backgroundColor"
+          size="small"
+          simple-mode
+          class="shrink-0"
         />
         <AppTooltip :text="row.meta.itemName">
           <span class="max-w-[12rem] truncate text-xs font-medium text-gray-900 dark:text-gray-100">
@@ -90,6 +93,7 @@
     currentCount: number;
     itemName: string;
     itemIcon?: string;
+    backgroundColor?: string;
     foundInRaid: boolean;
   };
   type ObjectiveRow = {
@@ -130,6 +134,7 @@
           objective.description ||
           t('page.tasks.questcard.item', 'Item'),
         itemIcon: item?.iconLink || item?.image8xLink || item?.image512pxLink || undefined,
+        backgroundColor: item?.backgroundColor,
         foundInRaid: full?.foundInRaid === true || objective.foundInRaid === true,
       };
     });
@@ -142,6 +147,7 @@
         currentCount: tarkovStore.getObjectiveCount(objective.id),
         itemName: objective.description || t('page.tasks.questcard.item', 'Item'),
         itemIcon: undefined,
+        backgroundColor: undefined,
         foundInRaid: objective.foundInRaid === true,
       };
       return { objective, meta: objectiveMetaById.value[objective.id] ?? fallback };

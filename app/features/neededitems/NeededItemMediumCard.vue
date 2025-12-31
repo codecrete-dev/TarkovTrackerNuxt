@@ -130,9 +130,9 @@
   } = inject(neededItemKey, createDefaultNeededItemContext());
   const itemCardClasses = computed(() => {
     return {
-      'bg-gradient-to-t from-complete to-surface':
+      'bg-gradient-to-t from-complete/20 to-surface-elevated':
         selfCompletedNeed.value || currentCount.value >= neededCount.value,
-      'bg-gray-800': !(selfCompletedNeed.value || currentCount.value >= neededCount.value),
+      'bg-surface-elevated': !(selfCompletedNeed.value || currentCount.value >= neededCount.value),
       'shadow-md': true,
     };
   });

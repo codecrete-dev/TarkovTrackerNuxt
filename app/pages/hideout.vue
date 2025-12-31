@@ -3,29 +3,18 @@
     <div class="flex justify-center">
       <div class="w-full max-w-4xl rounded-lg bg-surface-elevated px-4 py-3 shadow-sm">
         <div class="flex flex-wrap justify-center gap-2">
-          <UButton
+          <FilterPill
             v-for="view in primaryViews"
             :key="view.view"
+            :active="activePrimaryView === view.view"
             :icon="`i-${view.icon}`"
-            :variant="'ghost'"
-            :color="'neutral'"
-            size="md"
+            :label="view.title.toUpperCase()"
+            :count="view.count"
+            :count-color="view.badgeColor"
             class="shrink-0"
-            :class="{
-              'border-primary-500 rounded-none border-b-2': activePrimaryView === view.view,
-            }"
+            label-class="text-xs sm:text-sm"
             @click="activePrimaryView = view.view"
-          >
-            <span class="text-xs sm:text-sm text-content-primary">{{ view.title.toUpperCase() }}</span>
-            <span
-              :class="[
-                'ml-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-xs font-bold text-white sm:h-7 sm:min-w-7 sm:px-1.5 sm:text-sm',
-                view.badgeColor,
-              ]"
-            >
-              {{ view.count }}
-            </span>
-          </UButton>
+          />
         </div>
       </div>
     </div>
@@ -64,6 +53,7 @@
   import { useHideoutFiltering } from '@/composables/useHideoutFiltering';
   import { useMetadataStore } from '@/stores/useMetadata';
   import { useProgressStore } from '@/stores/useProgress';
+  import FilterPill from '@/components/FilterPill.vue';
   // Page metadata
   useSeoMeta({
     title: 'Hideout',

@@ -4,31 +4,18 @@
     <div
       class="flex flex-wrap items-center justify-center gap-1 overflow-x-auto rounded-lg bg-surface-elevated px-2 py-2 shadow-sm sm:gap-2 sm:px-4 sm:py-3"
     >
-      <UButton
+      <FilterPill
         v-for="tab in filterTabs"
         :key="tab.value"
-        :variant="'ghost'"
-        :color="'neutral'"
-        size="sm"
-        class="shrink-0 px-2 sm:px-3"
-        :class="{
-          'border-primary-500 rounded-none border-b-2': modelValue === tab.value,
-        }"
+        :active="modelValue === tab.value"
+        :icon="tab.icon"
+        :label="tab.label.toUpperCase()"
+        :count="tab.count"
+        :count-color="modelValue === tab.value ? 'bg-primary-500' : 'bg-surface-400'"
+        class="shrink-0"
+        label-class="hidden sm:inline text-[clamp(0.625rem,2vw,0.875rem)]"
         @click="$emit('update:modelValue', tab.value)"
-      >
-        <UIcon :name="tab.icon" class="h-4 w-4 sm:mr-1 sm:h-5 sm:w-5" />
-        <span class="hidden text-[clamp(0.625rem,2vw,0.875rem)] sm:inline">
-          {{ tab.label.toUpperCase() }}
-        </span>
-        <span
-          :class="[
-            'ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-xs font-bold text-white sm:ml-2 sm:h-7 sm:min-w-7 sm:px-1.5 sm:text-sm',
-            modelValue === tab.value ? 'bg-primary-500' : 'bg-surface-400',
-          ]"
-        >
-          {{ tab.count }}
-        </span>
-      </UButton>
+      />
     </div>
     <!-- Secondary filters container -->
     <div class="flex w-full flex-wrap gap-3">
@@ -185,6 +172,7 @@
   </div>
 </template>
 <script setup lang="ts">
+  import FilterPill from '@/components/FilterPill.vue';
   type FilterType = 'all' | 'tasks' | 'hideout' | 'completed';
   type ViewMode = 'list' | 'grid';
   type FirFilter = 'all' | 'fir' | 'non-fir';

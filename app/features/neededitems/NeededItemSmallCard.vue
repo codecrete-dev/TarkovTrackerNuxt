@@ -12,20 +12,10 @@
       @click="handleCardClick"
     >
       <template v-if="hasItem">
-        <!-- Tooltip wrapper for the clickable area (Image + Content) -->
-        <AppTooltip
-          :text="
-            !selfCompletedNeed
-              ? currentCount >= neededCount
-                ? isSingleItem ? 'Click to uncollect' : 'Click to mark as incomplete'
-                : isSingleItem ? 'Click to collect' : 'Click to mark as 100% complete'
-              : ''
-          "
-          class="flex flex-1 flex-col"
-        >
+        <div class="flex flex-1 flex-col">
           <!-- Item image with count badge -->
           <div :class="imageContainerClasses">
-            <div class="absolute top-0 left-0 z-10">
+            <div class="absolute top-0 left-0 z-20">
               <div
                 class="flex items-center gap-1 rounded-br-lg px-2 py-1 text-sm font-bold shadow-lg"
                 :class="itemCountTagClasses"
@@ -41,6 +31,17 @@
                   @craft="goToCraftStation"
                 />
               </div>
+            </div>
+            <!-- Click to complete overlay -->
+            <div
+              v-if="!selfCompletedNeed"
+              class="pointer-events-none absolute inset-0 z-30 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+            >
+              <span
+                class="rounded bg-black/60 px-2 py-1 text-sm font-bold tracking-wide text-white backdrop-blur-sm"
+              >
+                {{ currentCount >= neededCount ? 'Uncollect' : 'Collect' }}
+              </span>
             </div>
             <GameItem
               v-if="imageItem"
@@ -106,7 +107,7 @@
               </span>
             </div>
           </div>
-        </AppTooltip>
+        </div>
         <!-- Controls - outside tooltip wrapper to prevent overlap -->
         <div v-if="!isSingleItem" class="mt-auto flex items-center justify-center pb-2 px-2">
           <template v-if="!selfCompletedNeed">
@@ -207,7 +208,7 @@
     const transitionClasses = 'transition-transform duration-150 ease-out will-change-transform';
     const hoverClasses =
       'hover:z-20 hover:-translate-y-1 hover:scale-[1.08] hover:shadow-2xl hover:ring-1 hover:ring-black/5 dark:hover:ring-white/10';
-    return [baseLayoutClasses, transitionClasses, hoverClasses];
+    return [baseLayoutClasses, transitionClasses, hoverClasses, 'group'];
   });
   const itemCountTagClasses = computed(() => {
     const isCompleted = selfCompletedNeed.value || currentCount.value >= neededCount.value;

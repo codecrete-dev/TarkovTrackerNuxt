@@ -111,6 +111,7 @@
       image512pxLink?: string;
       wikiLink?: string;
       link?: string;
+      backgroundColor?: string;
     };
     taskFir: number;
     taskNonFir: number;
@@ -307,6 +308,7 @@
             image512pxLink: itemData.image512pxLink,
             wikiLink: itemData.wikiLink,
             link: itemData.link,
+            backgroundColor: itemData.backgroundColor,
           },
           taskFir: 0,
           taskNonFir: 0,

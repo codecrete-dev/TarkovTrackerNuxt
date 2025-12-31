@@ -1,7 +1,6 @@
 <template>
   <div class="mb-6 space-y-3">
     <!-- Top Bar: Search (left) | Primary View Tabs (center) | Settings (right) -->
-    <!-- Top Bar: Search (left) | Primary View Tabs (center) | Settings (right) -->
     <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-lg bg-surface-elevated px-4 py-2.5">
       <!-- Search - larger width -->
       <div class="w-56 shrink-0 justify-self-start sm:w-64 lg:w-72">
@@ -29,45 +28,27 @@
       </div>
       <!-- Primary View Tabs - centered -->
       <div class="flex items-center justify-center gap-1 justify-self-center">
-        <UButton
-          variant="ghost"
-          color="neutral"
-          size="sm"
-          :aria-pressed="primaryView === 'all'"
-          :class="['focus:ring-primary-500 focus:ring-1 focus:outline-none rounded-md', primaryView === 'all' ? 'bg-primary-100 text-primary-900 shadow-sm dark:bg-primary-500/20 dark:text-primary-100 dark:shadow-none' : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white']"
+        <FilterPill
+          :active="primaryView === 'all'"
+          icon="i-mdi-checkbox-multiple-marked"
+          :label="t('page.tasks.primaryviews.all').toUpperCase()"
+          label-class="hidden sm:inline"
           @click="setPrimaryView('all')"
-        >
-          <UIcon name="i-mdi-checkbox-multiple-marked" class="h-4 w-4 sm:mr-1.5" />
-          <span class="hidden text-xs sm:inline">
-            {{ t('page.tasks.primaryviews.all').toUpperCase() }}
-          </span>
-        </UButton>
-        <UButton
-          variant="ghost"
-          color="neutral"
-          size="sm"
-          :aria-pressed="primaryView === 'traders'"
-          :class="['focus:ring-primary-500 focus:ring-1 focus:outline-none rounded-md', primaryView === 'traders' ? 'bg-primary-100 text-primary-900 shadow-sm dark:bg-primary-500/20 dark:text-primary-100 dark:shadow-none' : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white']"
+        />
+        <FilterPill
+          :active="primaryView === 'traders'"
+          icon="i-mdi-account-group"
+          :label="t('page.tasks.primaryviews.traders').toUpperCase()"
+          label-class="hidden sm:inline"
           @click="setPrimaryView('traders')"
-        >
-          <UIcon name="i-mdi-account-group" class="h-4 w-4 sm:mr-1.5" />
-          <span class="hidden text-xs sm:inline">
-            {{ t('page.tasks.primaryviews.traders').toUpperCase() }}
-          </span>
-        </UButton>
-        <UButton
-          variant="ghost"
-          color="neutral"
-          size="sm"
-          :aria-pressed="primaryView === 'maps'"
-          :class="['focus:ring-primary-500 focus:ring-1 focus:outline-none rounded-md', primaryView === 'maps' ? 'bg-primary-100 text-primary-900 shadow-sm dark:bg-primary-500/20 dark:text-primary-100 dark:shadow-none' : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white']"
+        />
+        <FilterPill
+          :active="primaryView === 'maps'"
+          icon="i-mdi-map"
+          :label="t('page.tasks.primaryviews.maps').toUpperCase()"
+          label-class="hidden sm:inline"
           @click="setPrimaryView('maps')"
-        >
-          <UIcon name="i-mdi-map" class="h-4 w-4 sm:mr-1.5" />
-          <span class="hidden text-xs sm:inline">
-            {{ t('page.tasks.primaryviews.maps').toUpperCase() }}
-          </span>
-        </UButton>
+        />
       </div>
       <!-- Settings button -->
       <div class="shrink-0 justify-self-end">
@@ -78,126 +59,91 @@
     <div class="flex items-center justify-center gap-3 rounded-lg bg-surface-elevated px-4 py-2.5">
       <!-- Status filters (ALL / AVAILABLE / LOCKED / COMPLETED) -->
       <div class="flex items-center gap-1">
-        <UButton
-          variant="ghost"
-          color="neutral"
-          size="sm"
-          :aria-pressed="secondaryView === 'all'"
-          :class="['focus:ring-primary-500 focus:ring-1 focus:outline-none rounded-md', secondaryView === 'all' ? 'bg-primary-100 text-primary-900 shadow-sm dark:bg-primary-500/20 dark:text-primary-100 dark:shadow-none' : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white']"
+        <FilterPill
+          :active="secondaryView === 'all'"
+          :count="statusCounts.all"
+          count-color="bg-blue-600"
           @click="setSecondaryView('all')"
         >
-          <UIcon name="i-mdi-format-list-bulleted" class="hidden h-4 w-4 sm:mr-1 sm:block" />
+          <template #icon>
+            <UIcon name="i-mdi-format-list-bulleted" class="hidden h-4 w-4 sm:mr-1 sm:block" />
+          </template>
           <span class="text-xs sm:text-sm">ALL</span>
-          <span
-            class="ml-1.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-blue-600 px-1 text-xs font-bold text-white"
-          >
-            {{ statusCounts.all }}
-          </span>
-        </UButton>
-        <UButton
-          variant="ghost"
-          color="neutral"
-          size="sm"
-          :aria-pressed="secondaryView === 'available'"
-          :class="['focus:ring-primary-500 focus:ring-1 focus:outline-none rounded-md', secondaryView === 'available' ? 'bg-primary-100 text-primary-900 shadow-sm dark:bg-primary-500/20 dark:text-primary-100 dark:shadow-none' : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white']"
+        </FilterPill>
+        
+        <FilterPill
+          :active="secondaryView === 'available'"
+          :label="t('page.tasks.secondaryviews.available').toUpperCase()"
+          label-class="text-xs sm:text-sm"
+          :count="statusCounts.available"
+          count-color="bg-primary-500"
           @click="setSecondaryView('available')"
         >
-          <UIcon name="i-mdi-clipboard-text" class="hidden h-4 w-4 sm:mr-1 sm:block" />
-          <span class="text-xs sm:text-sm">
-            {{ t('page.tasks.secondaryviews.available').toUpperCase() }}
-          </span>
-          <span
-            class="bg-primary-500 ml-1.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-xs font-bold text-white"
-          >
-            {{ statusCounts.available }}
-          </span>
-        </UButton>
-        <UButton
-          variant="ghost"
-          color="neutral"
-          size="sm"
-          :aria-pressed="secondaryView === 'locked'"
-          :class="['focus:ring-primary-500 focus:ring-1 focus:outline-none rounded-md', secondaryView === 'locked' ? 'bg-primary-100 text-primary-900 shadow-sm dark:bg-primary-500/20 dark:text-primary-100 dark:shadow-none' : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white']"
+            <template #icon>
+              <UIcon name="i-mdi-clipboard-text" class="hidden h-4 w-4 sm:mr-1 sm:block" />
+            </template>
+        </FilterPill>
+
+        <FilterPill
+          :active="secondaryView === 'locked'"
+          :label="t('page.tasks.secondaryviews.locked').toUpperCase()"
+          label-class="text-xs sm:text-sm"
+          :count="statusCounts.locked"
+          count-color="bg-gray-600"
           @click="setSecondaryView('locked')"
         >
-          <UIcon name="i-mdi-lock" class="hidden h-4 w-4 sm:mr-1 sm:block" />
-          <span class="text-xs sm:text-sm">
-            {{ t('page.tasks.secondaryviews.locked').toUpperCase() }}
-          </span>
-          <span
-            class="ml-1.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-gray-600 px-1 text-xs font-bold text-white"
-          >
-            {{ statusCounts.locked }}
-          </span>
-        </UButton>
-        <UButton
-          variant="ghost"
-          color="neutral"
-          size="sm"
-          :aria-pressed="secondaryView === 'completed'"
-          :class="['focus:ring-primary-500 focus:ring-1 focus:outline-none rounded-md', secondaryView === 'completed' ? 'bg-primary-100 text-primary-900 shadow-sm dark:bg-primary-500/20 dark:text-primary-100 dark:shadow-none' : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white']"
+            <template #icon>
+              <UIcon name="i-mdi-lock" class="hidden h-4 w-4 sm:mr-1 sm:block" />
+            </template>
+        </FilterPill>
+
+        <FilterPill
+          :active="secondaryView === 'completed'"
+          :label="t('page.tasks.secondaryviews.completed').toUpperCase()"
+          label-class="text-xs sm:text-sm"
+          :count="statusCounts.completed"
+          count-color="bg-green-600"
           @click="setSecondaryView('completed')"
         >
-          <UIcon name="i-mdi-check-circle" class="hidden h-4 w-4 sm:mr-1 sm:block" />
-          <span class="text-xs sm:text-sm">
-            {{ t('page.tasks.secondaryviews.completed').toUpperCase() }}
-          </span>
-          <span
-            class="ml-1.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-green-600 px-1 text-xs font-bold text-white"
-          >
-            {{ statusCounts.completed }}
-          </span>
-        </UButton>
+            <template #icon>
+              <UIcon name="i-mdi-check-circle" class="hidden h-4 w-4 sm:mr-1 sm:block" />
+            </template>
+        </FilterPill>
       </div>
       <!-- Divider -->
       <div class="h-6 w-px shrink-0 bg-divider" />
       <!-- Player/Team view buttons -->
       <div class="flex items-center gap-1">
-        <UButton
-          variant="ghost"
-          color="neutral"
-          size="sm"
-          :aria-pressed="preferencesStore.getTaskUserView === 'self'"
-          :class="
-            ['focus:ring-primary-500 focus:ring-1 focus:outline-none rounded-md', preferencesStore.getTaskUserView === 'self' ? 'bg-primary-100 text-primary-900 shadow-sm dark:bg-primary-500/20 dark:text-primary-100 dark:shadow-none' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white']
-          "
+        <FilterPill
+          :active="preferencesStore.getTaskUserView === 'self'"
+          icon="i-mdi-account-circle"
+          label-class="hidden sm:inline sm:text-sm"
           @click="onUserViewSelect({ label: currentUserDisplayName, value: 'self' })"
         >
-          <UIcon name="i-mdi-account-circle" class="h-4 w-4 sm:mr-1" />
-          <span class="hidden text-xs sm:inline sm:text-sm">
-            {{ currentUserDisplayName.toUpperCase() }}
-          </span>
-          <UBadge size="xs" color="primary" variant="solid" class="ml-1">YOU</UBadge>
-        </UButton>
-        <UButton
+          {{ currentUserDisplayName.toUpperCase() }}
+          <template #badge>
+             <UBadge size="xs" color="primary" variant="solid" class="ml-1">YOU</UBadge>
+          </template>
+        </FilterPill>
+
+        <FilterPill
           v-for="teamId in visibleTeammates"
           :key="teamId"
-          variant="ghost"
-          color="neutral"
-          size="sm"
-          :aria-pressed="preferencesStore.getTaskUserView === teamId"
-          :class="
-            ['focus:ring-primary-500 focus:ring-1 focus:outline-none rounded-md', preferencesStore.getTaskUserView === teamId ? 'bg-primary-100 text-primary-900 shadow-sm dark:bg-primary-500/20 dark:text-primary-100 dark:shadow-none' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white']
-          "
+          :active="preferencesStore.getTaskUserView === teamId"
+          icon="i-mdi-account"
+          :label="getTeammateDisplayName(teamId).toUpperCase()"
+          label-class="text-xs sm:text-sm"
           @click="onUserViewSelect({ label: getTeammateDisplayName(teamId), value: teamId })"
-        >
-          <UIcon name="i-mdi-account" class="h-4 w-4 sm:mr-1" />
-          <span class="text-xs sm:text-sm">{{ getTeammateDisplayName(teamId).toUpperCase() }}</span>
-        </UButton>
-        <UButton
+        />
+
+        <FilterPill
           v-if="visibleTeammates.length > 0"
-          variant="ghost"
-          color="neutral"
-          size="sm"
-          :aria-pressed="preferencesStore.getTaskUserView === 'all'"
-          :class="
-            ['focus:ring-primary-500 focus:ring-1 focus:outline-none rounded-md', preferencesStore.getTaskUserView === 'all' ? 'bg-primary-100 text-primary-900 shadow-sm dark:bg-primary-500/20 dark:text-primary-100 dark:shadow-none' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white']
-          "
+          :active="preferencesStore.getTaskUserView === 'all'"
+          icon="i-mdi-account-multiple"
+          :label="t('page.tasks.userviews.all').toUpperCase()"
+          label-class="text-xs sm:text-sm"
           @click="onUserViewSelect({ label: t('page.tasks.userviews.all'), value: 'all' })"
-        >
-          <UIcon name="i-mdi-account-multiple" class="h-4 w-4 sm:mr-1" />
-          <span class="text-xs sm:text-sm">{{ t('page.tasks.userviews.all').toUpperCase() }}</span>
-        </UButton>
+        />
       </div>
     </div>
     <!-- Map selector (shown when MAPS is selected) - Horizontal scrollable -->
@@ -205,31 +151,15 @@
       <div
         class="flex w-max min-w-full justify-center gap-1 rounded-lg bg-surface-elevated px-4 py-2.5"
       >
-        <button
+        <FilterPill
           v-for="mapOption in mapOptions"
           :key="mapOption.value"
-          type="button"
-          :aria-pressed="preferencesStore.getTaskMapView === mapOption.value"
-          :class="[
-            'flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors',
-            'hover:bg-white/60 dark:hover:bg-white/5',
-            'focus:ring-primary-500 focus:ring-1 focus:outline-none',
-            preferencesStore.getTaskMapView === mapOption.value
-              ? 'bg-primary-100 text-primary-900 shadow-sm dark:bg-primary-500/20 dark:text-primary-100 dark:shadow-none'
-              : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white',
-          ]"
+          :active="preferencesStore.getTaskMapView === mapOption.value"
+          :label="mapOption.label"
+          :count="mapOption.count ?? 0"
+          label-class="whitespace-nowrap"
           @click="onMapSelect(mapOption)"
-        >
-          <span class="whitespace-nowrap">{{ mapOption.label }}</span>
-          <span
-            :class="[
-              'inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-xs font-bold text-white',
-              (mapOption.count ?? 0) > 0 ? 'bg-primary-500' : 'bg-gray-600',
-            ]"
-          >
-            {{ mapOption.count ?? 0 }}
-          </span>
-        </button>
+        />
       </div>
     </div>
     <!-- Trader selector (shown when TRADERS is selected) - Horizontal scrollable -->
@@ -281,6 +211,7 @@
 <script setup lang="ts">
   import { computed } from 'vue';
   import { useI18n } from 'vue-i18n';
+  import FilterPill from '@/components/FilterPill.vue';
   import { useTaskFiltering } from '@/composables/useTaskFiltering';
   import TaskSettingsModal from '@/features/tasks/TaskSettingsModal.vue';
   import { useMetadataStore } from '@/stores/useMetadata';

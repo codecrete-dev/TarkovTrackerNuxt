@@ -9,17 +9,19 @@
     <div
       v-if="simpleMode"
       :class="[
-        'relative overflow-hidden',
+        'relative overflow-hidden bg-stash-cell',
         imageContainerClasses,
         imageTileClasses,
         fill ? 'flex items-center justify-center' : '',
       ]"
     >
+      <div :class="['absolute inset-0', resolvedBackgroundClass]"></div>
       <img
         v-if="isVisible && computedImageSrc"
         :src="computedImageSrc"
         :class="[
           fill ? 'max-h-full max-w-full object-contain' : 'h-full w-full object-contain',
+          'relative z-10',
           imageElementClasses,
         ]"
         loading="lazy"
@@ -28,7 +30,7 @@
       <div
         v-else
         :class="[
-          'bg-surface-800 flex h-full w-full items-center justify-center rounded',
+          'bg-surface-800 flex h-full w-full items-center justify-center rounded relative z-10',
           imageClasses,
         ]"
       >
@@ -37,13 +39,14 @@
     </div>
     <!-- Full item display mode (for TarkovItem compatibility) -->
     <div v-else class="relative flex h-full w-full items-center justify-start">
-      <div class="relative mr-2 flex shrink-0 items-center justify-center">
+      <div class="relative mr-2 flex shrink-0 items-center justify-center bg-stash-cell rounded">
+        <div :class="['absolute inset-0 rounded', resolvedBackgroundClass]"></div>
         <img
           :width="imageSize"
           :height="imageSize"
           :src="computedImageSrc"
           :class="imageClasses"
-          class="rounded object-contain"
+          class="rounded object-contain relative z-10"
           alt="Item Icon"
           @error="handleImgError"
         />
@@ -211,6 +214,7 @@
     // Fill parent container (for simpleMode)
     fill?: boolean;
     // Legacy compatibility
+    noBorder?: boolean;
     imageItem?: {
       iconLink?: string;
       image512pxLink?: string;
@@ -239,6 +243,7 @@
     currentCount: 0,
     neededCount: 1,
     fill: false,
+    noBorder: false,
     imageItem: undefined,
   });
   const emit = defineEmits<{
@@ -249,21 +254,19 @@
   }>();
   const formatNumber = useLocaleNumberFormatter();
   const backgroundClassMap = {
-    violet: 'bg-brand-900',
-    grey: 'bg-surface-900',
-    yellow: 'bg-warning-900',
-    orange: 'bg-warning-950',
-    green: 'bg-success-950',
-    red: 'bg-error-900',
-    black: 'bg-surface-950',
-    blue: 'bg-secondary-900',
-    default: 'bg-transparent',
+    violet: 'bg-[var(--color-stash-violet)] overlay-stash-bg',
+    grey: 'bg-[var(--color-stash-grey)] overlay-stash-bg',
+    yellow: 'bg-[var(--color-stash-yellow)] overlay-stash-bg',
+    orange: 'bg-[var(--color-stash-orange)] overlay-stash-bg',
+    green: 'bg-[var(--color-stash-green)] overlay-stash-bg',
+    red: 'bg-[var(--color-stash-red)] overlay-stash-bg',
+    black: 'bg-[var(--color-stash-black)] overlay-stash-bg',
+    blue: 'bg-[var(--color-stash-blue)] overlay-stash-bg',
+    default: 'bg-[var(--color-stash-default)] overlay-stash-bg',
   } as const;
   type BackgroundKey = keyof typeof backgroundClassMap;
   const contextMenu = ref<InstanceType<typeof ContextMenu>>();
-  // Compute image source based on available props
   const computedImageSrc = computed(() => {
-    // Priority order: explicit src > iconLink > imageItem.iconLink > generated from itemId
     if (props.src) return props.src;
     if (props.iconLink) return props.iconLink;
     if (props.imageItem?.iconLink) return props.imageItem.iconLink;
@@ -311,9 +314,7 @@
     return classes;
   });
   const imageClasses = computed(() => {
-    const classes: string[] = ['rounded'];
-    classes.push(resolvedBackgroundClass.value);
-    return classes;
+    return ['rounded'];
   });
   const resolvedBackgroundClass = computed(() => {
     const bgColor = (
@@ -328,8 +329,8 @@
     const baseImageClasses = imageClasses.value;
     const backgroundClass = resolvedBackgroundClass.value;
     const classes: string[] = baseImageClasses.slice();
-    if (backgroundClass !== backgroundClassMap.default) {
-      classes.push('ring-1', 'ring-white/5', 'shadow-inner');
+    if (backgroundClass !== backgroundClassMap.default && !props.noBorder) {
+      // styles removed as per user request
     }
     return classes;
   });

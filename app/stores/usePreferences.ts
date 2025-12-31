@@ -150,9 +150,11 @@ export const usePreferencesStore = defineStore('preferences', {
     mapTeamAllHidden: (state) => {
       return state.mapTeamHideAll ?? false;
     },
-    // Add default values for views using nullish coalescing
+    // Add default values for views using nullish coalescing and validation
     getTaskPrimaryView: (state) => {
-      return state.taskPrimaryView ?? 'all';
+      const valid = ['all', 'traders', 'maps'];
+      const val = state.taskPrimaryView;
+      return val && valid.includes(val) ? val : 'all';
     },
     getTaskMapView: (state) => {
       return state.taskMapView ?? 'all';
@@ -161,7 +163,9 @@ export const usePreferencesStore = defineStore('preferences', {
       return state.taskTraderView ?? 'all';
     },
     getTaskSecondaryView: (state) => {
-      return state.taskSecondaryView ?? 'available';
+      const valid = ['all', 'available', 'locked', 'completed'];
+      const val = state.taskSecondaryView;
+      return val && valid.includes(val) ? val : 'available';
     },
     getTaskUserView: (state) => {
       return state.taskUserView ?? 'self';

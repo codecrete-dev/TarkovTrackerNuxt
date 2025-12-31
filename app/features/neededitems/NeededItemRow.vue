@@ -4,27 +4,33 @@
       <div class="px-3 py-2">
         <div class="mx-0 flex flex-nowrap items-center">
           <div class="flex min-w-0 flex-1 items-center p-0">
-            <span class="block">
+            <div class="relative h-12 w-12 shrink-0 md:h-16 md:w-16">
               <GameItem
                 v-if="isVisible"
                 :image-item="imageItem"
-                :src="imageItem?.iconLink"
+                :src="imageItem?.image512pxLink || imageItem?.iconLink"
                 :is-visible="true"
                 :item-name="item.name"
                 :wiki-link="item.wikiLink"
                 :dev-link="item.link"
                 :task-wiki-link="relatedTask?.wikiLink"
+                :background-color="imageItem?.backgroundColor || 'grey'"
                 size="small"
                 simple-mode
+                fill
+                no-border
+                class="h-full w-full"
               />
-            </span>
+            </div>
             <span class="ml-3 flex min-w-0 flex-1 flex-col overflow-hidden">
               <span class="flex items-center truncate text-base font-semibold">
                 <span class="truncate">{{ item.name }}</span>
                 <ItemIndicators
                   :found-in-raid="props.need.foundInRaid"
+                  fir-icon-class="ml-1 h-4 w-4"
                   :is-craftable="isCraftable"
                   :craftable-title="craftableTitle"
+                  craftable-icon-base-class="ml-1 h-4 w-4 opacity-90"
                   :craftable-icon-class="craftableIconClass"
                   @craft="goToCraftStation"
                 />
@@ -73,8 +79,10 @@
                         :wiki-link="item.wikiLink"
                         :dev-link="item.link"
                         :task-wiki-link="relatedTask?.wikiLink"
+                        :background-color="imageItem?.backgroundColor || 'grey'"
                         size="large"
                         simple-mode
+                        no-border
                       />
                     </div>
                     <div class="mx-2 mt-2 flex items-center self-center">
@@ -86,7 +94,7 @@
                         fir-icon-class="ml-1 h-4 w-4"
                         :is-craftable="isCraftable"
                         :craftable-title="craftableTitle"
-                        craftable-icon-base-class="ml-1 h-4 w-4"
+                        craftable-icon-base-class="ml-1 h-4 w-4 opacity-90"
                         :craftable-icon-class="craftableIconClass"
                         @craft="goToCraftStation"
                       />
