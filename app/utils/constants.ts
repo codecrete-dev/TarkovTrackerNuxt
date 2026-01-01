@@ -159,6 +159,8 @@ export const TRADER_ORDER = [
   'voevoda', // Arena trader
   'radio-station', // Radio operator
 ] as const;
+export const HOT_WHEELS_TASK_ID = '673f4e956f1b89c7bc0f56ef';
+export const MANUAL_FAIL_TASK_IDS: readonly string[] = [HOT_WHEELS_TASK_ID];
 // Sort traders by in-game order using normalizedName
 // Traders not in TRADER_ORDER are placed at the end, sorted alphabetically
 export function sortTradersByGameOrder<T extends { name: string; normalizedName?: string }>(

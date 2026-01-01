@@ -94,7 +94,8 @@ const calculateVisibleItems = () => {
 
   for (let i = 0; i < props.parents.length; i++) {
     const parent = props.parents[i];
-    const textWidth = getTextWidth(parent.name, font);
+    if (!parent) continue;
+    const textWidth = getTextWidth(parent.name ?? '', font);
     // Badge width = text + padding + border/handling. Max width 192px (12rem)
     const badgeWidth = Math.min(192, textWidth + PADDING_X);
     
@@ -141,6 +142,7 @@ const calculateVisibleItems = () => {
         // Remove last added item
         const lastIndex = count - 1;
         const lastParent = props.parents[lastIndex];
+        if (!lastParent) continue;
         const textWidth = getTextWidth(lastParent.name, font);
         const badgeWidth = Math.min(192, textWidth + PADDING_X);
         const gap = lastIndex > 0 ? GAP_WIDTH : 0;

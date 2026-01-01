@@ -39,6 +39,7 @@ export interface PreferencesState {
   showNextQuests: boolean;
   showPreviousQuests: boolean;
   taskCardDensity: 'comfortable' | 'compact';
+  enableManualTaskFail: boolean;
   // XP and Level settings
   useAutomaticLevelCalculation: boolean;
   // Holiday effects
@@ -86,6 +87,7 @@ export const preferencesDefaultState: PreferencesState = {
   showNextQuests: true,
   showPreviousQuests: true,
   taskCardDensity: 'compact',
+  enableManualTaskFail: false,
   // XP and Level settings
   useAutomaticLevelCalculation: false,
   // Holiday effects (enabled by default during holiday season)
@@ -230,6 +232,9 @@ export const usePreferencesStore = defineStore('preferences', {
     getTaskCardDensity: (state) => {
       return state.taskCardDensity ?? 'compact';
     },
+    getEnableManualTaskFail: (state) => {
+      return state.enableManualTaskFail ?? false;
+    },
     getUseAutomaticLevelCalculation: (state) => {
       return state.useAutomaticLevelCalculation ?? false;
     },
@@ -346,6 +351,9 @@ export const usePreferencesStore = defineStore('preferences', {
     setTaskCardDensity(density: 'comfortable' | 'compact') {
       this.taskCardDensity = density;
     },
+    setEnableManualTaskFail(enable: boolean) {
+      this.enableManualTaskFail = enable;
+    },
     setUseAutomaticLevelCalculation(use: boolean) {
       this.useAutomaticLevelCalculation = use;
     },
@@ -400,6 +408,7 @@ export const usePreferencesStore = defineStore('preferences', {
       'showNextQuests',
       'showPreviousQuests',
       'taskCardDensity',
+      'enableManualTaskFail',
       'useAutomaticLevelCalculation',
       'enableHolidayEffects',
       'showMapExtracts',
@@ -490,6 +499,7 @@ if (import.meta.client) {
                       neededitems_style: preferencesState.neededitemsStyle,
                       hideout_primary_view: preferencesState.hideoutPrimaryView,
                       locale_override: preferencesState.localeOverride,
+                      enable_manual_task_fail: preferencesState.enableManualTaskFail,
                       use_automatic_level_calculation:
                         preferencesState.useAutomaticLevelCalculation,
                     };

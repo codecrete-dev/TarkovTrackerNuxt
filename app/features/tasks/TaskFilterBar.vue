@@ -109,6 +109,19 @@
               <UIcon name="i-mdi-check-circle" class="hidden h-4 w-4 sm:mr-1 sm:block" />
             </template>
         </FilterPill>
+        
+        <FilterPill
+          :active="secondaryView === 'failed'"
+          :label="t('page.tasks.secondaryviews.failed', 'FAILED').toUpperCase()"
+          label-class="text-xs sm:text-sm"
+          :count="statusCounts.failed"
+          count-color="bg-red-600"
+          @click="setSecondaryView('failed')"
+        >
+            <template #icon>
+              <UIcon name="i-mdi-close-circle" class="hidden h-4 w-4 sm:mr-1 sm:block" />
+            </template>
+        </FilterPill>
       </div>
       <!-- Divider -->
       <div class="h-6 w-px shrink-0 bg-divider" />
@@ -252,7 +265,8 @@
   });
   const traderCounts = computed(() => {
     const userView = preferencesStore.getTaskUserView;
-    return calculateTraderCounts(userView);
+    const secondaryView = preferencesStore.getTaskSecondaryView;
+    return calculateTraderCounts(userView, secondaryView);
   });
   const mergedMaps = computed(() => {
     return maps.value.map((map) => {

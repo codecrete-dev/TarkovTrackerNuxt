@@ -11,11 +11,12 @@
         v-for="row in consolidatedRows"
         :key="row.itemKey"
         class="flex max-w-full items-center gap-2 rounded-md border px-2 py-1 transition-colors"
-        :class="
+        :class="[
           row.allComplete
             ? 'border-success-500/50 bg-success-100 text-success-900 dark:bg-success-500/10 dark:text-success-100'
-            : 'border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5'
-        "
+            : 'border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5',
+          isParentTaskLocked ? 'opacity-70' : '',
+        ]"
       >
         <GameItem
           v-if="row.meta.itemIcon"
@@ -43,20 +44,23 @@
           v-if="row.meta.neededCount > 1"
           :current-count="row.currentCount"
           :needed-count="row.meta.neededCount"
+          :disabled="isParentTaskLocked"
           @decrease="decreaseCountForRow(row)"
           @increase="increaseCountForRow(row)"
           @toggle="toggleCountForRow(row)"
+          @set-count="(value) => setCountForRow(row, value)"
         />
         <button
           v-else
           type="button"
-          class="cursor-pointer focus-visible:ring-primary-500 focus-visible:ring-offset-surface-900 flex h-7 w-7 items-center justify-center rounded-md border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-          :aria-label="
+           class="cursor-pointer focus-visible:ring-primary-500 focus-visible:ring-offset-surface-900 flex h-7 w-7 items-center justify-center rounded-md border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+           :aria-label="
             row.allComplete
               ? t('page.tasks.questcard.uncomplete', 'Uncomplete')
               : t('page.tasks.questcard.complete', 'Complete')
           "
           :aria-pressed="row.allComplete"
+          :disabled="isParentTaskLocked"
           :class="
             row.allComplete
               ? 'bg-success-600 border-success-500 hover:bg-success-500 text-white'
@@ -121,9 +125,11 @@
       // Use item, markerItem, or questItem (quest items use questItem)
       const item =
         full?.item ||
+        full?.items?.[0] ||
         full?.markerItem ||
         full?.questItem ||
         objective.item ||
+        objective.items?.[0] ||
         objective.markerItem ||
         objective.questItem;
       map[objective.id] = {
@@ -160,7 +166,10 @@
     objectiveRows.value.forEach((row) => {
       // Use item, markerItem, or questItem ID (quest items use questItem)
       const itemId =
-        row.objective.item?.id || row.objective.markerItem?.id || row.objective.questItem?.id;
+        row.objective.item?.id ||
+        row.objective.items?.[0]?.id ||
+        row.objective.markerItem?.id ||
+        row.objective.questItem?.id;
       const foundInRaid = row.meta.foundInRaid;
       // Use item ID + foundInRaid as key, fallback to objective ID if no item
       const key = itemId ? `${itemId}:${foundInRaid ? 1 : 0}` : row.objective.id;
@@ -227,8 +236,35 @@
   const isObjectiveComplete = (objectiveId: string) => {
     return tarkovStore.isTaskObjectiveComplete(objectiveId);
   };
+  const getObjectiveTaskId = (objective: TaskObjective): string | undefined => {
+    return (
+      objective.taskId ?? fullObjectives.value.find((entry) => entry.id === objective.id)?.taskId
+    );
+  };
+  const parentTaskIds = computed(() => {
+    const ids = new Set<string>();
+    props.objectives.forEach((objective) => {
+      const taskId = getObjectiveTaskId(objective);
+      if (taskId) {
+        ids.add(taskId);
+      }
+    });
+    return Array.from(ids);
+  });
+  const isParentTaskComplete = computed(() => {
+    return parentTaskIds.value.some(
+      (taskId) => tarkovStore.isTaskComplete(taskId) && !tarkovStore.isTaskFailed(taskId)
+    );
+  });
+  const isParentTaskFailed = computed(() => {
+    return parentTaskIds.value.some((taskId) => tarkovStore.isTaskFailed(taskId));
+  });
+  const isParentTaskLocked = computed(() => {
+    return isParentTaskComplete.value || isParentTaskFailed.value;
+  });
   // Update all objectives in a row together
   const decreaseCountForRow = (row: ConsolidatedRow) => {
+    if (isParentTaskLocked.value) return;
     if (row.currentCount <= 0) return;
     // Find the last objective with progress and decrement it
     for (let i = row.objectives.length - 1; i >= 0; i--) {
@@ -245,6 +281,7 @@
     }
   };
   const increaseCountForRow = (row: ConsolidatedRow) => {
+    if (isParentTaskLocked.value) return;
     if (row.currentCount >= row.meta.neededCount) return;
     // Find the first objective that isn't complete and increment it
     for (const obj of row.objectives) {
@@ -259,6 +296,7 @@
     }
   };
   const toggleCountForRow = (row: ConsolidatedRow) => {
+    if (isParentTaskLocked.value) return;
     const isAllComplete = row.allComplete;
     if (isAllComplete) {
       // Set all to 0
@@ -277,5 +315,28 @@
         }
       });
     }
+  };
+  /**
+   * Set count to a specific value for a consolidated row (from direct input)
+   * Distributes the count across objectives in the row
+   */
+  const setCountForRow = (row: ConsolidatedRow, newCount: number) => {
+    if (isParentTaskLocked.value) return;
+    const totalNeeded = row.meta.neededCount;
+    const clampedCount = Math.max(0, Math.min(totalNeeded, newCount));
+    // Distribute the count across objectives
+    let remaining = clampedCount;
+    row.objectives.forEach((obj) => {
+      const objNeeded = obj.meta.neededCount;
+      const objCount = Math.min(remaining, objNeeded);
+      tarkovStore.setObjectiveCount(obj.objective.id, objCount);
+      // Update completion status
+      if (objCount >= objNeeded && !isObjectiveComplete(obj.objective.id)) {
+        tarkovStore.setTaskObjectiveComplete(obj.objective.id);
+      } else if (objCount < objNeeded && isObjectiveComplete(obj.objective.id)) {
+        tarkovStore.setTaskObjectiveUncomplete(obj.objective.id);
+      }
+      remaining -= objCount;
+    });
   };
 </script>

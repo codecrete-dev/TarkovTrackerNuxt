@@ -414,9 +414,9 @@
           ? getComputedStyle(document.documentElement).getPropertyValue('--color-map-extract-coop').trim() || '#0284c7' 
           : '#38bdf8'; // Keep simpler blue for generic shared
         break;
-        default:
-          markerColor = '#3b82f6';
-          break;
+      default:
+        markerColor = '#3b82f6';
+        break;
       }
       const iconHtml = `<span style="
       display: inline-block;

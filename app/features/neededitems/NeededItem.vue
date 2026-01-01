@@ -22,10 +22,10 @@
     </div>
   </template>
 </template>
-<script setup>
+<script setup lang="ts">
   import { computed, provide } from 'vue';
   import { useCraftableItem } from '@/composables/useCraftableItem';
-  import { neededItemKey } from '@/features/neededitems/neededitem-keys';
+  import { neededItemKey, type NeededItemTeamNeed } from '@/features/neededitems/neededitem-keys';
   import { useMetadataStore } from '@/stores/useMetadata';
   import { usePreferencesStore } from '@/stores/usePreferences';
   import { useProgressStore } from '@/stores/useProgress';
@@ -119,7 +119,7 @@
       }
     }
   };
-  const setCount = (count) => {
+  const setCount = (count: number) => {
     if (props.need.needType == 'taskObjective') {
       tarkovStore.setObjectiveCount(props.need.id, count);
       // Update completion status based on new count
@@ -158,6 +158,7 @@
     return baseIsCraftable.value && !isCompleted;
   });
 
+
   // Helper functions and data to calculate the item's progress
   // These are passed to the child components via provide/inject
   const currentCount = computed(() => {
@@ -183,11 +184,13 @@
   });
   const relatedTask = computed(() => {
     if (props.need.needType == 'taskObjective') {
-      return tasks.value.find((t) => t.id == props.need.taskId);
+      return tasks.value.find((t) => t.id == props.need.taskId) ?? null;
     } else {
       return null;
     }
   });
+  const isTaskSuccessful = (taskId: string) =>
+    tarkovStore.isTaskComplete(taskId) && !tarkovStore.isTaskFailed(taskId);
   const item = computed(() => {
     if (props.need.needType == 'taskObjective') {
       // Prefer the objective's item; fall back to marker item (e.g., beacons/cameras) when present
@@ -207,10 +210,11 @@
   });
   const lockedBefore = computed(() => {
     if (props.need.needType == 'taskObjective') {
-      return relatedTask.value.predecessors.filter((s) => !tarkovStore.isTaskComplete(s)).length;
+      if (!relatedTask.value?.predecessors) return 0;
+      return relatedTask.value.predecessors.filter((s) => !isTaskSuccessful(s)).length;
     } else if (props.need.needType == 'hideoutModule') {
       return props.need.hideoutModule.predecessors.filter(
-        (s) => !tarkovStore.isHideoutModuleComplete(s)
+        (s: string) => !tarkovStore.isHideoutModuleComplete(s)
       ).length;
     } else {
       return 0;
@@ -218,26 +222,27 @@
   });
   const selfCompletedNeed = computed(() => {
     if (props.need.needType == 'taskObjective') {
-      const alternativeTaskCompleted = alternativeTasks.value[props.need.taskId]?.some(
-        (altTaskId) => progressStore.tasksCompletions?.[altTaskId]?.['self']
-      );
+      const alternativeTaskCompleted =
+        alternativeTasks.value[props.need.taskId]?.some((altTaskId) =>
+          isTaskSuccessful(altTaskId)
+        ) ?? false;
       // Only consider the need "completed" when the parent TASK is completed (turned in)
       // Not when just the objective is marked complete - that should still allow adjustments
-      return (
-        progressStore.tasksCompletions?.[props.need.taskId]?.['self'] || alternativeTaskCompleted
-      );
+      return isTaskSuccessful(props.need.taskId) || alternativeTaskCompleted;
     } else if (props.need.needType == 'hideoutModule') {
       // Only consider the need "completed" when the parent MODULE is built
       // Not when just the part is marked complete - that should still allow adjustments
-      return progressStore.moduleCompletions?.[props.need.hideoutModule.id]?.['self'];
+      return progressStore.moduleCompletions?.[props.need.hideoutModule.id]?.['self'] ?? false;
     } else {
       return false;
     }
   });
   const relatedStation = computed(() => {
     if (props.need.needType == 'hideoutModule') {
-      return Object.values(hideoutStations.value).find(
-        (s) => s.id == props.need.hideoutModule.stationId
+      return (
+        Object.values(hideoutStations.value).find(
+          (s) => s.id == props.need.hideoutModule.stationId
+        ) ?? null
       );
     } else {
       return null;
@@ -245,7 +250,7 @@
   });
   const levelRequired = computed(() => {
     if (props.need.needType == 'taskObjective') {
-      return relatedTask.value.minPlayerLevel;
+      return relatedTask.value?.minPlayerLevel ?? 0;
     } else if (props.need.needType == 'hideoutModule') {
       return 0;
     } else {
@@ -253,7 +258,7 @@
     }
   });
   const teamNeeds = computed(() => {
-    const needingUsers = [];
+    const needingUsers: NeededItemTeamNeed[] = [];
     // Check if team items should be hidden based on preferences
     if (preferencesStore.itemsTeamAllHidden) {
       return needingUsers;
@@ -277,7 +282,9 @@
         // Skip if objective is completed or parent task is completed
         if (completed || taskCompletions[user]) return;
         // Get the teammate's store and count
-        const teammateStore = progressStore.teamStores?.[user];
+        const teammateStore = progressStore.teamStores?.[user] as
+          | { getObjectiveCount?: (id: string) => number }
+          | undefined;
         if (teammateStore) {
           needingUsers.push({
             user: user,
@@ -295,7 +302,9 @@
         // Skip if part is completed
         if (completed) return;
         // Get the teammate's store and count
-        const teammateStore = progressStore.teamStores?.[user];
+        const teammateStore = progressStore.teamStores?.[user] as
+          | { getHideoutPartCount?: (id: string) => number }
+          | undefined;
         if (teammateStore) {
           needingUsers.push({
             user: user,
