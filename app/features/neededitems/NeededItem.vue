@@ -197,7 +197,7 @@
     return closest[0]?.stationId ?? craftSources.value[0]?.stationId ?? '';
   });
   const craftableIconClass = computed(() => {
-    return isCraftableAvailable.value ? 'text-success-400' : 'text-red-400';
+    return isCraftableAvailable.value ? 'text-success-400' : 'text-red-500';
   });
   const goToCraftStation = async () => {
     if (!craftStationTargetId.value) {
@@ -251,6 +251,12 @@
     } else {
       return null;
     }
+  });
+  const isKappaRequired = computed(() => {
+    if (props.need.needType !== 'taskObjective') {
+      return false;
+    }
+    return relatedTask.value?.kappaRequired === true;
   });
   const isTaskSuccessful = (taskId: string) =>
     tarkovStore.isTaskComplete(taskId) && !tarkovStore.isTaskFailed(taskId);
@@ -393,6 +399,7 @@
     relatedStation,
     selfCompletedNeed,
     isParentCompleted,
+    isKappaRequired,
     lockedBefore,
     currentCount,
     neededCount,

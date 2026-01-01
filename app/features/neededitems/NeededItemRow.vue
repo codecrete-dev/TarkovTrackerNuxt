@@ -26,6 +26,8 @@
                   :is-craftable="isCraftable"
                   :craftable-title="craftableTitle"
                   :craftable-icon-class="craftableIconClass"
+                  :kappa-required="isKappaRequired"
+                  :kappa-title="$t('task.kappa_req', 'Required for Kappa quest')"
                   @craft="goToCraftStation"
                 />
               </span>
@@ -88,6 +90,9 @@
                         :craftable-title="craftableTitle"
                         craftable-icon-base-class="ml-1 h-4 w-4"
                         :craftable-icon-class="craftableIconClass"
+                        :kappa-required="isKappaRequired"
+                        :kappa-title="$t('task.kappa_req', 'Required for Kappa quest')"
+                        kappa-icon-class="ml-1 h-4 w-4 text-warning-400"
                         @craft="goToCraftStation"
                       />
                     </div>
@@ -283,6 +288,7 @@
     neededCount,
     currentCount,
     isCraftable,
+    isKappaRequired,
     levelRequired,
     item,
     teamNeeds,

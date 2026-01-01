@@ -28,7 +28,7 @@
                 class="flex items-center gap-1 rounded-br-lg px-2 py-1 text-sm font-bold shadow-lg"
                 :class="itemCountTagClasses"
               >
-                {{ currentCount }}/{{ neededCount }}
+                {{ formatNumber(currentCount) }}/{{ formatNumber(neededCount) }}
                 <ItemIndicators
                   :found-in-raid="props.need.foundInRaid"
                   fir-icon-class="h-4 w-4"
@@ -36,6 +36,9 @@
                   :craftable-title="craftableTitle"
                   craftable-icon-base-class="h-4 w-4 opacity-90"
                   :craftable-icon-class="craftableIconClass"
+                  :kappa-required="isKappaRequired"
+                  :kappa-title="$t('task.kappa_req', 'Required for Kappa quest')"
+                  kappa-icon-class="h-4 w-4 text-warning-400"
                   @craft="goToCraftStation"
                 />
               </div>
@@ -116,7 +119,7 @@
                 />
               </template>
               <span v-else class="text-success-400 text-sm font-bold">
-                {{ currentCount }}/{{ neededCount }} ✓
+                {{ formatNumber(currentCount) }}/{{ formatNumber(neededCount) }} ✓
               </span>
             </div>
           </div>
@@ -152,6 +155,7 @@
     neededItemKey,
   } from '@/features/neededitems/neededitem-keys';
   import { useTarkovStore } from '@/stores/useTarkov';
+  import { useLocaleNumberFormatter } from '@/utils/formatters';
   import ItemCountControls from './ItemCountControls.vue';
   const TaskLink = defineAsyncComponent(() => import('@/features/tasks/TaskLink.vue'));
   const StationLink = defineAsyncComponent(() => import('@/features/hideout/StationLink.vue'));
@@ -162,6 +166,7 @@
       required: true,
     },
   });
+  const formatNumber = useLocaleNumberFormatter();
   const tarkovStore = useTarkovStore();
   const playerLevel = computed(() => tarkovStore.playerLevel());
   const {
@@ -174,6 +179,7 @@
     neededCount,
     currentCount,
     isCraftable,
+    isKappaRequired,
     levelRequired,
     lockedBefore,
     item,
@@ -205,8 +211,9 @@
   const itemCountTagClasses = computed(() => {
     return {
       'bg-clip-padding rounded-tl-[5px] rounded-br-[10px]': true,
-      'bg-white text-black': !(selfCompletedNeed.value || currentCount.value >= neededCount.value),
-      'bg-complete': selfCompletedNeed.value || currentCount.value >= neededCount.value,
+      'bg-surface-800/90 text-surface-100 ring-1 ring-white/10':
+        !(selfCompletedNeed.value || currentCount.value >= neededCount.value),
+      'bg-complete text-white': selfCompletedNeed.value || currentCount.value >= neededCount.value,
     };
   });
 </script>

@@ -248,10 +248,12 @@
         !hideNonFirSpecialEquipment.value ||
         !isNonFirSpecialEquipment(need as NeededItemTaskObjective)
     );
-    // Filter to only show items for Kappa-required quests (excludes hideout items)
+    // Filter task items to only show Kappa-required quests (hideout items remain visible)
     if (kappaOnly.value) {
       items = items.filter((need) => {
-        if (need.needType !== 'taskObjective') return false;
+        if (need.needType !== 'taskObjective') {
+          return true;
+        }
         const task = metadataStore.getTaskById(need.taskId);
         return task?.kappaRequired === true;
       });

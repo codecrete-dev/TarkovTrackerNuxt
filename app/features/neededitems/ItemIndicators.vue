@@ -2,6 +2,9 @@
   <AppTooltip v-if="foundInRaid" :text="foundInRaidTitle">
     <UIcon name="i-mdi-checkbox-marked-circle-outline" :class="firIconClass" />
   </AppTooltip>
+  <AppTooltip v-if="kappaRequired" :text="kappaTitleText">
+    <UIcon name="i-mdi-trophy" :class="kappaIconClass" />
+  </AppTooltip>
   <AppTooltip v-if="isCraftable" :text="craftableTitleText">
     <button
       type="button"
@@ -23,6 +26,9 @@
       foundInRaid: boolean;
       foundInRaidTitle?: string;
       isCraftable: boolean;
+      kappaIconClass?: string;
+      kappaRequired?: boolean;
+      kappaTitle?: string;
     }>(),
     {
       craftableIconBaseClass: 'ml-1 h-5 w-5',
@@ -30,6 +36,9 @@
       craftableTitle: 'Craftable',
       firIconClass: 'ml-1 h-5 w-5',
       foundInRaidTitle: 'Found in Raid required',
+      kappaIconClass: 'ml-1 h-5 w-5 text-warning-400',
+      kappaRequired: false,
+      kappaTitle: 'Required for Kappa quest',
     }
   );
   const emit = defineEmits<{
@@ -39,5 +48,9 @@
   const craftableTitleText = computed(() => {
     const title = props.craftableTitle?.trim();
     return title && title.length > 0 ? title : 'Craftable';
+  });
+  const kappaTitleText = computed(() => {
+    const title = props.kappaTitle?.trim();
+    return title && title.length > 0 ? title : 'Required for Kappa quest';
   });
 </script>

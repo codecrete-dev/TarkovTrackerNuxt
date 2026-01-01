@@ -76,7 +76,7 @@ export function useCraftableItem(
     if (!isCraftable.value) {
       return '';
     }
-    return isCraftableAvailable.value ? 'text-success-400' : 'text-red-400';
+    return isCraftableAvailable.value ? 'text-success-400' : 'text-red-500';
   });
   const craftableTitle = computed(() => {
     if (!isCraftable.value) {

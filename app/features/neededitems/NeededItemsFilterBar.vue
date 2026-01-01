@@ -125,16 +125,22 @@
                 </AppTooltip>
                 <AppTooltip
                   :text="
-                    $t(
-                      'page.neededitems.filters.kappa_only_tooltip',
-                      'Show only items required for Kappa quests'
-                    )
+                    isKappaDisabled
+                      ? $t(
+                          'page.neededitems.filters.kappa_only_disabled_tooltip',
+                          'Kappa filter applies to tasks only.'
+                        )
+                      : $t(
+                          'page.neededitems.filters.kappa_only_tooltip',
+                          'Show only items required for Kappa quests'
+                        )
                   "
                 >
                   <UButton
                     :variant="kappaOnly ? 'soft' : 'ghost'"
                     :color="kappaOnly ? 'warning' : 'neutral'"
                     size="sm"
+                    :disabled="isKappaDisabled"
                     @click="$emit('update:kappaOnly', !kappaOnly)"
                   >
                     <UIcon name="i-mdi-trophy" class="mr-1 h-4 w-4" />
@@ -248,6 +254,9 @@
       count += 1;
     }
     return count;
+  });
+  const isKappaDisabled = computed(() => {
+    return props.modelValue === 'hideout';
   });
   const setViewMode = (mode: ViewMode) => {
     emit('update:groupByItem', false);
