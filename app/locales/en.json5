@@ -616,6 +616,8 @@
       title: 'Skills Management',
       explanation: 'All skills from game data are shown below. Quest rewards are auto-calculated. Use offsets to add skills gained through gameplay.',
       no_skills: 'No skills found in game data.',
+      required_for: 'Required for: {tasks}',
+      required_levels: 'Required levels: {levels}',
     },
     experience: {
       title: 'Experience & Level',
@@ -632,10 +634,6 @@
     },
     danger_zone: {
       title: 'Danger Zone',
-    },
-    skills: {
-      required_for: 'Required for: {tasks}',
-      required_levels: 'Required levels: {levels}',
     },
   },
   generic: {

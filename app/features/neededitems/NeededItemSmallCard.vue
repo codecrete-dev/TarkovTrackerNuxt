@@ -10,7 +10,7 @@
           :class="[
             imageContainerClasses,
             {
-              'hover:ring-primary-400 hover:ring-opacity-50 cursor-pointer hover:ring-2 active:scale-[0.98]':
+              'hover:ring-primary-300 cursor-pointer hover:ring-1 active:scale-[0.98]':
                 hasItem && !selfCompletedNeed,
             },
           ]"

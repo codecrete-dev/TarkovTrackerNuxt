@@ -43,7 +43,7 @@
             type="button"
             class="focus:ring-pvp-400 inline-flex items-center gap-0.5 px-1.5 py-1 text-[10px] font-semibold tracking-wide uppercase transition-colors focus:z-10 focus:ring-2 focus:outline-none sm:gap-2 sm:px-3 sm:py-1.5 sm:text-xs md:px-3.5 md:text-sm lg:px-4 lg:text-[15px]"
             :class="pvpClasses"
-            :disabled="dataLoading"
+            :disabled="dataLoading || localLoading"
             @click="switchMode(GAME_MODES.PVP)"
           >
             <UIcon name="i-mdi-sword-cross" class="hidden h-4 w-4 sm:block md:h-5 md:w-5" />
@@ -54,7 +54,7 @@
             type="button"
             class="focus:ring-pve-400 inline-flex items-center gap-0.5 px-1.5 py-1 text-[10px] font-semibold tracking-wide uppercase transition-colors focus:z-10 focus:ring-2 focus:outline-none sm:gap-2 sm:px-3 sm:py-1.5 sm:text-xs md:px-3.5 md:text-sm lg:px-4 lg:text-[15px]"
             :class="pveClasses"
-            :disabled="dataLoading"
+            :disabled="dataLoading || localLoading"
             @click="switchMode(GAME_MODES.PVE)"
           >
             <UIcon name="i-mdi-account-group" class="hidden h-4 w-4 sm:block md:h-5 md:w-5" />
@@ -161,23 +161,26 @@
   );
 
   async function switchMode(mode: GameMode) {
-    if (mode !== currentGameMode.value && !dataLoading.value) {
-      dataLoading.value = true;
+    if (mode !== currentGameMode.value && !dataLoading.value && !localLoading.value) {
+      localLoading.value = true;
       try {
         await tarkovStore.switchGameMode(mode);
         metadataStore.updateLanguageAndGameMode();
-        await metadataStore.fetchAllData();
+        // Since we are changing mode, we should ensure fresh data
+        await metadataStore.fetchAllData(true);
         dataError.value = false;
       } catch (err) {
         logger.error('[AppBar] Error switching mode:', err);
         dataError.value = true;
       } finally {
-        dataLoading.value = false;
+        localLoading.value = false;
       }
     }
   }
 
   const { loading: dataLoading, hideoutLoading } = storeToRefs(metadataStore);
+  // Local loading state for UI feedback during mode switch to avoid store mutation warnings
+  const localLoading = ref(false);
   const dataError = ref(false);
 
   const pageTitle = computed(() =>

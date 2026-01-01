@@ -22,7 +22,7 @@
                 <NuxtImg
                   v-if="!factionImageLoadFailed"
                   :src="pmcFactionIcon"
-                  class="absolute top-0 left-0 z-20 mt-1 max-w-[48px] px-1 opacity-0 invert transition-opacity duration-1000 ease-in-out group-hover:opacity-100"
+                  class="absolute top-0 left-0 z-20 mt-1 max-w-[48px] px-1 opacity-0 invert dark:invert-0 transition-opacity duration-1000 ease-in-out group-hover:opacity-100"
                   width="48"
                   height="48"
                   @error="handleFactionImageError"
@@ -64,7 +64,7 @@
                           'navigation_drawer.auto_level_enabled',
                           'Automatic level calculation is enabled'
                         )
-                      : ''
+                      : undefined
                   "
                   :class="
                     useAutomaticLevel
@@ -115,7 +115,7 @@
                         'navigation_drawer.manual_disabled',
                         'Manual level editing is disabled when automatic calculation is enabled'
                       )
-                    : ''
+                    : undefined
                 "
                 class="flex h-6 w-6 cursor-pointer items-center justify-center p-0 text-content-secondary transition-colors hover:text-content-primary disabled:cursor-not-allowed disabled:opacity-40"
                 :disabled="useAutomaticLevel || displayedLevel >= maxPlayerLevel"
@@ -131,7 +131,7 @@
                           'navigation_drawer.manual_disabled',
                           'Manual level editing is disabled when automatic calculation is enabled'
                         )
-                      : ''
+                      : undefined
                   "
                   class="flex h-6 w-6 cursor-pointer items-center justify-center p-0 text-content-secondary transition-colors hover:text-content-primary disabled:cursor-not-allowed disabled:opacity-40"
                   :disabled="useAutomaticLevel"

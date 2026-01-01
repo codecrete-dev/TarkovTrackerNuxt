@@ -83,7 +83,7 @@
         </div>
         <InfoRow v-if="task?.factionName != 'Any'" class="mb-1 text-sm text-gray-400">
           <template #icon>
-            <img :src="factionImage" class="mx-1 h-6 w-6 invert" />
+            <img :src="factionImage" class="mx-1 h-6 w-6 invert dark:invert-0" />
           </template>
           {{ task.factionName }}
         </InfoRow>

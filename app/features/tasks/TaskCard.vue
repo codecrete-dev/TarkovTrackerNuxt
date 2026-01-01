@@ -38,7 +38,7 @@
                 v-if="isFactionTask"
                 :src="factionImage"
                 :alt="task?.factionName"
-                class="h-6 w-6 shrink-0 object-contain invert"
+                class="h-6 w-6 shrink-0 object-contain invert dark:invert-0"
               />
               <span class="min-w-0 truncate text-sm font-semibold text-content-primary sm:text-base">
                 {{ task?.name }}

@@ -19,7 +19,7 @@
           <img
             :src="factionImage"
             :alt="factionAlt"
-            class="h-full w-full object-contain invert"
+            class="h-full w-full object-contain invert dark:invert-0"
           />
         </div>
       </template>
