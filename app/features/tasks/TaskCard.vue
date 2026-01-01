@@ -20,8 +20,8 @@
       <!--1) Header: identity + state -->
       <div class="flex flex-nowrap items-center justify-between gap-3">
         <div class="flex min-w-0 items-center gap-2">
-          <AppTooltip :text="task?.name">
             <router-link
+              v-tooltip="task?.name"
               :to="`/tasks?task=${task.id}`"
               class="text-primary-700 hover:text-primary-600 dark:text-primary-400 dark:hover:text-primary-300 flex min-w-0 items-center gap-2 no-underline"
             >
@@ -44,14 +44,11 @@
                 {{ task?.name }}
               </span>
             </router-link>
-          </AppTooltip>
           <!-- External link icons -->
           <div class="ml-2 flex shrink-0 items-center gap-1.5">
-            <AppTooltip
-              v-if="task.wikiLink"
-              :text="t('page.tasks.questcard.viewOnWiki', 'View on Wiki')"
-            >
               <a
+                v-if="task.wikiLink"
+                v-tooltip="t('page.tasks.questcard.viewOnWiki', 'View on Wiki')"
                 :href="task.wikiLink"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -61,9 +58,8 @@
               >
                 <img src="/img/logos/wikilogo.webp" alt="Wiki" aria-hidden="true" class="h-5 w-5" />
               </a>
-            </AppTooltip>
-            <AppTooltip :text="t('page.tasks.questcard.viewOnTarkovDev', 'View on tarkov.dev')">
               <a
+                v-tooltip="t('page.tasks.questcard.viewOnTarkovDev', 'View on tarkov.dev')"
                 :href="tarkovDevTaskUrl"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -78,22 +74,19 @@
                   class="h-5 w-5"
                 />
               </a>
-            </AppTooltip>
           </div>
         </div>
         <div class="flex shrink-0 flex-nowrap items-center justify-end gap-2.5">
           <div class="flex items-center gap-1.5">
-            <AppTooltip
-              v-if="(task.minPlayerLevel ?? 0) > 0"
-              :text="
-                t(
-                  'page.tasks.questcard.levelBadgeTooltip',
-                  { level: task.minPlayerLevel },
-                  `Minimum player level ${task.minPlayerLevel} required to unlock this quest`
-                )
-              "
-            >
               <UBadge
+                v-if="(task.minPlayerLevel ?? 0) > 0"
+                v-tooltip="
+                  t(
+                    'page.tasks.questcard.levelBadgeTooltip',
+                    { level: task.minPlayerLevel },
+                    `Minimum player level ${task.minPlayerLevel} required to unlock this quest`
+                  )
+                "
                 size="xs"
                 color="gray"
                 variant="solid"
@@ -101,9 +94,8 @@
               >
                 {{ t('page.tasks.questcard.levelBadge', { count: task.minPlayerLevel }) }}
               </UBadge>
-            </AppTooltip>
-            <AppTooltip :text="task?.map?.name || t('page.tasks.questcard.anyMap', 'Any')">
               <UBadge
+                v-tooltip="task?.map?.name || t('page.tasks.questcard.anyMap', 'Any')"
                 size="xs"
                 color="gray"
                 variant="solid"
@@ -118,7 +110,6 @@
                   {{ task?.map?.name || t('page.tasks.questcard.anyMap', 'Any') }}
                 </span>
               </UBadge>
-            </AppTooltip>
             <UBadge
               v-if="objectiveProgress.total > 0"
               size="xs"
@@ -129,16 +120,14 @@
               <UIcon name="i-mdi-progress-check" aria-hidden="true" class="h-3 w-3" />
               {{ t('page.tasks.questcard.progress', objectiveProgress) }}
             </UBadge>
-            <AppTooltip
-              v-if="preferencesStore.getShowRequiredLabels && task.kappaRequired"
-              :text="
-                t(
-                  'page.tasks.questcard.kappaTooltip',
-                  'This quest is required to obtain the Kappa Secure Container'
-                )
-              "
-            >
               <UBadge
+                v-if="preferencesStore.getShowRequiredLabels && task.kappaRequired"
+                v-tooltip="
+                  t(
+                    'page.tasks.questcard.kappaTooltip',
+                    'This quest is required to obtain the Kappa Secure Container'
+                  )
+                "
                 size="xs"
                 color="red"
                 variant="solid"
@@ -146,17 +135,14 @@
               >
                 {{ t('page.tasks.questcard.kappa', 'Kappa') }}
               </UBadge>
-            </AppTooltip>
-            <AppTooltip
-              v-if="preferencesStore.getShowRequiredLabels && task.lightkeeperRequired"
-              :text="
-                t(
-                  'page.tasks.questcard.lightkeeperTooltip',
-                  'This quest is required to unlock the Lightkeeper trader'
-                )
-              "
-            >
               <UBadge
+                v-if="preferencesStore.getShowRequiredLabels && task.lightkeeperRequired"
+                v-tooltip="
+                  t(
+                    'page.tasks.questcard.lightkeeperTooltip',
+                    'This quest is required to unlock the Lightkeeper trader'
+                  )
+                "
                 size="xs"
                 color="amber"
                 variant="solid"
@@ -164,7 +150,6 @@
               >
                 {{ t('page.tasks.questcard.lightkeeper', 'Lightkeeper') }}
               </UBadge>
-            </AppTooltip>
             <!-- XP display - moved to TaskCardRewards -->
           </div>
           <!-- Action buttons in header for consistent positioning -->
@@ -209,8 +194,9 @@
             </UButton>
           </template>
           <!-- Menu button -->
-          <AppTooltip v-if="isOurFaction" :text="t('page.tasks.questcard.more', 'More')">
             <UButton
+              v-if="isOurFaction"
+              v-tooltip="t('page.tasks.questcard.more', 'More')"
               size="xs"
               color="neutral"
               variant="ghost"
@@ -220,7 +206,6 @@
             >
               <UIcon name="i-mdi-dots-horizontal" aria-hidden="true" class="h-5 w-5" />
             </UButton>
-          </AppTooltip>
         </div>
       </div>
       <!-- 2) Metadata Row: Requires -->
@@ -234,18 +219,15 @@
             {{ t('page.tasks.questcard.requires', 'Requires') }}:
           </span>
           <span class="ml-2 inline-flex flex-nowrap items-center rounded-md gap-1.5 overflow-hidden">
-            <AppTooltip
-              v-for="parent in displayedPendingParents"
-              :key="parent.id"
-              :text="parent.name"
-            >
               <router-link
+                v-for="parent in displayedPendingParents"
+                :key="parent.id"
+                v-tooltip="parent.name"
                 :to="`/tasks?task=${parent.id}`"
                 class="inline-flex max-w-[12rem] items-center rounded-md border border-base bg-surface-200 px-2 py-0.5 text-[11px] text-content-secondary hover:bg-surface-300 dark:bg-white/5 dark:hover:bg-white/10"
               >
                 <span class="truncate">{{ parent.name }}</span>
               </router-link>
-            </AppTooltip>
             <span v-if="extraPendingParentsCount > 0" class="shrink-0 text-gray-500">
               +{{ extraPendingParentsCount }}
             </span>

@@ -55,8 +55,9 @@
           v-if="showActions && (props.devLink || props.wikiLink)"
           class="absolute inset-0 z-20 flex items-center justify-center gap-1 rounded bg-surface-900/80 opacity-0 transition-opacity group-hover:opacity-100"
         >
-          <AppTooltip v-if="props.wikiLink" text="View on Wiki">
             <a
+              v-if="props.wikiLink"
+              v-tooltip="'View on Wiki'"
               :href="props.wikiLink"
               target="_blank"
               rel="noopener noreferrer"
@@ -65,9 +66,9 @@
             >
               <img src="/img/logos/wikilogo.webp" alt="Wiki" :class="overlayIconClasses" />
             </a>
-          </AppTooltip>
-          <AppTooltip v-if="props.devLink" text="View on tarkov.dev">
             <a
+              v-if="props.devLink"
+              v-tooltip="'View on tarkov.dev'"
               :href="props.devLink"
               target="_blank"
               rel="noopener noreferrer"
@@ -76,7 +77,6 @@
             >
               <img src="/img/logos/tarkovdevlogo.webp" alt="tarkov.dev" :class="overlayIconClasses" />
             </a>
-          </AppTooltip>
         </div>
       </div>
       <!-- Counter controls for multi-item objectives -->

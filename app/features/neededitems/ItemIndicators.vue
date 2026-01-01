@@ -1,17 +1,20 @@
 <template>
-  <AppTooltip v-if="foundInRaid" :text="foundInRaidTitle">
-    <UIcon name="i-mdi-checkbox-marked-circle-outline" :class="firIconClass" />
-  </AppTooltip>
-  <AppTooltip v-if="isCraftable" :text="craftableTitleText">
-    <button
-      type="button"
-      class="inline-flex"
-      :aria-label="craftableTitleText"
-      @click.stop="emit('craft')"
-    >
-      <UIcon name="i-mdi-hammer-wrench" :class="[craftableIconBaseClass, craftableIconClass]" />
-    </button>
-  </AppTooltip>
+  <UIcon
+    v-if="foundInRaid"
+    v-tooltip="foundInRaidTitle"
+    name="i-mdi-checkbox-marked-circle-outline"
+    :class="firIconClass"
+  />
+  <button
+    v-if="isCraftable"
+    v-tooltip="craftableTitleText"
+    type="button"
+    class="inline-flex"
+    :aria-label="craftableTitleText"
+    @click.stop="emit('craft')"
+  >
+    <UIcon name="i-mdi-hammer-wrench" :class="[craftableIconBaseClass, craftableIconClass]" />
+  </button>
 </template>
 <script setup lang="ts">
   const props = withDefaults(

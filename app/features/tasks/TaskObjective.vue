@@ -24,15 +24,14 @@
         <div class="text-sm leading-5 text-content-primary">
           {{ props.objective?.description }}
         </div>
-        <AppTooltip
-          v-if="userHasTeam && activeUserView === 'all' && userNeeds.length > 0"
-          :text="userNeedsTitle"
-        >
-          <div class="mt-1 inline-flex items-center gap-1 text-[11px] text-content-tertiary">
+          <div
+            v-if="userHasTeam && activeUserView === 'all' && userNeeds.length > 0"
+            v-tooltip="userNeedsTitle"
+            class="mt-1 inline-flex items-center gap-1 text-[11px] text-content-tertiary"
+          >
             <UIcon name="i-mdi-account-multiple-outline" aria-hidden="true" class="h-3.5 w-3.5" />
             <span>{{ userNeeds.length }}</span>
           </div>
-        </AppTooltip>
       </div>
       <div class="flex items-center gap-2" @click.stop>
         <ObjectiveCountControls
@@ -44,15 +43,13 @@
           @increase="increaseCount"
           @toggle="toggleCount"
         />
-        <AppTooltip
-          v-else
-          :text="
-            isComplete
-              ? t('page.tasks.questcard.uncomplete', 'Uncomplete')
-              : t('page.tasks.questcard.complete', 'Complete')
-          "
-        >
           <button
+            v-else
+            v-tooltip="
+              isComplete
+                ? t('page.tasks.questcard.uncomplete', 'Uncomplete')
+                : t('page.tasks.questcard.complete', 'Complete')
+            "
             type="button"
             :disabled="isTaskUnavailable"
             class="focus-visible:ring-primary-500 focus-visible:ring-offset-surface-900 flex h-7 w-7 items-center justify-center rounded-md border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
@@ -74,7 +71,6 @@
               class="h-4 w-4"
             />
           </button>
-        </AppTooltip>
       </div>
     </div>
   </div>

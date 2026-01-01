@@ -56,18 +56,16 @@
               {{ t('navigation_drawer.level') }}
             </div>
             <div class="text-center">
-              <AppTooltip
-                v-if="!editingLevel || useAutomaticLevel"
-                :text="
-                  useAutomaticLevel
-                    ? t(
-                        'navigation_drawer.auto_level_enabled',
-                        'Automatic level calculation is enabled'
-                      )
-                    : ''
-                "
-              >
                 <h1
+                  v-if="!editingLevel || useAutomaticLevel"
+                  v-tooltip="
+                    useAutomaticLevel
+                      ? t(
+                          'navigation_drawer.auto_level_enabled',
+                          'Automatic level calculation is enabled'
+                        )
+                      : ''
+                  "
                   :class="
                     useAutomaticLevel
                       ? 'mx-auto w-11 text-[2rem] leading-[0.85] text-content-primary'
@@ -95,7 +93,6 @@
                 >
                   {{ displayedLevel }}
                 </h1>
-              </AppTooltip>
               <input
                 v-else
                 ref="levelInput"
@@ -111,27 +108,8 @@
             </div>
           </span>
           <span class="ml-0.5 flex shrink-0 flex-col items-center gap-0.5">
-            <AppTooltip
-              :text="
-                useAutomaticLevel
-                  ? t(
-                      'navigation_drawer.manual_disabled',
-                      'Manual level editing is disabled when automatic calculation is enabled'
-                    )
-                  : ''
-              "
-            >
               <button
-                class="flex h-6 w-6 cursor-pointer items-center justify-center p-0 text-content-secondary transition-colors hover:text-content-primary disabled:cursor-not-allowed disabled:opacity-40"
-                :disabled="useAutomaticLevel || displayedLevel >= maxPlayerLevel"
-                @click="incrementLevel"
-              >
-                <UIcon name="i-mdi-chevron-up" class="h-5 w-5" />
-              </button>
-            </AppTooltip>
-            <template v-if="displayedLevel > minPlayerLevel">
-              <AppTooltip
-                :text="
+                v-tooltip="
                   useAutomaticLevel
                     ? t(
                         'navigation_drawer.manual_disabled',
@@ -139,15 +117,28 @@
                       )
                     : ''
                 "
+                class="flex h-6 w-6 cursor-pointer items-center justify-center p-0 text-content-secondary transition-colors hover:text-content-primary disabled:cursor-not-allowed disabled:opacity-40"
+                :disabled="useAutomaticLevel || displayedLevel >= maxPlayerLevel"
+                @click="incrementLevel"
               >
+                <UIcon name="i-mdi-chevron-up" class="h-5 w-5" />
+              </button>
+            <template v-if="displayedLevel > minPlayerLevel">
                 <button
+                  v-tooltip="
+                    useAutomaticLevel
+                      ? t(
+                          'navigation_drawer.manual_disabled',
+                          'Manual level editing is disabled when automatic calculation is enabled'
+                        )
+                      : ''
+                  "
                   class="flex h-6 w-6 cursor-pointer items-center justify-center p-0 text-content-secondary transition-colors hover:text-content-primary disabled:cursor-not-allowed disabled:opacity-40"
                   :disabled="useAutomaticLevel"
                   @click="decrementLevel"
                 >
                   <UIcon name="i-mdi-chevron-down" class="h-5 w-5" />
                 </button>
-              </AppTooltip>
             </template>
             <template v-else>
               <div class="h-6 w-6" aria-hidden="true"></div>

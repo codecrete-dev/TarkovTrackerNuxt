@@ -26,11 +26,12 @@
           simple-mode
           class="shrink-0"
         />
-        <AppTooltip :text="row.meta.itemName">
-          <span class="max-w-[12rem] truncate text-xs font-medium text-gray-900 dark:text-gray-100">
-            {{ row.meta.itemName }}
-          </span>
-        </AppTooltip>
+        <span
+          v-tooltip="row.meta.itemName"
+          class="max-w-[12rem] truncate text-xs font-medium text-gray-900 dark:text-gray-100"
+        >
+          {{ row.meta.itemName }}
+        </span>
         <span
           v-if="row.meta.foundInRaid"
           class="rounded bg-yellow-500/20 px-1 py-0.5 text-[10px] font-bold text-yellow-700 dark:bg-yellow-500/10 dark:text-yellow-300"

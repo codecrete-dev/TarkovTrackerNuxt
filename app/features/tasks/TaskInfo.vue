@@ -7,13 +7,16 @@
             <task-link :task="task" />
           </div>
         </div>
-        <AppTooltip v-if="task.minPlayerLevel != 0" text="Minimum level required to access task">
-          <InfoRow icon="mdi-menu-right" class="text-sm text-gray-400">
-            <i18n-t keypath="page.tasks.questcard.level" scope="global">
-              <template #count>{{ task.minPlayerLevel }}</template>
-            </i18n-t>
-          </InfoRow>
-        </AppTooltip>
+        <InfoRow
+          v-if="task.minPlayerLevel != 0"
+          v-tooltip="'Minimum level required to access task'"
+          icon="mdi-menu-right"
+          class="text-sm text-gray-400"
+        >
+          <i18n-t keypath="page.tasks.questcard.level" scope="global">
+            <template #count>{{ task.minPlayerLevel }}</template>
+          </i18n-t>
+        </InfoRow>
         <!-- Previous quests (locked before) -->
         <InfoRow
           v-if="preferencesStore.getShowPreviousQuests && task?.predecessors?.length"

@@ -29,6 +29,7 @@
     "@vueuse/core": "^14.1.0",
     "d3": "^7.9.0",
     "eslint": "^9.39.2",
+    "floating-vue": "^5.2.2",
     "graphology": "^0.26.0",
     "graphology-types": "^0.24.8",
     "ipaddr.js": "^2.3.0",

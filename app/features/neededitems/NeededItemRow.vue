@@ -150,20 +150,19 @@
                         />
                       </template>
                       <template v-else>
-                        <AppTooltip :text="isCollected ? 'Collected' : 'Mark as collected'">
-                          <CollectedToggleButton
-                            :is-collected="isCollected"
-                            class="flex h-10 w-10 items-center justify-center rounded-lg border transition-colors"
-                            :class="
-                              isCollected
-                                ? 'bg-success-600 border-success-500 hover:bg-success-500 text-white'
-                                : 'bg-surface-elevated text-content-secondary hover:bg-surface-hover border-base hover:text-content-primary'
-                            "
-                            :aria-label="isCollected ? 'Collected' : 'Mark as collected'"
-                            icon-class="h-6 w-6"
-                            @toggle="$emit('toggleCount')"
-                          />
-                        </AppTooltip>
+                        <CollectedToggleButton
+                          v-tooltip="isCollected ? 'Collected' : 'Mark as collected'"
+                          :is-collected="isCollected"
+                          class="flex h-10 w-10 items-center justify-center rounded-lg border transition-colors"
+                          :class="
+                            isCollected
+                              ? 'bg-success-600 border-success-500 hover:bg-success-500 text-white'
+                              : 'bg-surface-elevated text-content-secondary hover:bg-surface-hover border-base hover:text-content-primary'
+                          "
+                          :aria-label="isCollected ? 'Collected' : 'Mark as collected'"
+                          icon-class="h-6 w-6"
+                          @toggle="$emit('toggleCount')"
+                        />
                       </template>
                       <!-- Show team needs alongside controls -->
                       <TeamNeedsDisplay
@@ -219,20 +218,19 @@
                   />
                 </template>
                 <template v-else>
-                  <AppTooltip :text="isCollected ? 'Collected' : 'Mark as collected'">
-                    <CollectedToggleButton
-                      :is-collected="isCollected"
-                      class="flex h-8 w-8 items-center justify-center rounded-lg border transition-colors"
-                      :class="
-                        isCollected
-                          ? 'bg-success-600 border-success-500 hover:bg-success-500 text-white'
-                          : 'bg-surface-elevated text-content-secondary hover:bg-surface-hover border-base hover:text-content-primary'
-                      "
-                      :aria-label="isCollected ? 'Collected' : 'Mark as collected'"
-                      icon-class="h-6 w-6"
-                      @toggle="$emit('toggleCount')"
-                    />
-                  </AppTooltip>
+                  <CollectedToggleButton
+                    v-tooltip="isCollected ? 'Collected' : 'Mark as collected'"
+                    :is-collected="isCollected"
+                    class="flex h-8 w-8 items-center justify-center rounded-lg border transition-colors"
+                    :class="
+                      isCollected
+                        ? 'bg-success-600 border-success-500 hover:bg-success-500 text-white'
+                        : 'bg-surface-elevated text-content-secondary hover:bg-surface-hover border-base hover:text-content-primary'
+                    "
+                    :aria-label="isCollected ? 'Collected' : 'Mark as collected'"
+                    icon-class="h-6 w-6"
+                    @toggle="$emit('toggleCount')"
+                  />
                 </template>
                 <!-- Show team needs alongside controls -->
                 <TeamNeedsDisplay

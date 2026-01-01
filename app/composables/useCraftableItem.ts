@@ -80,21 +80,36 @@ export function useCraftableItem(
       ? 'text-success-600 dark:text-success-400'
       : 'text-surface-400';
   });
-  const craftableTitle = computed(() => {
+const craftableTitle = computed(() => {
     if (!isCraftable.value) {
       return '';
     }
-    const prefix = isCraftableAvailable.value
-      ? 'Craftable now'
-      : 'Craftable (station level too low)';
-    const preview = craftSourceStatuses.value
-      .slice(0, 3)
-      .map(
-        (source) => `${source.stationName} ${source.stationLevel} (you: ${source.currentLevel})`
-      );
-    const remainingCount = craftSourceStatuses.value.length - preview.length;
-    const remainingText = remainingCount > 0 ? ` +${remainingCount} more` : '';
-    return `${prefix}: ${preview.join(', ')}${remainingText}`;
+
+    // Sort to show available options first
+    const sorted = [...craftSourceStatuses.value].sort((a, b) => {
+      if (a.isAvailable !== b.isAvailable) return a.isAvailable ? -1 : 1;
+      return a.stationLevel - b.stationLevel;
+    });
+
+    const lines = sorted.slice(0, 3).map((source) => {
+      if (source.isAvailable) {
+        return `${source.stationName} level ${source.stationLevel}`;
+      }
+      return `${source.stationName} level ${source.stationLevel} (current: ${source.currentLevel})`;
+    });
+
+    const remainingCount = sorted.length - lines.length;
+    if (remainingCount > 0) {
+      lines.push(`+${remainingCount} more`);
+    }
+
+    const list = lines.join(', ');
+
+    if (isCraftableAvailable.value) {
+      return `Craftable at ${list}`;
+    }
+
+    return `Requires ${list}`;
   });
   const goToCraftStation = async () => {
     if (!craftStationTargetId.value) {

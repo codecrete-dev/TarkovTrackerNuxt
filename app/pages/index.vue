@@ -163,12 +163,10 @@
         {{ $t('page.dashboard.traders.title') }}
       </h2>
       <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-        <AppTooltip
-          v-for="trader in traderStats"
-          :key="trader.id"
-          :text="$t('page.dashboard.traders.viewTasks', { name: trader.name })"
-        >
           <div
+            v-for="trader in traderStats"
+            :key="trader.id"
+            v-tooltip="$t('page.dashboard.traders.viewTasks', { name: trader.name })"
             role="button"
             tabindex="0"
             class="cursor-pointer rounded-lg border border-gray-200 bg-white p-3 shadow-sm transition-all outline-none hover:border-primary-500/30 hover:shadow-md focus-visible:border-primary-500 focus-visible:ring-2 focus-visible:ring-primary-500/50 dark:border-primary-700/30 dark:bg-surface-800 dark:hover:border-primary-700/50"
@@ -208,7 +206,6 @@
               {{ trader.percentage }}%
             </div>
           </div>
-        </AppTooltip>
       </div>
     </div>
     <!-- Milestones Section -->

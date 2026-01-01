@@ -4,8 +4,8 @@
   >
     <div class="flex h-full items-center gap-1 px-2 sm:gap-3 sm:px-3">
       <!-- Left: Toggle Button -->
-      <AppTooltip text="Toggle Menu Drawer">
         <UButton
+          v-tooltip="'Toggle Menu Drawer'"
           :icon="navBarIcon"
           variant="ghost"
           color="neutral"
@@ -13,23 +13,26 @@
           aria-label="Toggle Menu Drawer"
           @click.stop="changeNavigationDrawer"
         />
-      </AppTooltip>
       <!-- Center: Page Title -->
       <span class="min-w-0 flex-1 truncate text-xl font-bold text-content-primary">
         {{ pageTitle }}
       </span>
       <!-- Right: Status Icons & Settings -->
       <div class="ml-auto flex items-center gap-1 sm:gap-2">
-        <AppTooltip v-if="dataError" text="Error Loading Tarkov Data">
-          <span class="inline-flex rounded">
-            <UIcon name="i-mdi-database-alert" class="text-error-500 h-6 w-6" />
-          </span>
-        </AppTooltip>
-        <AppTooltip v-if="dataLoading || hideoutLoading" text="Loading Tarkov Data">
-          <span class="inline-flex rounded">
-            <UIcon name="i-heroicons-arrow-path" class="text-primary-500 h-6 w-6 animate-spin" />
-          </span>
-        </AppTooltip>
+        <span
+          v-if="dataError"
+          v-tooltip="'Error Loading Tarkov Data'"
+          class="inline-flex rounded"
+        >
+          <UIcon name="i-mdi-database-alert" class="text-error-500 h-6 w-6" />
+        </span>
+        <span
+          v-if="dataLoading || hideoutLoading"
+          v-tooltip="'Loading Tarkov Data'"
+          class="inline-flex rounded"
+        >
+          <UIcon name="i-heroicons-arrow-path" class="text-primary-500 h-6 w-6 animate-spin" />
+        </span>
         <!-- Game mode quick toggle -->
         <div
           class="flex items-center overflow-hidden rounded-md border border-base bg-surface-elevated ring-1 ring-gray-200/50 dark:border-white/15 dark:bg-surface-900/90 dark:ring-white/10"
@@ -59,8 +62,8 @@
           </button>
         </div>
         <!-- Theme toggle -->
-        <AppTooltip :text="nextThemeLabel">
           <button
+            v-tooltip="nextThemeLabel"
             type="button"
             class="bg-surface-elevated border-base flex items-center justify-center rounded-md border px-2 py-1.5 ring-1 ring-gray-200/50 transition-colors hover:bg-surface-100 dark:bg-surface-900/90 dark:border-white/15 dark:ring-white/10 dark:hover:bg-surface-800"
             @click="cycleTheme"
@@ -71,7 +74,6 @@
               class="text-content-tertiary h-4 w-4 transition-transform duration-200"
             />
           </button>
-        </AppTooltip>
         <!-- Language selector -->
         <USelectMenu
           v-model="selectedLocale"

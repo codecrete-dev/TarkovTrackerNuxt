@@ -55,27 +55,21 @@
                     {{ formatSkillName(skill.name) }}
                   </span>
                   <!-- Required Badge -->
-                  <AppTooltip
-                    v-if="skill.requiredByTasks.length > 0"
-                    :text="`Required for: ${skill.requiredByTasks.join(', ')}`"
-                  >
                     <span
+                      v-if="skill.requiredByTasks.length > 0"
+                      v-tooltip="`Required for: ${skill.requiredByTasks.join(', ')}`"
                       class="shrink-0 rounded bg-orange-500/20 px-1.5 py-0.5 text-xs text-orange-400"
                     >
                       Req
                     </span>
-                  </AppTooltip>
                   <!-- Required Levels Badge -->
-                  <AppTooltip
-                    v-if="skill.requiredLevels.length > 0"
-                    :text="`Required levels: ${skill.requiredLevels.join(', ')}`"
-                  >
                     <span
+                      v-if="skill.requiredLevels.length > 0"
+                      v-tooltip="`Required levels: ${skill.requiredLevels.join(', ')}`"
                       class="shrink-0 rounded bg-amber-500/20 px-1.5 py-0.5 text-xs text-amber-400"
                     >
                       Lv {{ formatRequiredLevels(skill.requiredLevels) }}
                     </span>
-                  </AppTooltip>
                 </div>
                 <!-- Skill Info -->
                 <div class="truncate text-xs text-gray-500 dark:text-surface-500">

@@ -1,6 +1,5 @@
 <template>
   <footer
-  <footer
     class="relative w-full border-t border-base bg-surface-elevated px-6 py-5"
   >
     <div class="mx-auto w-full max-w-6xl">
@@ -12,14 +11,12 @@
             {{ t('footer.community_label') }}
           </div>
           <div class="flex flex-col items-center gap-2.5 lg:items-start">
-            <AppTooltip
-              :text="
-                t('footer.call_to_action.discord_phrase', {
-                  discord: t('footer.call_to_action.discord'),
-                })
-              "
-            >
               <a
+                v-tooltip="
+                  t('footer.call_to_action.discord_phrase', {
+                    discord: t('footer.call_to_action.discord'),
+                  })
+                "
                 href="https://discord.gg/M8nBgA2sT6"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -46,15 +43,12 @@
                   {{ t('footer.call_to_action.discord') }}
                 </span>
               </a>
-            </AppTooltip>
-            <AppTooltip
-              :text="
-                t('footer.call_to_action.github_phrase', {
-                  github: t('footer.call_to_action.github'),
-                })
-              "
-            >
               <a
+                v-tooltip="
+                  t('footer.call_to_action.github_phrase', {
+                    github: t('footer.call_to_action.github'),
+                  })
+                "
                 href="https://github.com/tarkovtracker-org/TarkovTrackerNuxt"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -71,7 +65,6 @@
                   {{ t('footer.call_to_action.github') }}
                 </span>
               </a>
-            </AppTooltip>
           </div>
         </div>
         <!-- Support Button (Center Focus) -->

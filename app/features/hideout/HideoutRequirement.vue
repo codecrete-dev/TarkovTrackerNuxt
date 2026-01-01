@@ -31,11 +31,13 @@
         >
           <UIcon name="i-mdi-check-circle" class="text-success-500/50 h-10 w-10 sm:h-12 sm:w-12" />
         </div>
-        <AppTooltip v-if="isFoundInRaid" text="Found in Raid required">
-          <div class="absolute bottom-1 right-1 z-30 rounded bg-warning-500/90 p-px shadow-sm flex items-center justify-center">
-            <UIcon name="i-mdi-checkbox-marked-circle-outline" class="h-3 w-3 text-warning-950" />
-          </div>
-        </AppTooltip>
+        <div
+          v-if="isFoundInRaid"
+          v-tooltip="'Found in Raid required'"
+          class="absolute bottom-1 right-1 z-30 flex items-center justify-center rounded bg-warning-500/90 p-px shadow-sm"
+        >
+          <UIcon name="i-mdi-checkbox-marked-circle-outline" class="text-warning-950 h-3 w-3" />
+        </div>
         <!-- Count Badge -->
         <div
           v-if="requiredCount > 1"

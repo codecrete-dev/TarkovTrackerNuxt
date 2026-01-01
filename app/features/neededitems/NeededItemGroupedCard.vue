@@ -23,11 +23,19 @@
           <div class="line-clamp-2 min-w-0 text-sm leading-tight font-semibold text-content-primary">
             {{ groupedItem.item.name }}
           </div>
-          <AppTooltip v-if="isCraftable" :text="craftableTitle">
-            <button type="button" class="inline-flex" @click.stop="goToCraftStation">
-              <UIcon name="i-mdi-hammer-wrench" class="h-4 w-4 opacity-90" :class="craftableIconClass" />
-            </button>
-          </AppTooltip>
+          <button
+            v-if="isCraftable"
+            v-tooltip="craftableTitle"
+            type="button"
+            class="inline-flex"
+            @click.stop="goToCraftStation"
+          >
+            <UIcon
+              name="i-mdi-hammer-wrench"
+              class="h-4 w-4 opacity-90"
+              :class="craftableIconClass"
+            />
+          </button>
         </div>
         <div class="mt-1 flex items-center gap-1">
           <span class="text-xs text-content-tertiary">Total:</span>

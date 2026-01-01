@@ -94,28 +94,27 @@
                   <UIcon name="i-mdi-checkbox-blank-circle-outline" class="mr-1 h-4 w-4" />
                   {{ $t('page.neededitems.filters.non_fir', 'NON-FIR') }}
                 </UButton>
-                <AppTooltip
-                  :text="
+                <UButton
+                  v-tooltip="
                     $t(
                       'page.neededitems.filters.hide_non_fir_special_equipment_title',
                       'Hide non-FIR special equipment (e.g., MS2000 Markers, Wi-Fi Cameras)'
                     )
                   "
+                  :variant="hideNonFirSpecialEquipment ? 'soft' : 'ghost'"
+                  :color="hideNonFirSpecialEquipment ? 'primary' : 'neutral'"
+                  size="sm"
+                  @click="
+                    $emit('update:hideNonFirSpecialEquipment', !hideNonFirSpecialEquipment)
+                  "
                 >
-                  <UButton
-                    :variant="hideNonFirSpecialEquipment ? 'soft' : 'ghost'"
-                    :color="hideNonFirSpecialEquipment ? 'primary' : 'neutral'"
-                    size="sm"
-                    @click="$emit('update:hideNonFirSpecialEquipment', !hideNonFirSpecialEquipment)"
-                  >
-                    <UIcon name="i-mdi-briefcase-outline" class="mr-1 h-4 w-4" />
-                    {{
-                      hideNonFirSpecialEquipment
-                        ? $t('page.neededitems.filters.no_special', 'NO-SPECIAL')
-                        : $t('page.neededitems.filters.special', 'SPECIAL')
-                    }}
-                  </UButton>
-                </AppTooltip>
+                  <UIcon name="i-mdi-briefcase-outline" class="mr-1 h-4 w-4" />
+                  {{
+                    hideNonFirSpecialEquipment
+                      ? $t('page.neededitems.filters.no_special', 'NO-SPECIAL')
+                      : $t('page.neededitems.filters.special', 'SPECIAL')
+                  }}
+                </UButton>
               </div>
               <div class="border-t border-base pt-3">
                 <div class="mb-2 text-xs font-medium text-content-tertiary">

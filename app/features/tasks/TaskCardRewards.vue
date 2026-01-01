@@ -52,8 +52,9 @@
         </span>
       </template>
       <!-- Item Rewards Summary -->
-      <AppTooltip v-if="itemRewards.length > 0" :text="itemRewardsSummaryTooltip">
         <span
+          v-if="itemRewards.length > 0"
+          v-tooltip="itemRewardsSummaryTooltip"
           class="inline-flex cursor-help items-center gap-1.5 rounded !bg-[var(--color-reward-item)] px-2 py-0.5 !text-white"
         >
           <UIcon name="i-mdi-package-variant" aria-hidden="true" class="h-4 w-4 !text-white" />
@@ -67,62 +68,56 @@
             }}
           </span>
         </span>
-      </AppTooltip>
       <!-- Offer Unlock Summary -->
-      <AppTooltip v-if="offerUnlockRewards.length > 0" :text="offerUnlockSummaryTooltip">
-        <span
-          class="inline-flex cursor-help items-center gap-1.5 rounded !bg-[var(--color-reward-item)] px-2 py-0.5 !text-white"
-        >
-          <UIcon name="i-mdi-cart-check" aria-hidden="true" class="h-4 w-4 !text-white" />
-          <span>
-            {{
-              t(
-                'page.tasks.questcard.unlocksCount',
-                { count: offerUnlockRewards.length },
-                `${offerUnlockRewards.length} unlock${offerUnlockRewards.length === 1 ? '' : 's'}`
-              )
-            }}
-          </span>
+      <span
+        v-if="offerUnlockRewards.length > 0"
+        v-tooltip="offerUnlockSummaryTooltip"
+        class="inline-flex cursor-help items-center gap-1.5 rounded !bg-[var(--color-reward-item)] px-2 py-0.5 !text-white"
+      >
+        <UIcon name="i-mdi-cart-check" aria-hidden="true" class="h-4 w-4 !text-white" />
+        <span>
+          {{
+            t(
+              'page.tasks.questcard.unlocksCount',
+              { count: offerUnlockRewards.length },
+              `${offerUnlockRewards.length} unlock${offerUnlockRewards.length === 1 ? '' : 's'}`
+            )
+          }}
         </span>
-      </AppTooltip>
+      </span>
       <!-- Chain info & Dropdown toggle -->
       <div class="ml-auto flex items-center gap-4">
         <div v-if="unlocksNextCount > 0 || impactCount > 0" class="flex shrink-0 items-center">
-          <AppTooltip
+          <span
             v-if="unlocksNextCount > 0"
-            :text="
+            v-tooltip="
               t(
                 'page.tasks.questcard.unlocksNextTooltip',
                 'Number of quests that become available after completing this task'
               )
             "
+            class="cursor-help border-b border-dotted border-base text-content-secondary"
           >
-            <span
-              class="cursor-help border-b border-dotted border-base text-content-secondary"
-            >
-              {{ t('page.tasks.questcard.unlocksNext', 'Unlocks next') }}: {{ unlocksNextCount }}
-            </span>
-          </AppTooltip>
+            {{ t('page.tasks.questcard.unlocksNext', 'Unlocks next') }}: {{ unlocksNextCount }}
+          </span>
           <span v-if="unlocksNextCount > 0 && impactCount > 0" class="mx-2 text-content-secondary">•</span>
-          <AppTooltip
+          <span
             v-if="impactCount > 0"
-            :text="
+            v-tooltip="
               t(
                 'page.tasks.questcard.impactTooltip',
                 'Number of incomplete quests that depend on this task being completed'
               )
             "
+            class="cursor-help border-b border-dotted border-base text-content-secondary"
           >
-            <span
-              class="cursor-help border-b border-dotted border-base text-content-secondary"
-            >
-              {{ t('page.tasks.questcard.impact', 'Impact') }}: {{ impactCount }}
-            </span>
-          </AppTooltip>
+            {{ t('page.tasks.questcard.impact', 'Impact') }}: {{ impactCount }}
+          </span>
         </div>
 
-        <AppTooltip v-if="hasExpandableDetails" :text="toggleDetailsLabel">
           <UButton
+            v-if="hasExpandableDetails"
+            v-tooltip="toggleDetailsLabel"
             size="xs"
             color="neutral"
             variant="ghost"
@@ -138,7 +133,6 @@
               class="h-5 w-5 text-content-tertiary"
             />
           </UButton>
-        </AppTooltip>
       </div>
     </div>
     <div
@@ -160,13 +154,11 @@
               {{ t('page.tasks.questcard.rewardItems', 'Items') }}:
             </div>
             <div class="flex flex-wrap gap-2">
-              <AppTooltip
-                v-for="(reward, index) in itemRewards"
-                :key="`item-${reward.item?.id || index}`"
-                :text="getItemTooltip(reward.item)"
-              >
                 <component
                   :is="reward.item?.id ? 'a' : 'span'"
+                  v-for="(reward, index) in itemRewards"
+                  :key="`item-${reward.item?.id || index}`"
+                  v-tooltip="getItemTooltip(reward.item)"
                   :href="reward.item?.id ? `https://tarkov.dev/item/${reward.item?.id}` : undefined"
                   :target="reward.item?.id ? '_blank' : undefined"
                   :rel="reward.item?.id ? 'noopener noreferrer' : undefined"
@@ -194,7 +186,6 @@
                     </span>
                   </div>
                 </component>
-              </AppTooltip>
             </div>
           </div>
 
@@ -207,13 +198,11 @@
               {{ t('page.tasks.questcard.unlocksPurchase', 'Unlocks purchase') }}:
             </div>
             <div class="flex flex-wrap justify-end gap-2 text-left">
-              <AppTooltip
-                v-for="offer in offerUnlockRewards"
-                :key="`offer-${offer.id}`"
-                :text="getItemTooltip(offer.item)"
-              >
                 <component
                   :is="offer.item?.id ? 'a' : 'span'"
+                  v-for="offer in offerUnlockRewards"
+                  :key="`offer-${offer.id}`"
+                  v-tooltip="getItemTooltip(offer.item)"
                   :href="offer.item?.id ? `https://tarkov.dev/item/${offer.item?.id}` : undefined"
                   :target="offer.item?.id ? '_blank' : undefined"
                   :rel="offer.item?.id ? 'noopener noreferrer' : undefined"
@@ -238,7 +227,6 @@
                     </span>
                   </div>
                 </component>
-              </AppTooltip>
             </div>
           </div>
         </div>

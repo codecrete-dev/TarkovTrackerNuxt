@@ -95,8 +95,8 @@
             >
               Item Found!
             </div>
-            <AppTooltip :text="`View ${foundItem.name} on tarkov.dev`">
               <a
+                v-tooltip="`View ${foundItem.name} on tarkov.dev`"
                 :href="foundItem.link"
                 :aria-label="`View ${foundItem.name} on tarkov.dev`"
                 target="_blank"
@@ -152,7 +152,6 @@
                   </div>
                 </div>
               </a>
-            </AppTooltip>
             <UButton
               size="xs"
               color="neutral"
