@@ -16,7 +16,7 @@
         class="w-full overflow-hidden rounded-lg border border-base bg-surface-base px-2 py-1.5 backdrop-blur-sm dark:bg-surface-950"
       >
         <div class="flex min-w-0 items-center gap-1">
-          <span class="mr-1 shrink-0 leading-none">
+          <span class="shrink-0 leading-none">
             <div class="group relative h-12 w-12 overflow-hidden">
               <template v-if="isDataReady && groupIcon">
                 <NuxtImg
@@ -99,7 +99,7 @@
               />
             </div>
           </span>
-          <span class="ml-0.5 flex shrink-0 flex-col items-center gap-0.5">
+          <span class="flex w-12 shrink-0 flex-col items-center gap-0.5">
               <button
                 v-tooltip="
                   useAutomaticLevel
