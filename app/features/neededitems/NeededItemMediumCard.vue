@@ -16,33 +16,18 @@
     <div v-if="item" class="flex h-12 shrink-0 items-center justify-center px-2 pt-2">
       <div class="line-clamp-2 text-center text-sm leading-tight">
         {{ item.name }}
-          <span v-if="props.need.foundInRaid" v-tooltip="$t('page.neededitems.fir_required')" class="inline-block">
-            <UIcon
-              name="i-mdi-checkbox-marked-circle-outline"
-              class="ml-0.5 inline-block h-3.5 w-3.5"
-            />
-          </span>
-          <span v-if="isKappaRequired" v-tooltip="$t('task.kappa_req', 'Required for Kappa quest')" class="inline-block">
-            <UIcon
-              name="i-mdi-trophy"
-              class="text-entity-kappa ml-0.5 inline-block h-3.5 w-3.5"
-            />
-          </span>
-          <button
-            v-if="isCraftable"
-            v-tooltip="craftableTitle"
-            type="button"
-            class="ml-0.5 inline-flex"
-            :aria-label="craftableTitle"
-            @click.stop="goToCraftStation"
-          >
-            <UIcon
-              name="i-mdi-hammer-wrench"
-              class="h-3.5 w-3.5 opacity-90"
-              :class="craftableIconClass"
-              aria-hidden="true"
-            />
-          </button>
+        <ItemIndicators
+          :found-in-raid="props.need.foundInRaid"
+          fir-icon-class="ml-0.5 h-3.5 w-3.5"
+          :is-craftable="isCraftable"
+          :craftable-title="craftableTitle"
+          craftable-icon-base-class="ml-0.5 h-3.5 w-3.5 opacity-90"
+          :craftable-icon-class="craftableIconClass"
+          :kappa-required="isKappaRequired"
+          :kappa-title="$t('task.kappa_req', 'Required for Kappa quest')"
+          kappa-icon-class="ml-0.5 h-3.5 w-3.5 text-entity-kappa"
+          @craft="goToCraftStation"
+        />
       </div>
     </div>
     <!-- Task/Station info - fixed height with line clamp -->
@@ -103,6 +88,7 @@
   import { useTarkovStore } from '@/stores/useTarkov';
   import { useLocaleNumberFormatter } from '@/utils/formatters';
   import ItemCountControls from './ItemCountControls.vue';
+  import ItemIndicators from './ItemIndicators.vue';
   import RequirementInfo from './RequirementInfo.vue';
   import TeamNeedsDisplay from './TeamNeedsDisplay.vue';
   const TaskLink = defineAsyncComponent(() => import('@/features/tasks/TaskLink.vue'));

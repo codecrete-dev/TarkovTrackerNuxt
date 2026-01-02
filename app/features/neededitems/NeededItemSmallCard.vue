@@ -1,6 +1,6 @@
 <template>
   <div
-    class="group flex h-full flex-col rounded-lg border shadow-sm transition-all duration-200"
+    class="group flex h-full flex-col rounded-lg shadow-sm transition-all duration-200"
     :class="itemCardClasses"
   >
     <template v-if="hasItem">
@@ -200,9 +200,9 @@
   };
   const itemCardClasses = computed(() => {
     return {
-      'bg-success-50/50 border-success-200 dark:bg-success-900/10 dark:border-success-500/30':
+      'bg-success-500/20':
         isCompleted.value,
-      'bg-surface-elevated border-base hover:border-primary-300':
+      'bg-surface-elevated':
         !isCompleted.value,
     };
   });
@@ -217,9 +217,9 @@
   const itemCountTagClasses = computed(() => {
     return {
       'bg-clip-padding rounded-tl-[5px] rounded-br-[10px]': true,
-      'bg-surface-elevated text-content-primary shadow-md ring-1 ring-black/5 dark:ring-0':
-        !isCompleted.value,
-      'bg-success-600 text-white shadow-md': isCompleted.value,
+      'bg-surface-elevated shadow-md ring-1 ring-black/5 dark:ring-0': true,
+      'text-content-primary': !isCompleted.value,
+      'text-success-600 dark:text-success-400 font-bold': isCompleted.value,
     };
   });
 </script>
