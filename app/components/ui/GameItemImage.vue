@@ -8,7 +8,7 @@
       fill ? 'flex items-center justify-center' : '',
     ]"
   >
-    <div :class="['absolute inset-0', resolvedBackgroundClass]"></div>
+    <div :class="['absolute inset-0 overlay-stash-bg', resolvedBackgroundClass]"></div>
     <img
       v-if="isVisible && formattedSrc"
       :src="formattedSrc"
@@ -78,15 +78,15 @@
     return classes;
   });
   const backgroundClassMap = {
-    violet: 'bg-[var(--color-stash-violet)] overlay-stash-bg',
-    grey: 'bg-[var(--color-stash-grey)] overlay-stash-bg',
-    yellow: 'bg-[var(--color-stash-yellow)] overlay-stash-bg',
-    orange: 'bg-[var(--color-stash-orange)] overlay-stash-bg',
-    green: 'bg-[var(--color-stash-green)] overlay-stash-bg',
-    red: 'bg-[var(--color-stash-red)] overlay-stash-bg',
-    black: 'bg-[var(--color-stash-black)] overlay-stash-bg',
-    blue: 'bg-[var(--color-stash-blue)] overlay-stash-bg',
-    default: 'bg-[var(--color-stash-default)] overlay-stash-bg',
+    violet: 'bg-[var(--color-stash-violet)]',
+    grey: 'bg-[var(--color-stash-grey)]',
+    yellow: 'bg-[var(--color-stash-yellow)]',
+    orange: 'bg-[var(--color-stash-orange)]',
+    green: 'bg-[var(--color-stash-green)]',
+    red: 'bg-[var(--color-stash-red)]',
+    black: 'bg-[var(--color-stash-black)]',
+    blue: 'bg-[var(--color-stash-blue)]',
+    default: 'bg-[var(--color-stash-default)]',
   } as const;
   type BackgroundKey = keyof typeof backgroundClassMap;
   const resolvedBackgroundClass = computed(() => {

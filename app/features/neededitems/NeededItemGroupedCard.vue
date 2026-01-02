@@ -1,9 +1,12 @@
 <template>
-  <div class="flex h-full flex-col rounded-lg border border-base bg-surface-elevated shadow-sm">
-    <!-- Top section: Image + Name side by side -->
-    <div class="flex items-center gap-3 p-3">
-      <!-- Item image -->
-      <div class="relative h-16 w-16 shrink-0 overflow-hidden rounded bg-surface-base">
+  <div
+    class="flex h-full flex-col rounded-lg shadow-sm transition-all duration-200"
+    :class="cardClasses"
+  >
+    <!-- Top section: Image (left) + Content (right) -->
+    <div class="flex items-stretch">
+      <!-- Item image - fills top-left corner -->
+      <div class="relative h-24 w-24 shrink-0 overflow-hidden rounded-tl-lg">
         <GameItem
           :item="groupedItem.item"
           :is-visible="true"
@@ -13,10 +16,12 @@
           class="h-full w-full"
         />
       </div>
-      <!-- Item name + Total -->
-      <div class="min-w-0 flex-1">
+      <!-- Item name + Total - with padding -->
+      <div class="flex min-w-0 flex-1 flex-col justify-center p-3">
         <div class="flex min-w-0 items-start gap-1">
-          <div class="line-clamp-2 min-w-0 text-sm leading-tight font-semibold text-content-primary">
+          <div
+            class="text-content-primary line-clamp-2 min-w-0 text-sm leading-tight font-semibold"
+          >
             {{ groupedItem.item.name }}
           </div>
           <button
@@ -34,10 +39,14 @@
           </button>
         </div>
         <div class="mt-1 flex items-center gap-1">
-          <span class="text-xs text-content-tertiary">Total:</span>
+          <span class="text-content-tertiary text-xs">Total:</span>
           <span
             class="text-lg font-bold"
-            :class="isComplete ? 'text-success-400 dark:text-success-400' : 'text-primary-400 dark:text-primary-400'"
+            :class="
+              isComplete
+                ? 'text-success-600 dark:text-success-400'
+                : 'text-primary-400 dark:text-primary-400'
+            "
           >
             {{ formatCompactNumber(groupedItem.currentCount) }}/{{
               formatCompactNumber(groupedItem.total)
@@ -48,33 +57,36 @@
     </div>
     <!-- Breakdown grid -->
     <div
-      class="gap-px border-t border-base text-xs"
-      :class="activeFilter === 'tasks' || activeFilter === 'hideout' ? '' : 'grid grid-cols-2 divide-x divide-base'"
+      class="gap-px text-xs"
+      :class="activeFilter === 'tasks' || activeFilter === 'hideout' ? '' : 'grid grid-cols-2'"
     >
       <!-- Tasks section -->
       <div v-if="activeFilter !== 'hideout'" class="p-2">
-        <div v-if="activeFilter === 'all' || activeFilter === 'completed'" class="mb-1.5 flex items-center gap-1 text-content-tertiary">
+        <div
+          v-if="activeFilter === 'all' || activeFilter === 'completed'"
+          class="text-content-tertiary mb-1.5 flex items-center gap-1 opacity-75"
+        >
           <UIcon name="i-mdi-clipboard-list" class="h-3.5 w-3.5" />
           <span class="font-medium">Tasks</span>
         </div>
         <div class="flex gap-3">
-          <div v-if="groupedItem.taskFir > 0" class="flex items-center gap-1">
-              <span v-tooltip="'Found in Raid required'" class="inline-flex">
-                <UIcon
-                  name="i-mdi-checkbox-marked-circle-outline"
-                  class="h-3 w-3"
-                  :class="
-                    groupedItem.taskFirCurrent >= groupedItem.taskFir
-                      ? 'text-success-400 dark:text-success-400'
-                      : 'text-content-primary'
-                  "
-                />
-              </span>
+          <div v-if="groupedItem.taskFir > 0" class="flex items-baseline gap-1">
+            <span v-tooltip="'Found in Raid required'" class="inline-flex items-center">
+              <UIcon
+                name="i-mdi-checkbox-marked-circle-outline"
+                class="h-3 w-3"
+                :class="
+                  groupedItem.taskFirCurrent >= groupedItem.taskFir
+                    ? 'text-success-600 dark:text-success-400'
+                    : 'text-content-primary'
+                "
+              />
+            </span>
             <span
-              class="font-semibold"
+              class="leading-none font-semibold"
               :class="
                 groupedItem.taskFirCurrent >= groupedItem.taskFir
-                  ? 'text-success-400 dark:text-success-400'
+                  ? 'text-success-600 dark:text-success-400'
                   : 'text-content-primary'
               "
             >
@@ -87,7 +99,7 @@
               class="h-3 w-3"
               :class="
                 groupedItem.taskNonFirCurrent >= groupedItem.taskNonFir
-                  ? 'text-success-400 dark:text-success-400'
+                  ? 'text-success-600 dark:text-success-400'
                   : 'text-content-tertiary'
               "
             />
@@ -95,7 +107,7 @@
               class="font-semibold"
               :class="
                 groupedItem.taskNonFirCurrent >= groupedItem.taskNonFir
-                  ? 'text-success-400 dark:text-success-400'
+                  ? 'text-success-600 dark:text-success-400'
                   : 'text-content-primary'
               "
             >
@@ -112,28 +124,31 @@
       </div>
       <!-- Hideout section -->
       <div v-if="activeFilter !== 'tasks'" class="p-2">
-        <div v-if="activeFilter === 'all' || activeFilter === 'completed'" class="mb-1.5 flex items-center gap-1 text-content-tertiary">
+        <div
+          v-if="activeFilter === 'all' || activeFilter === 'completed'"
+          class="text-content-tertiary mb-1.5 flex items-center gap-1 opacity-75"
+        >
           <UIcon name="i-mdi-home" class="h-3.5 w-3.5" />
           <span class="font-medium">Hideout</span>
         </div>
         <div class="flex gap-3">
-          <div v-if="groupedItem.hideoutFir > 0" class="flex items-center gap-1">
-              <span v-tooltip="'Found in Raid required'" class="inline-flex">
-                <UIcon
-                  name="i-mdi-checkbox-marked-circle-outline"
-                  class="h-3 w-3"
-                  :class="
-                    groupedItem.hideoutFirCurrent >= groupedItem.hideoutFir
-                      ? 'text-success-400 dark:text-success-400'
-                      : 'text-content-primary'
-                  "
-                />
-              </span>
+          <div v-if="groupedItem.hideoutFir > 0" class="flex items-baseline gap-1">
+            <span v-tooltip="'Found in Raid required'" class="inline-flex items-center">
+              <UIcon
+                name="i-mdi-checkbox-marked-circle-outline"
+                class="h-3 w-3"
+                :class="
+                  groupedItem.hideoutFirCurrent >= groupedItem.hideoutFir
+                    ? 'text-success-600 dark:text-success-400'
+                    : 'text-content-primary'
+                "
+              />
+            </span>
             <span
-              class="font-semibold"
+              class="leading-none font-semibold"
               :class="
                 groupedItem.hideoutFirCurrent >= groupedItem.hideoutFir
-                  ? 'text-success-400 dark:text-success-400'
+                  ? 'text-success-600 dark:text-success-400'
                   : 'text-content-primary'
               "
             >
@@ -146,7 +161,7 @@
               class="h-3 w-3"
               :class="
                 groupedItem.hideoutNonFirCurrent >= groupedItem.hideoutNonFir
-                  ? 'text-success-400 dark:text-success-400'
+                  ? 'text-success-600 dark:text-success-400'
                   : 'text-content-tertiary'
               "
             />
@@ -154,7 +169,7 @@
               class="font-semibold"
               :class="
                 groupedItem.hideoutNonFirCurrent >= groupedItem.hideoutNonFir
-                  ? 'text-success-400 dark:text-success-400'
+                  ? 'text-success-600 dark:text-success-400'
                   : 'text-content-primary'
               "
             >
@@ -204,6 +219,12 @@
   const itemId = computed(() => props.groupedItem.itemId);
   const isComplete = computed(() => {
     return props.groupedItem.currentCount >= props.groupedItem.total;
+  });
+  const cardClasses = computed(() => {
+    return {
+      'bg-success-500/20': isComplete.value,
+      'bg-surface-elevated': !isComplete.value,
+    };
   });
   const { isCraftable, craftableIconClass, craftableTitle, goToCraftStation } =
     useCraftableItem(itemId);

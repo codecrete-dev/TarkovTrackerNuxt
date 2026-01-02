@@ -1,10 +1,14 @@
 <template>
   <KeepAlive>
-    <div ref="cardRef" class="mb-1 rounded" :class="itemRowClasses">
+    <div
+      ref="cardRef"
+      class="mb-1 rounded-lg shadow-sm transition-all duration-200"
+      :class="itemRowClasses"
+    >
       <div class="px-3 py-2">
         <div class="mx-0 flex flex-nowrap items-center">
           <div class="flex min-w-0 flex-1 items-center p-0">
-            <div class="relative h-18 w-18 shrink-0">
+            <div class="relative aspect-square h-20 shrink-0">
               <GameItem
                 v-if="isVisible"
                 :item="imageItem"
@@ -66,7 +70,9 @@
                 <UCard v-if="smallDialog" :ui="{ body: { padding: 'p-0 sm:p-0' } }">
                   <div class="flex flex-col items-center">
                     <!-- Item image -->
-                    <div class="flex aspect-video w-full items-center justify-center bg-surface-elevated">
+                    <div
+                      class="bg-surface-elevated flex aspect-video w-full items-center justify-center"
+                    >
                       <GameItem
                         v-if="imageItem"
                         :item="imageItem"
@@ -97,7 +103,7 @@
                       />
                     </div>
                     <!-- Item need details -->
-                    <div class="mx-2 mt-2 flex w-full flex-col self-center items-center">
+                    <div class="mx-2 mt-2 flex w-full flex-col items-center self-center">
                       <template v-if="props.need.needType == 'taskObjective'">
                         <TaskLink :task="relatedTask" />
                         <RequirementInfo
@@ -148,7 +154,11 @@
                       </template>
                       <template v-else>
                         <CollectedToggleButton
-                          :tooltip="isCollected ? t('page.neededitems.collected') : t('page.neededitems.mark_as_collected')"
+                          :tooltip="
+                            isCollected
+                              ? t('page.neededitems.collected')
+                              : t('page.neededitems.mark_as_collected')
+                          "
                           :is-collected="isCollected"
                           class="flex h-12 w-12 items-center justify-center rounded-lg border transition-colors"
                           :class="
@@ -156,7 +166,11 @@
                               ? 'bg-success-600 border-success-500 hover:bg-success-500 text-white'
                               : 'bg-surface-elevated text-content-secondary hover:bg-surface-hover border-base hover:text-content-primary'
                           "
-                          :aria-label="isCollected ? t('page.neededitems.collected') : t('page.neededitems.mark_as_collected')"
+                          :aria-label="
+                            isCollected
+                              ? t('page.neededitems.collected')
+                              : t('page.neededitems.mark_as_collected')
+                          "
                           icon-class="h-8 w-8"
                           @toggle="$emit('toggleCount')"
                         />
@@ -170,11 +184,8 @@
                       />
                     </div>
                     <!-- Show static count for completed parent items (Completed tab) -->
-                    <div
-                      v-else
-                      class="mx-2 mt-4 mb-4 flex w-full items-center justify-center"
-                    >
-                      <span class="text-success-400 text-lg font-bold">
+                    <div v-else class="mx-2 mt-4 mb-4 flex w-full items-center justify-center">
+                      <span class="text-success-600 dark:text-success-400 text-lg font-bold">
                         {{ formatNumber(currentCount) }}/{{ formatNumber(neededCount) }}
                       </span>
                     </div>
@@ -216,7 +227,11 @@
                 </template>
                 <template v-else>
                   <CollectedToggleButton
-                    :tooltip="isCollected ? t('page.neededitems.collected') : t('page.neededitems.mark_as_collected')"
+                    :tooltip="
+                      isCollected
+                        ? t('page.neededitems.collected')
+                        : t('page.neededitems.mark_as_collected')
+                    "
                     :is-collected="isCollected"
                     class="flex h-8 w-8 items-center justify-center rounded-lg border transition-colors"
                     :class="
@@ -224,7 +239,11 @@
                         ? 'bg-success-600 border-success-500 hover:bg-success-500 text-white'
                         : 'bg-surface-elevated text-content-secondary hover:bg-surface-hover border-base hover:text-content-primary'
                     "
-                    :aria-label="isCollected ? t('page.neededitems.collected') : t('page.neededitems.mark_as_collected')"
+                    :aria-label="
+                      isCollected
+                        ? t('page.neededitems.collected')
+                        : t('page.neededitems.mark_as_collected')
+                    "
                     icon-class="h-6 w-6"
                     @toggle="$emit('toggleCount')"
                   />
@@ -238,7 +257,7 @@
               </div>
               <!-- Show static count for completed parent items -->
               <div v-else class="mr-2 flex items-center justify-center self-center">
-                <span class="text-success-400 text-sm font-semibold">
+                <span class="text-success-600 dark:text-success-400 text-sm font-semibold">
                   {{ formatNumber(currentCount) }}/{{ formatNumber(neededCount) }}
                 </span>
               </div>
@@ -299,8 +318,7 @@
   const { isVisible } = useItemRowIntersection(cardRef);
   const itemRowClasses = computed(() => {
     return {
-      'bg-gradient-to-l from-success-100 dark:from-complete to-surface':
-        selfCompletedNeed.value || currentCount.value >= neededCount.value,
+      'bg-success-500/20': selfCompletedNeed.value || currentCount.value >= neededCount.value,
       'bg-surface-elevated': !(selfCompletedNeed.value || currentCount.value >= neededCount.value),
     };
   });

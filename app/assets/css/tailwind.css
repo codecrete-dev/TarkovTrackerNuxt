@@ -614,7 +614,7 @@ select:disabled,
 
   /* Overlay utility */
   .overlay-stash-bg {
-    @apply absolute inset-[1px] rounded; /* Slight indent to show border */
+    @apply absolute rounded inset-[1px]; /* Slight indent to show border */
     mix-blend-mode: normal;
   }
 

@@ -75,7 +75,7 @@
         <div v-if="visibleCount < displayItems.length" ref="gridSentinel" class="h-1 w-full"></div>
       </div>
       <!-- List View -->
-      <div v-else-if="viewMode === 'list'" class="divide-y divide-base">
+      <div v-else-if="viewMode === 'list'" class="divide-base">
         <NeededItem
           v-for="(item, index) in visibleIndividualItems"
           :key="`${item.needType}-${item.id}`"

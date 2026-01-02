@@ -16,7 +16,7 @@
           ]"
           @click="handleCardClick"
         >
-          <div class="absolute top-0 left-0 z-40 peer/indicators">
+          <div class="peer/indicators absolute top-0 left-0 z-40">
             <div
               class="flex items-center gap-1 rounded-br-lg px-2 py-1 text-sm font-bold shadow-lg"
               :class="itemCountTagClasses"
@@ -44,7 +44,11 @@
             <span
               class="rounded bg-black/60 px-2 py-1 text-sm font-bold tracking-wide text-white backdrop-blur-sm"
             >
-              {{ currentCount >= neededCount ? t('page.neededitems.uncollect') : t('page.neededitems.collect') }}
+              {{
+                currentCount >= neededCount
+                  ? t('page.neededitems.uncollect')
+                  : t('page.neededitems.collect')
+              }}
             </span>
           </div>
           <GameItem
@@ -63,7 +67,7 @@
           <!-- Item name -->
           <div class="flex min-h-10 items-start justify-center">
             <span
-                class="line-clamp-2 text-center text-[clamp(0.7rem,2.5vw,0.875rem)] leading-snug font-medium text-content-primary"
+              class="text-content-primary line-clamp-2 text-center text-[clamp(0.7rem,2.5vw,0.875rem)] leading-snug font-medium"
             >
               {{ item?.name ?? '' }}
             </span>
@@ -84,14 +88,14 @@
                 compact
                 class="max-w-full text-[clamp(0.625rem,2vw,0.75rem)]"
               />
-              <span class="ml-1 text-[clamp(0.625rem,2vw,0.75rem)] text-content-tertiary">
+              <span class="text-content-tertiary ml-1 text-[clamp(0.625rem,2vw,0.75rem)]">
                 {{ props.need.hideoutModule.level }}
               </span>
             </template>
           </div>
           <!-- Requirements (Level & Tasks Before) -->
           <div
-              class="flex min-h-10 flex-wrap items-center justify-center gap-x-3 gap-y-0.5 text-[clamp(0.625rem,1.8vw,0.75rem)] text-content-tertiary"
+            class="text-content-tertiary flex min-h-10 flex-wrap items-center justify-center gap-x-3 gap-y-0.5 text-[clamp(0.625rem,1.8vw,0.75rem)]"
           >
             <span
               v-if="levelRequired > 0 && levelRequired > playerLevel"
@@ -108,7 +112,7 @@
         </div>
       </div>
       <!-- Controls - outside tooltip wrapper to prevent overlap -->
-      <div v-if="!isSingleItem" class="mt-auto flex items-center justify-center pb-2 px-2">
+      <div v-if="!isSingleItem" class="mt-auto flex items-center justify-center px-2 pb-2">
         <template v-if="!selfCompletedNeed">
           <ItemCountControls
             :current-count="currentCount"
@@ -120,7 +124,7 @@
             @click.stop
           />
         </template>
-        <span v-else class="text-sm font-bold text-success-600 dark:text-success-400">
+        <span v-else class="text-success-600 dark:text-success-400 text-sm font-bold">
           {{ currentCount }}/{{ neededCount }} ✓
         </span>
       </div>
@@ -129,21 +133,21 @@
     </template>
     <template v-else>
       <div :class="imageContainerClasses">
-        <div class="h-full w-full animate-pulse rounded-t-lg bg-surface-elevated"></div>
+        <div class="bg-surface-elevated h-full w-full animate-pulse rounded-t-lg"></div>
       </div>
       <div class="flex flex-1 flex-col p-2">
         <div class="flex min-h-10 items-start justify-center">
-          <span class="h-4 w-3/4 animate-pulse rounded bg-surface-elevated"></span>
+          <span class="bg-surface-elevated h-4 w-3/4 animate-pulse rounded"></span>
         </div>
         <div class="flex min-h-7 w-full items-center justify-center">
-          <span class="h-3 w-1/2 animate-pulse rounded bg-surface-elevated"></span>
+          <span class="bg-surface-elevated h-3 w-1/2 animate-pulse rounded"></span>
         </div>
         <div class="flex min-h-10 flex-wrap items-center justify-center gap-x-3 gap-y-0.5">
-          <span class="h-3 w-1/3 animate-pulse rounded bg-surface-elevated"></span>
-          <span class="h-3 w-1/3 animate-pulse rounded bg-surface-elevated"></span>
+          <span class="bg-surface-elevated h-3 w-1/3 animate-pulse rounded"></span>
+          <span class="bg-surface-elevated h-3 w-1/3 animate-pulse rounded"></span>
         </div>
         <div class="mt-auto flex items-center justify-center pt-2">
-          <span class="h-4 w-10 animate-pulse rounded bg-surface-elevated"></span>
+          <span class="bg-surface-elevated h-4 w-10 animate-pulse rounded"></span>
         </div>
       </div>
     </template>
@@ -192,7 +196,9 @@
   const hasItem = computed(() => Boolean(item.value));
   // Simplified UI for single-quantity items
   const isSingleItem = computed(() => neededCount.value === 1);
-  const isCompleted = computed(() => selfCompletedNeed.value || currentCount.value >= neededCount.value);
+  const isCompleted = computed(
+    () => selfCompletedNeed.value || currentCount.value >= neededCount.value
+  );
   const handleCardClick = () => {
     if (hasItem.value && !selfCompletedNeed.value) {
       emit('toggleCount');
@@ -200,10 +206,8 @@
   };
   const itemCardClasses = computed(() => {
     return {
-      'bg-success-500/20':
-        isCompleted.value,
-      'bg-surface-elevated':
-        !isCompleted.value,
+      'bg-success-500/20': isCompleted.value,
+      'bg-surface-elevated': !isCompleted.value,
     };
   });
   const imageContainerClasses = computed(() => {
@@ -211,13 +215,13 @@
       'group/image relative z-0 aspect-[4/3] w-full shrink-0 origin-bottom overflow-hidden rounded';
     const transitionClasses = 'transition-transform duration-150 ease-out will-change-transform';
     const hoverClasses =
-      'hover:z-20 hover:-translate-y-1 hover:scale-[1.08] hover:shadow-2xl hover:ring-1 hover:ring-black/5 dark:hover:ring-white/10';
+      'hover:z-20 hover:-translate-y-1 hover:scale-[1.08] hover:ring-1 hover:ring-black/5 dark:hover:ring-white/10';
     return [baseLayoutClasses, transitionClasses, hoverClasses];
   });
   const itemCountTagClasses = computed(() => {
     return {
       'bg-clip-padding rounded-tl-[5px] rounded-br-[10px]': true,
-      'bg-surface-elevated shadow-md ring-1 ring-black/5 dark:ring-0': true,
+      'bg-surface-elevated': true,
       'text-content-primary': !isCompleted.value,
       'text-success-600 dark:text-success-400 font-bold': isCompleted.value,
     };
