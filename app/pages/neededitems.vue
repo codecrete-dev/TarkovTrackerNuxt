@@ -1,5 +1,5 @@
 <template>
-  <div class="px-4 py-6">
+  <div class="p-4">
     <!-- Filter Bar -->
     <NeededItemsFilterBar
       v-model="activeFilter"
@@ -20,7 +20,7 @@
       <div v-if="metadataStore.loading || !metadataStore.isDataLoaded" class="p-2">
         <div
           v-if="viewMode === 'list'"
-          class="divide-y divide-base"
+          class="divide-base"
         >
           <div
             v-for="n in 10"
@@ -37,7 +37,7 @@
         </div>
         <div
           v-else
-          class="grid grid-cols-2 items-stretch gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6"
+          class="grid grid-cols-2 items-stretch gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7"
         >
           <div
             v-for="n in 12"
@@ -75,7 +75,7 @@
         <div v-if="visibleCount < displayItems.length" ref="gridSentinel" class="h-1 w-full"></div>
       </div>
       <!-- List View -->
-      <div v-else-if="viewMode === 'list'" class="divide-base">
+      <div v-else-if="viewMode === 'list'">
         <NeededItem
           v-for="(item, index) in visibleIndividualItems"
           :key="`${item.needType}-${item.id}`"
@@ -88,7 +88,7 @@
       <!-- Grid View -->
       <div v-else class="p-2">
         <div
-          class="grid grid-cols-2 items-stretch gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6"
+          class="grid grid-cols-2 items-stretch gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7"
         >
           <NeededItem
             v-for="(item, index) in visibleIndividualItems"

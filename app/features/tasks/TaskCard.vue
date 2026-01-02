@@ -165,7 +165,12 @@
               v-if="objectiveProgress.total > 0 && !(isInvalid && !isFailed)"
               variant="solid"
               color="gray"
-              badge-class="inline-flex items-center gap-1 text-xs border dark:text-gray-100 dark:border-gray-100"
+              :badge-class="[
+                'inline-flex items-center gap-1 text-xs border',
+                objectiveProgress.done === objectiveProgress.total
+                  ? 'text-success-400 border-success-400'
+                  : 'dark:text-gray-100 dark:border-gray-100'
+              ]"
               icon="i-mdi-progress-check"
               :label="t('page.tasks.questcard.progress', objectiveProgress)"
             />

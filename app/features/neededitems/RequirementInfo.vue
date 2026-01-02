@@ -9,7 +9,7 @@
     </div>
     <!-- Locked Before -->
     <div v-if="lockedBefore > 0" class="mr-2 flex items-center">
-      <UIcon name="i-mdi-lock-open-outline" class="h-5 w-5" />
+      <UIcon name="i-mdi-lock-open-outline" class="h-5 w-5 mr-1" />
       <i18n-t keypath="page.tasks.questcard.lockedbefore" scope="global">
         <template #count>{{ lockedBefore }}</template>
       </i18n-t>

@@ -11,7 +11,7 @@
     </div>
   </template>
   <template v-else-if="props.itemStyle == 'row'">
-    <div class="w-full pt-1">
+    <div class="w-full mb-2">
       <NeededItemRow
         :need="props.need"
         @decrease-count="decreaseCount()"

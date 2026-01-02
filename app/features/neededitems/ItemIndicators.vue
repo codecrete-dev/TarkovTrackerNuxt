@@ -5,12 +5,6 @@
       :class="firIconClass"
     />
   </span>
-  <span v-if="kappaRequired" v-tooltip="kappaTitleText" class="inline-flex">
-    <UIcon
-      name="i-mdi-trophy"
-      :class="kappaIconClass"
-    />
-  </span>
   <button
     v-if="isCraftable"
     v-tooltip="craftableTitleText"
@@ -21,6 +15,12 @@
   >
     <UIcon name="i-mdi-hammer-wrench" :class="[craftableIconBaseClass, craftableIconClass]" />
   </button>
+  <span v-if="kappaRequired" v-tooltip="kappaTitleText" class="inline-flex">
+    <UIcon
+      name="i-mdi-trophy"
+      :class="kappaIconClass"
+    />
+  </span>
 </template>
 <script setup lang="ts">
   const props = withDefaults(
