@@ -1,6 +1,6 @@
 <template>
   <header
-    class="fixed top-0 right-0 z-40 h-16 border-b border-gray-200 bg-white/95 shadow-sm backdrop-blur-sm dark:bg-transparent dark:from-surface-800/95 dark:to-surface-950/95 dark:border-primary-800/60 dark:bg-linear-to-tr dark:shadow-[0_1px_0_rgba(0,0,0,0.4)]"
+    class="fixed top-0 right-0 z-40 h-16 border-b border-gray-200 bg-white/95 shadow-sm backdrop-blur-sm dark:bg-transparent dark:from-surface-800/95 dark:to-surface-950/95 dark:border-accent-800/60 dark:bg-linear-to-tr dark:shadow-[0_1px_0_rgba(0,0,0,0.4)]"
   >
     <div class="flex h-full items-center gap-1 px-2 sm:gap-3 sm:px-3">
       <!-- Left: Toggle Button -->

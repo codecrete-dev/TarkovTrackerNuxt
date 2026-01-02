@@ -1,6 +1,6 @@
 <template>
   <div
-    class="group focus-within:ring-primary-500 focus-within:ring-offset-surface-900 flex w-full items-center gap-4 rounded-md px-2 py-2 transition-colors focus-within:ring-2 focus-within:ring-offset-2"
+    class="group focus-within:ring-accent-500 focus-within:ring-offset-surface-900 flex w-full items-center gap-4 rounded-md px-2 py-2 transition-colors focus-within:ring-2 focus-within:ring-offset-2"
     :class="[
       isComplete ? 'bg-success-500/10' : 'hover:bg-surface-200 dark:hover:bg-white/5',
       isParentTaskLocked ? 'cursor-not-allowed opacity-80' : 'cursor-pointer',
@@ -57,7 +57,7 @@
                 : t('page.tasks.questcard.complete', 'Complete')
             "
             type="button"
-            class="focus-visible:ring-primary-500 focus-visible:ring-offset-surface-900 flex h-7 w-7 items-center justify-center rounded-md border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+            class="focus-visible:ring-accent-500 focus-visible:ring-offset-surface-900 flex h-7 w-7 items-center justify-center rounded-md border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
             :aria-label="toggleObjectiveLabel"
             :aria-pressed="isComplete"
             :disabled="isParentTaskLocked"

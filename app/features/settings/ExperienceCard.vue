@@ -21,7 +21,7 @@
           </template>
         </UAlert>
         <!-- Automatic Level Calculation Toggle -->
-        <div class="rounded-lg border border-base bg-surface-elevated p-4 dark:border-primary-700/30">
+        <div class="rounded-lg border border-base bg-surface-elevated p-4 dark:border-accent-700/30">
           <div class="flex items-start justify-between gap-3">
             <div class="flex-1">
               <div class="mb-1 text-sm font-semibold text-content-primary">
@@ -59,12 +59,12 @@
           </UAlert>
         </div>
         <!-- Current Level Display -->
-        <div class="rounded-lg border border-base bg-surface-elevated p-4 dark:border-primary-700/30">
+        <div class="rounded-lg border border-base bg-surface-elevated p-4 dark:border-accent-700/30">
           <div class="mb-3 flex items-center justify-between">
             <span class="text-sm font-semibold text-content-primary">
               {{ $t('settings.experience.current_level', 'Current Level') }}
             </span>
-            <span class="text-2xl font-bold text-primary-600 dark:text-primary-400">
+            <span class="text-2xl font-bold text-accent-600 dark:text-accent-400">
               {{ xpCalculation.derivedLevel.value }}
             </span>
           </div>
@@ -76,7 +76,7 @@
             </div>
             <div class="h-2 overflow-hidden rounded-full bg-surface-400 dark:bg-surface-700">
               <div
-                class="h-full bg-primary-500 transition-all duration-300"
+                class="h-full bg-accent-500 transition-all duration-300"
                 :style="{ width: `${xpCalculation.xpProgress.value}%` }"
               ></div>
             </div>
@@ -88,7 +88,7 @@
         </div>
         <div class="grid gap-4 md:grid-cols-2">
           <!-- Left: XP Equation Breakdown -->
-          <div class="rounded-lg border border-base bg-surface-elevated p-4 dark:border-primary-700/30">
+          <div class="rounded-lg border border-base bg-surface-elevated p-4 dark:border-accent-700/30">
              <div class="mb-3 text-sm font-semibold text-content-primary">
               {{ $t('settings.experience.breakdown', 'XP Breakdown') }}
             </div>
@@ -113,14 +113,14 @@
               <!-- Total -->
               <div class="flex justify-between items-center font-bold text-lg py-0.5">
                 <span class="text-content-primary">Total XP</span>
-                <span class="text-primary-600 dark:text-primary-400">
+                <span class="text-accent-600 dark:text-accent-400">
                   {{ formatNumber(xpCalculation.totalXP.value) }}
                 </span>
               </div>
             </div>
           </div>
           <!-- Right: Manual Input Actions -->
-          <div class="rounded-lg border border-base bg-surface-elevated p-4 dark:border-primary-700/30">
+          <div class="rounded-lg border border-base bg-surface-elevated p-4 dark:border-accent-700/30">
             <label class="mb-3 block text-sm font-semibold text-content-primary">
               {{ $t('settings.experience.set_total_xp', 'Set Total XP') }}
             </label>

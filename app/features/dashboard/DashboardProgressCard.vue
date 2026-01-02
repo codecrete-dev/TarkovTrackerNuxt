@@ -1,7 +1,7 @@
 <template>
   <div
     :class="[
-      'cursor-pointer rounded-xl border border-base bg-surface-elevated p-6 shadow-lg dark:bg-surface-900 dark:border-primary-700/30',
+      'cursor-pointer rounded-xl border border-base bg-surface-elevated p-6 shadow-lg dark:bg-surface-900 dark:border-accent-700/30',
       'transition-colors',
       hoverBorderClass,
     ]"

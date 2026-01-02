@@ -2,7 +2,7 @@
   <div
     :class="[
       'relative overflow-hidden rounded-xl border p-6 transition-all',
-      isAchieved ? achievedClasses : 'border-base bg-surface-elevated opacity-50 dark:bg-surface-900/50 dark:border-primary-700/30',
+      isAchieved ? achievedClasses : 'border-base bg-surface-elevated opacity-50 dark:bg-surface-900/50 dark:border-accent-700/30',
     ]"
   >
     <div class="relative z-10">

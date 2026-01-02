@@ -14,7 +14,7 @@
   </Transition>
   <!-- Unified Sidebar - works as rail on mobile, rail/expanded on desktop -->
   <aside
-    class="border-base fixed inset-y-0 left-0 z-50 flex flex-col border-r bg-surface-elevated shadow-sm backdrop-blur-sm transition-all duration-300 dark:bg-[linear-gradient(180deg,rgba(18,18,20,0.96)_0%,rgba(14,14,15,0.96)_45%,rgba(12,12,13,0.97)_100%)] dark:border-primary-800/60 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.03),inset_0_-1px_0_rgba(0,0,0,0.6),1px_0_0_rgba(0,0,0,0.55)]"
+    class="border-base fixed inset-y-0 left-0 z-50 flex flex-col border-r bg-surface-elevated shadow-sm backdrop-blur-sm transition-all duration-300 dark:bg-[linear-gradient(180deg,rgba(18,18,20,0.96)_0%,rgba(14,14,15,0.96)_45%,rgba(12,12,13,0.97)_100%)] dark:border-accent-800/60 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.03),inset_0_-1px_0_rgba(0,0,0,0.6),1px_0_0_rgba(0,0,0,0.55)]"
     :class="[sidebarWidth]"
   >
     <div
@@ -43,7 +43,7 @@
           <div class="text-base leading-tight font-medium text-content-primary">TarkovTracker.org</div>
         </div>
       </NuxtLink>
-      <div class="mx-3 my-0.5 h-px bg-divider dark:bg-primary-800/40" />
+      <div class="mx-3 my-0.5 h-px bg-divider dark:bg-accent-800/40" />
       <DrawerLevel :is-collapsed="isCollapsed" />
       <div v-if="!isCollapsed" class="my-2 flex flex-col items-center gap-1.5 px-4">
         <button
@@ -83,9 +83,9 @@
           </span>
         </div>
       </div>
-      <div class="mx-3 my-0.5 h-px bg-divider dark:bg-primary-800/40" />
+      <div class="mx-3 my-0.5 h-px bg-divider dark:bg-accent-800/40" />
       <DrawerLinks :is-collapsed="isCollapsed" />
-      <div class="mx-3 my-0.5 h-px bg-divider dark:bg-primary-800/40" />
+      <div class="mx-3 my-0.5 h-px bg-divider dark:bg-accent-800/40" />
       <div class="flex flex-col gap-1">
         <div v-if="!isCollapsed" class="px-4 py-0.5">
           <h3 class="text-xs font-semibold tracking-wider text-content-tertiary uppercase">External</h3>

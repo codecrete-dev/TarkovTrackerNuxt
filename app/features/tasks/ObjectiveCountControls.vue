@@ -11,7 +11,7 @@
           type="button"
           :disabled="disabled || currentCount <= 0"
           :aria-label="t('page.tasks.questcard.decrease', 'Decrease')"
-          class="focus-visible:ring-primary-500 focus-visible:ring-offset-surface-900 flex h-7 w-7 items-center justify-center rounded-l-md text-gray-500 transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 active:bg-gray-200 disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-50 dark:text-gray-300 dark:hover:bg-white/10 dark:active:bg-white/15"
+          class="focus-visible:ring-accent-500 focus-visible:ring-offset-surface-900 flex h-7 w-7 items-center justify-center rounded-l-md text-gray-500 transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 active:bg-gray-200 disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-50 dark:text-gray-300 dark:hover:bg-white/10 dark:active:bg-white/15"
           @click="$emit('decrease')"
         >
           <UIcon name="i-mdi-minus" aria-hidden="true" class="h-4 w-4" />
@@ -35,7 +35,7 @@
           type="number"
           :min="0"
           :max="neededCount"
-          class="focus:border-primary-500 h-6 w-10 rounded border border-gray-300 bg-white px-1 text-center text-[11px] font-semibold text-gray-900 tabular-nums focus:outline-none dark:border-white/20 dark:bg-white/10 dark:text-gray-100"
+          class="focus:border-accent-500 h-6 w-10 rounded border border-gray-300 bg-white px-1 text-center text-[11px] font-semibold text-gray-900 tabular-nums focus:outline-none dark:border-white/20 dark:bg-white/10 dark:text-gray-100"
           @blur="commitEdit"
           @keydown.enter="commitEdit"
           @keydown.escape="cancelEdit"
@@ -52,7 +52,7 @@
           type="button"
           :disabled="disabled || currentCount >= neededCount"
           :aria-label="t('page.tasks.questcard.increase', 'Increase')"
-          class="focus-visible:ring-primary-500 focus-visible:ring-offset-surface-900 flex h-7 w-7 items-center justify-center rounded-r-md text-gray-500 transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 active:bg-gray-200 disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-50 dark:text-gray-300 dark:hover:bg-white/10 dark:active:bg-white/15"
+          class="focus-visible:ring-accent-500 focus-visible:ring-offset-surface-900 flex h-7 w-7 items-center justify-center rounded-r-md text-gray-500 transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 active:bg-gray-200 disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-50 dark:text-gray-300 dark:hover:bg-white/10 dark:active:bg-white/15"
           @click="$emit('increase')"
         >
           <UIcon name="i-mdi-plus" aria-hidden="true" class="h-4 w-4" />
@@ -72,7 +72,7 @@
         <button
           type="button"
           :disabled="disabled"
-          class="focus-visible:ring-primary-500 focus-visible:ring-offset-surface-900 flex h-7 w-7 items-center justify-center rounded-md border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-60"
+          class="focus-visible:ring-accent-500 focus-visible:ring-offset-surface-900 flex h-7 w-7 items-center justify-center rounded-md border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-60"
           :aria-label="
             currentCount >= neededCount
               ? t('page.tasks.questcard.complete', 'Complete')

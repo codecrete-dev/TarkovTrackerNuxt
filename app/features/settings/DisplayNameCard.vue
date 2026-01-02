@@ -21,7 +21,7 @@
           </template>
         </UAlert>
         <!-- Current Game Mode Indicator -->
-        <div class="rounded-lg border border-base bg-surface-elevated p-3 dark:border-primary-700/30">
+        <div class="rounded-lg border border-base bg-surface-elevated p-3 dark:border-accent-700/30">
           <div class="mb-2 flex items-center justify-between">
             <span class="text-sm font-semibold text-content-secondary">
               {{ $t('settings.display_name.current_mode', 'Current Game Mode') }}
@@ -80,7 +80,7 @@
           </div>
         </div>
         <!-- Preview Section -->
-        <div class="rounded-lg border border-base bg-surface-elevated p-3 dark:border-primary-700/30">
+        <div class="rounded-lg border border-base bg-surface-elevated p-3 dark:border-accent-700/30">
           <div class="mb-2 text-sm font-semibold text-content-secondary">
             {{ $t('settings.display_name.preview', 'Preview') }}
           </div>
