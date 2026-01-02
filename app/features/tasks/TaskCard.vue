@@ -274,13 +274,13 @@
         <!-- Background Icon (The Background) -->
         <div
           v-if="showBackgroundIcon"
-          class="pointer-events-none absolute inset-0 z-0 flex rotate-12 transform items-center justify-center opacity-80"
-          :class="backgroundIconColor"
+          class="pointer-events-none absolute inset-0 z-0 flex transform items-center justify-center opacity-80"
+          :class="[backgroundIconColor, !isComplete && 'rotate-12']"
         >
           <UIcon
             :name="backgroundIcon.startsWith('mdi-') ? `i-${backgroundIcon}` : backgroundIcon"
             aria-hidden="true"
-            class="h-24 w-24"
+            class="h-12 w-12"
           />
         </div>
         
