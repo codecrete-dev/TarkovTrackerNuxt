@@ -55,15 +55,16 @@
         <!-- Faction and Game Mode Cycling Buttons Row -->
         <div class="flex w-full gap-1.5">
           <!-- Faction Cycling Button -->
-          <span v-tooltip="`Switch to ${nextFaction}`" class="aspect-square">
+          <span v-tooltip="`Switch to ${nextFaction}`" class="flex">
             <button
-              class="w-full h-full rounded border px-2 py-2.5 text-center transition-colors border-base hover:bg-surface-200 dark:border-accent-800/50 dark:hover:border-accent-600 dark:hover:bg-white/5"
+              class="aspect-square flex items-center justify-center rounded border p-2 text-center transition-colors border-base hover:bg-surface-200 dark:border-accent-800/50 dark:hover:border-accent-600 dark:hover:bg-white/5"
               @click="cycleFaction"
             >
               <NuxtImg
                 :src="`/img/factions/${currentFaction}.webp`"
-                class="h-10 w-10 mx-auto object-contain invert-0 dark:invert"
-                width="40"
+                :alt="currentFaction"
+                class="opacity-60 invert-0 dark:invert"
+                width="33"
                 height="40"
               />
             </button>
@@ -77,7 +78,7 @@
             >
               <div class="flex items-center justify-center gap-1.5 text-md font-semibold uppercase tracking-wide">
                 <UIcon :name="currentGameModeIcon" class="h-10 w-10" :class="currentGameModeIconClass" />
-                <span>{{ currentGameModeLabel }}</span>
+                <span class="opacity-70">{{ currentGameModeLabel }}</span>
               </div>
             </button>
           </span>
