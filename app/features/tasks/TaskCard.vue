@@ -278,7 +278,7 @@
         <!-- Background Icon (The Background) -->
         <div
           v-if="showBackgroundIcon"
-          class="pointer-events-none absolute z-0 flex transform items-center justify-center opacity-80"
+          class="pointer-events-none absolute inset-0 z-0 flex transform items-center justify-center opacity-80"
           :class="[backgroundIconColor, !isComplete && 'rotate-12']"
         >
           <UIcon

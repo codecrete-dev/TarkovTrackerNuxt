@@ -469,8 +469,7 @@ select:disabled,
   --ui-primary: var(--color-primary-600);
 
   /* --- Stash Grid (Light Mode) --- */
-  /* --- Stash Grid (Light Mode) --- */
-  --color-stash-base: #babcbe;
+  --color-stash-base: #aaaaaa;
   --color-stash-border: #a7a7ab;
   --stash-shadow: inset 0 0 5px rgba(0, 0, 0, 0.15); /* Slightly deeper shadow */
   --stash-sheen: rgba(255, 255, 255, 0.12); /* Slightly less sheen */
@@ -499,7 +498,6 @@ select:disabled,
   --color-task-complete: var(--color-success-500);
   --color-task-failed: var(--color-error-500);
 
-  /* --- Stash Grid (Dark Mode) --- */
   /* --- Stash Grid (Dark Mode) --- */
   --color-stash-base: #141414; /* Very dark grey, almost black */
   --color-stash-border: #303030; /* Subtle metallic border */
