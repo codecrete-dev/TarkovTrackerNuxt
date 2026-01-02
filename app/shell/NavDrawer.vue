@@ -87,7 +87,7 @@
       <DrawerLevel :is-collapsed="isCollapsed" />
       <div v-if="!isCollapsed" class="my-2 flex flex-col items-center gap-1.5 px-4">
         <button
-          class="w-full rounded border px-2 py-1 text-center text-xs font-medium transition-colors border-base text-content-secondary hover:text-content-primary dark:border-primary-800/50 dark:hover:border-primary-600 dark:text-white/80 dark:hover:text-white"
+          class="w-full rounded border px-2 py-2.5 text-center text-xs font-medium transition-colors border-base text-content-secondary hover:text-content-primary dark:border-primary-800/50 dark:hover:border-primary-600 dark:text-white/80 dark:hover:text-white"
           @click="navigateToSettings"
         >
           {{ currentEditionName }}
@@ -96,7 +96,7 @@
           <button
             v-for="faction in factions"
             :key="faction"
-            class="flex flex-1 items-center justify-center gap-1.5 px-2 py-1 text-xs font-semibold uppercase transition-colors"
+            class="flex flex-1 items-center justify-center px-2 py-2.5 transition-colors"
             :class="
               faction === currentFaction
                 ? 'bg-primary-600 text-white dark:bg-primary-700'
@@ -106,12 +106,11 @@
           >
             <NuxtImg
               :src="`/img/factions/${faction}.webp`"
-              class="h-4 w-4 object-contain"
+              class="h-10 w-10 object-contain"
               :class="faction === currentFaction ? 'invert' : 'invert-0 dark:invert'"
-              width="16"
-              height="16"
+              width="40"
+              height="40"
             />
-            <span>{{ faction }}</span>
           </button>
         </div>
       </div>

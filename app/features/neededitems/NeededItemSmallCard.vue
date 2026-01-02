@@ -224,7 +224,7 @@
       'bg-clip-padding rounded-tl-[5px] rounded-br-[10px]': true,
       'bg-surface-elevated text-content-primary shadow-md ring-1 ring-black/5 dark:ring-0':
         !isCompleted.value,
-      'bg-success-500 text-white shadow-md': isCompleted.value,
+      'bg-success-600 text-white shadow-md': isCompleted.value,
     };
   });
 </script>
