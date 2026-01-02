@@ -1,8 +1,7 @@
 <template>
   <div
     :class="[
-      'relative overflow-hidden',
-      !noBorder ? 'bg-stash-cell' : 'rounded',
+      'relative overflow-hidden bg-stash-cell rounded',
       containerClasses,
       imageTileClasses,
       fill ? 'flex items-center justify-center' : '',
@@ -44,7 +43,6 @@
     fill?: boolean;
     size?: 'xs' | 'small' | 'medium' | 'large';
     isVisible?: boolean;
-    noBorder?: boolean;
   }
   const props = withDefaults(defineProps<Props>(), {
     src: '',
@@ -54,7 +52,6 @@
     fill: false,
     size: 'medium',
     isVisible: true,
-    noBorder: false,
   });
   const formattedSrc = computed(() => {
     return props.src;

@@ -17,7 +17,6 @@
                 size="small"
                 simple-mode
                 fill
-                no-border
                 class="h-full w-full"
               />
             </div>
@@ -81,7 +80,6 @@
                         size="large"
                         simple-mode
                         fill
-                        no-border
                         class="h-full w-full"
                       />
                     </div>

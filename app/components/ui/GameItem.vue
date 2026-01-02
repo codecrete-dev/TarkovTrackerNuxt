@@ -14,7 +14,6 @@
       :fill="fill"
       :size="size"
       :is-visible="isVisible"
-      :no-border="noBorder"
     />
     <!-- Full item display mode (for TarkovItem compatibility) -->
     <div v-else class="relative flex h-full w-full items-center justify-start">
@@ -195,8 +194,6 @@
     neededCount?: number;
     // Fill parent container (for simpleMode)
     fill?: boolean;
-    // Legacy compatibility
-    noBorder?: boolean;
     /** @deprecated use item prop */
     imageItem?: {
       iconLink?: string;
@@ -227,7 +224,6 @@
     currentCount: 0,
     neededCount: 1,
     fill: false,
-    noBorder: false,
     imageItem: undefined,
   });
   const emit = defineEmits<{
