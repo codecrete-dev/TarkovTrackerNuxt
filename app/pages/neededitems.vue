@@ -368,16 +368,18 @@
       if (!itemData || !itemData.name) continue;
       const existingGroup = groups.get(itemId);
       if (!existingGroup) {
+        // Use defaultPreset for image display when available (e.g., weapons with attachments)
+        const imageData = itemData.properties?.defaultPreset || itemData;
         groups.set(itemId, {
           itemId,
           item: {
             id: itemData.id,
             name: itemData.name,
-            iconLink: itemData.iconLink,
-            image512pxLink: itemData.image512pxLink,
+            iconLink: imageData.iconLink || itemData.iconLink,
+            image512pxLink: imageData.image512pxLink || itemData.image512pxLink,
             wikiLink: itemData.wikiLink,
             link: itemData.link,
-            backgroundColor: itemData.backgroundColor,
+            backgroundColor: imageData.backgroundColor || itemData.backgroundColor,
           },
           taskFir: 0,
           taskFirCurrent: 0,

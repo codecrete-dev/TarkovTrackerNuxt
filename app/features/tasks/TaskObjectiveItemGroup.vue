@@ -25,9 +25,13 @@
             :needed-count="row.meta.neededCount"
             :is-complete="row.allComplete"
             :found-in-raid="row.meta.foundInRaid"
+            :is-craftable="isItemCraftable(row)"
+            :craftable-title="getCraftableTitle(row)"
+            :craftable-icon-class="getCraftableIconClass(row)"
             :is-kappa-required="false"
             :show-count="false"
             size="sm"
+            @craft="goToCraftStation(row)"
           />
           <GameItem
             :item="row.meta.item"
@@ -44,6 +48,28 @@
         >
           {{ row.meta.itemName }}
         </span>
+        <!-- External links to task guide -->
+        <div v-if="getTaskForRow(row)" class="flex shrink-0 items-center gap-0.5" @click.stop>
+          <a
+            v-if="getTaskForRow(row)?.wikiLink"
+            v-tooltip="t('page.tasks.questcard.viewOnWiki', 'View on Wiki')"
+            :href="`${getTaskForRow(row)?.wikiLink}#Guide`"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center justify-center rounded p-0.5 text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-600 dark:hover:bg-white/20 dark:hover:text-white"
+          >
+            <img src="/img/logos/wikilogo.webp" alt="Wiki" aria-hidden="true" class="h-4 w-4" />
+          </a>
+          <a
+            v-tooltip="t('page.tasks.questcard.viewOnTarkovDev', 'View on tarkov.dev')"
+            :href="`https://tarkov.dev/task/${getTaskForRow(row)?.id}#objectives`"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center justify-center rounded p-0.5 text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-600 dark:hover:bg-white/20 dark:hover:text-white"
+          >
+            <img src="/img/logos/tarkovdevlogo.webp" alt="tarkov.dev" aria-hidden="true" class="h-4 w-4" />
+          </a>
+        </div>
         <!-- Single set of controls per item - updates all related objectives together -->
         <span v-if="row.meta.neededCount > 1" @click.stop>
           <ObjectiveCountControls
@@ -84,7 +110,7 @@
   import { useI18n } from 'vue-i18n';
   import ItemStatusBadge from '@/components/ui/ItemStatusBadge.vue';
   import ObjectiveCountControls from '@/features/tasks/ObjectiveCountControls.vue';
-  import { useMetadataStore } from '@/stores/useMetadata';
+  import { useMetadataStore, type CraftSource } from '@/stores/useMetadata';
   import { useProgressStore } from '@/stores/useProgress';
   import { useTarkovStore } from '@/stores/useTarkov';
   import type { TaskObjective } from '@/types/tarkov';
@@ -138,6 +164,8 @@
         objective.items?.[0] ||
         objective.markerItem ||
         objective.questItem;
+      // Use defaultPreset for image display when available (e.g., weapons with attachments)
+      const imageItem = item?.properties?.defaultPreset || item;
       map[objective.id] = {
         item,
         neededCount,
@@ -152,8 +180,8 @@
           item?.shortName ||
           objective.description ||
           t('page.tasks.questcard.item', 'Item'),
-        itemIcon: item?.image512pxLink || item?.image8xLink || undefined,
-        backgroundColor: item?.backgroundColor,
+        itemIcon: imageItem?.image512pxLink || imageItem?.image8xLink || undefined,
+        backgroundColor: imageItem?.backgroundColor || item?.backgroundColor,
         foundInRaid: full?.foundInRaid === true || objective.foundInRaid === true,
       };
     });
@@ -254,6 +282,85 @@
     return (
       objective.taskId ?? fullObjectives.value.find((entry) => entry.id === objective.id)?.taskId
     );
+  };
+  const getTaskForRow = (row: ConsolidatedRow) => {
+    const firstObjective = row.objectives[0]?.objective;
+    if (!firstObjective) return undefined;
+    const taskId = getObjectiveTaskId(firstObjective);
+    if (!taskId) return undefined;
+    return metadataStore.tasks.find((t) => t.id === taskId);
+  };
+  // Craftable item helpers
+  const getItemIdForRow = (row: ConsolidatedRow): string | undefined => {
+    return row.meta.item?.id;
+  };
+  const getCraftSourcesForRow = (row: ConsolidatedRow): CraftSource[] => {
+    const itemId = getItemIdForRow(row);
+    if (!itemId) return [];
+    return metadataStore.craftSourcesByItemId.get(itemId) ?? [];
+  };
+  const isItemCraftable = (row: ConsolidatedRow): boolean => {
+    return getCraftSourcesForRow(row).length > 0;
+  };
+  const getCraftableIconClass = (row: ConsolidatedRow): string => {
+    const sources = getCraftSourcesForRow(row);
+    if (sources.length === 0) return '';
+    const isAvailable = sources.some((source) => {
+      const currentLevel = progressStore.hideoutLevels?.[source.stationId]?.self ?? 0;
+      return currentLevel >= source.stationLevel;
+    });
+    return isAvailable
+      ? 'text-success-600 dark:text-success-400'
+      : 'text-surface-400';
+  };
+  const getCraftableTitle = (row: ConsolidatedRow): string => {
+    const sources = getCraftSourcesForRow(row);
+    if (sources.length === 0) return '';
+    const statuses = sources.map((source) => {
+      const currentLevel = progressStore.hideoutLevels?.[source.stationId]?.self ?? 0;
+      const isAvailable = currentLevel >= source.stationLevel;
+      return { ...source, currentLevel, isAvailable };
+    });
+    const sorted = [...statuses].sort((a, b) => {
+      if (a.isAvailable !== b.isAvailable) return a.isAvailable ? -1 : 1;
+      return a.stationLevel - b.stationLevel;
+    });
+    const lines = sorted.slice(0, 3).map((source) => {
+      if (source.isAvailable) {
+        return `${source.stationName} level ${source.stationLevel}`;
+      }
+      return `${source.stationName} level ${source.stationLevel} (current: ${source.currentLevel})`;
+    });
+    const remainingCount = sorted.length - lines.length;
+    if (remainingCount > 0) {
+      lines.push(`+${remainingCount} more`);
+    }
+    const list = lines.join(', ');
+    const isAvailable = statuses.some((s) => s.isAvailable);
+    return isAvailable ? `Craftable at ${list}` : `Requires ${list}`;
+  };
+  const goToCraftStation = async (row: ConsolidatedRow) => {
+    const sources = getCraftSourcesForRow(row);
+    if (sources.length === 0) return;
+    const statuses = sources.map((source) => {
+      const currentLevel = progressStore.hideoutLevels?.[source.stationId]?.self ?? 0;
+      const isAvailable = currentLevel >= source.stationLevel;
+      return { ...source, currentLevel, isAvailable, missingLevels: Math.max(0, source.stationLevel - currentLevel) };
+    });
+    // Prefer available stations, sorted by level (lowest first)
+    const available = statuses.filter((s) => s.isAvailable).sort((a, b) => a.stationLevel - b.stationLevel);
+    let targetId = available[0]?.stationId;
+    if (!targetId) {
+      // Find the closest to being available
+      const closest = [...statuses].sort((a, b) => {
+        if (a.missingLevels !== b.missingLevels) return a.missingLevels - b.missingLevels;
+        return a.stationLevel - b.stationLevel;
+      });
+      targetId = closest[0]?.stationId ?? sources[0]?.stationId;
+    }
+    if (targetId) {
+      await navigateTo({ path: '/hideout', query: { station: targetId } });
+    }
   };
   const parentTaskIds = computed(() => {
     const ids = new Set<string>();
