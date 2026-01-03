@@ -176,6 +176,19 @@ export function useLeafletMap(options: UseLeafletMapOptions): UseLeafletMapRetur
       }
     }
   };
+  // Restrict dragging to left mouse button only (button 0)
+  const onMouseDown = (e: MouseEvent) => {
+    if (!mapInstance.value) return;
+    // Only allow left-click (button 0) to initiate dragging
+    if (e.button !== 0) {
+      mapInstance.value.dragging.disable();
+    }
+  };
+  const onMouseUp = () => {
+    if (!mapInstance.value) return;
+    // Re-enable dragging after any mouse button release
+    mapInstance.value.dragging.enable();
+  };
   // Idle detection timer
   let idleTimer: ReturnType<typeof setTimeout> | null = null;
   // Computed
@@ -397,6 +410,9 @@ export function useLeafletMap(options: UseLeafletMapOptions): UseLeafletMapRetur
       // Attach custom wheel handler
       if (containerRef.value) {
         containerRef.value.addEventListener('wheel', onWheel, { passive: false });
+        // Attach mouse handlers to restrict dragging to left-click only
+        containerRef.value.addEventListener('mousedown', onMouseDown);
+        containerRef.value.addEventListener('mouseup', onMouseUp);
       }
     } catch (error) {
       logger.error('Failed to initialize Leaflet map:', error);
@@ -449,9 +465,11 @@ export function useLeafletMap(options: UseLeafletMapOptions): UseLeafletMapRetur
       mapInstance.value.remove();
       mapInstance.value = null;
     }
-    // Remove custom wheel handler
+    // Remove custom event handlers
     if (containerRef.value) {
       containerRef.value.removeEventListener('wheel', onWheel);
+      containerRef.value.removeEventListener('mousedown', onMouseDown);
+      containerRef.value.removeEventListener('mouseup', onMouseUp);
     }
     svgLayer.value = null;
     objectiveLayer.value = null;

@@ -227,6 +227,18 @@
     closeOnClick: false,
     closeButton: true,
   };
+
+  /**
+   * Generates inline styles for Leaflet popups based on current theme.
+   * Leaflet injects popups outside Vue's DOM tree, so Tailwind dark: classes won't work.
+   */
+  const getPopupStyles = () => {
+    const isDark = document.documentElement.classList.contains('dark');
+    return {
+      container: `background-color: ${isDark ? 'var(--color-surface-800)' : 'var(--color-gray-100)'}; color: ${isDark ? 'var(--color-gray-200)' : 'var(--color-gray-900)'}; border-radius: 0.375rem; padding: 0.25rem 0.5rem; font-size: 0.75rem; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);`,
+      secondary: `color: ${isDark ? 'var(--color-gray-400)' : 'var(--color-gray-600)'}; font-size: 0.75rem;`,
+    };
+  };
   const attachTogglePopup = (
     layer: L.Layer,
     html: string,
@@ -284,13 +296,14 @@
     props.marks.forEach((mark) => {
       const objective = metadataStore.objectives.find((obj) => obj.id === mark.id);
       const task = objective ? metadataStore.tasks.find((t) => t.id === objective.taskId) : null;
+        const styles = getPopupStyles();
         const popupContent =
         task || objective
           ? `
-          <div class="rounded bg-gray-900 px-2 py-1 text-xs text-white shadow-lg dark:bg-surface-800 dark:text-gray-200">
-             <div class="text-sm">
-               ${task ? `<div class="font-semibold">${task.name}</div>` : ''}
-               ${objective ? `<div class="text-gray-400">${objective.description}</div>` : ''}
+          <div style="${styles.container}">
+             <div>
+               ${task ? `<div style="font-weight: 600; font-size: 0.875rem;">${task.name}</div>` : ''}
+               ${objective ? `<div style="${styles.secondary}">${objective.description}</div>` : ''}
              </div>
            </div>
         `
@@ -446,11 +459,12 @@
         : extract.faction
           ? extract.faction.charAt(0).toUpperCase() + extract.faction.slice(1)
           : 'Unknown';
+      const extractStyles = getPopupStyles();
       const popupContent = `
-      <div class="rounded bg-gray-900 px-2 py-1 text-xs text-white shadow-lg dark:bg-surface-800 dark:text-gray-200">
-        <div class="text-sm">
-          <div class="font-semibold">${extract.name}</div>
-          <div class="text-gray-400">Faction: ${factionText}</div>
+      <div style="${extractStyles.container}">
+        <div>
+          <div style="font-weight: 600; font-size: 0.875rem;">${extract.name}</div>
+          <div style="${extractStyles.secondary}">Faction: ${factionText}</div>
         </div>
       </div>
     `;
@@ -515,7 +529,7 @@
     background-color: var(--color-surface-900) !important;
   }
   .leaflet-popup-content {
-    margin: 0.75rem;
+    margin: 0;
   }
   :root.dark .leaflet-control-zoom a {
     background-color: var(--color-surface-800) !important;

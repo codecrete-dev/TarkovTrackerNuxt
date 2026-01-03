@@ -199,7 +199,7 @@ export const usePreferencesStore = defineStore('preferences', {
       return state.localeOverride ?? null;
     },
     getTheme: (state) => {
-      return state.theme ?? 'dark';
+      return state.theme ?? 'system';
     },
     // Task filter getters
     getShowNonSpecialTasks: (state) => {

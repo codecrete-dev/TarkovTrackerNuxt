@@ -11,7 +11,7 @@
         />
         <!-- Map Display (shown when MAPS view is selected) -->
         <div v-if="showMapDisplay" class="mb-6">
-          <div class="rounded-lg bg-surface-base p-4 dark:bg-surface-800/50">
+          <div class="rounded-lg bg-surface-base dark:bg-surface-800/50">
             <div class="mb-3 flex items-center justify-between">
               <h3 class="text-lg font-medium text-content-primary">
                 {{ selectedMapData?.name || 'Map' }}
@@ -333,7 +333,7 @@
 
   // When entering single-task mode, set secondary view to 'all' so the task is visible
   watch(singleTaskId, (taskId) => {
-    if (taskId && preferencesStore.getTaskSecondaryView !== 'all') {
+    if (taskId && getTaskSecondaryView.value !== 'all') {
       preferencesStore.setTaskSecondaryView('all');
     }
   });
@@ -349,6 +349,12 @@
       searchQuery,
     ],
     () => {
+      // Skip clearing route if we're currently in single-task mode viewing that task
+      // This prevents the watch from immediately clearing the route when we programmatically
+      // set taskSecondaryView to 'all' upon entering single-task mode
+      if (singleTaskId.value && route.query.task === singleTaskId.value) {
+        return;
+      }
       // If we're in single-task mode and the user changed a filter, clear the query param
       if (route.query.task) {
         router.replace({ path: '/tasks', query: {} });
