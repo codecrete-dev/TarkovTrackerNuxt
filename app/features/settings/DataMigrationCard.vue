@@ -133,8 +133,8 @@
   </GenericCard>
 </template>
 <script setup>
-  import GenericCard from '@/components/ui/GenericCard.vue';
   import GameBadge from '@/components/ui/GameBadge.vue';
+  import GenericCard from '@/components/ui/GenericCard.vue';
   import { useDataMigration } from '@/composables/useDataMigration';
   import ImportConfirmDialog from './ImportConfirmDialog.vue';
   import MigrationSteps from './MigrationSteps.vue';

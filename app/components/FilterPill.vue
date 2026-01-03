@@ -48,4 +48,3 @@ const countColorClass = computed(() => {
       : 'badge-soft-surface';
 });
 </script>
-

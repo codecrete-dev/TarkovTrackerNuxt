@@ -16,7 +16,6 @@
   import { useTarkovStore } from '@/stores/useTarkov';
   // Initialize app (auth, locale, migrations)
   useAppInitialization();
-  
   // Game mode class toggler for accent color switching
   const tarkovStore = useTarkovStore();
   const gameMode = computed(() => tarkovStore.getCurrentGameMode());

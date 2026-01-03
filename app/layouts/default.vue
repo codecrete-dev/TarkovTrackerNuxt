@@ -53,23 +53,19 @@
   const appStore = useAppStore();
   const preferencesStore = usePreferencesStore();
   const colorMode = useColorMode();
-
   // System theme listener for detecting OS theme changes
   const systemThemeListener = ref<MediaQueryList | null>(null);
-
   // Handler for system theme changes
   function handleSystemThemeChange(e?: MediaQueryListEvent) {
     if (preferencesStore.theme === 'system') {
       // Check current system preference
       const mediaQuery = e?.target as MediaQueryList ?? window.matchMedia('(prefers-color-scheme: dark)');
       const isDark = mediaQuery.matches;
-      
       // Force Nuxt Color Mode to apply the system theme immediately
       // We must set the value directly to force the .dark class to be added/removed
       colorMode.value = isDark ? 'dark' : 'light';
     }
   }
-
   // Sync theme preference to color mode and set up system listeners
   watch(
     () => preferencesStore.theme,
@@ -79,11 +75,9 @@
         systemThemeListener.value.removeEventListener('change', handleSystemThemeChange);
         systemThemeListener.value = null;
       }
-
       if (newTheme === 'system') {
         // Set preference to 'system' to let Nuxt know we want system detection
         colorMode.preference = 'system';
-        
         // Set up listener for OS theme changes (only on client-side)
         if (typeof window !== 'undefined') {
           systemThemeListener.value = window.matchMedia('(prefers-color-scheme: dark)');
@@ -100,7 +94,6 @@
     },
     { immediate: true }
   );
-
   // Cleanup on unmount
   onUnmounted(() => {
     if (systemThemeListener.value) {

@@ -149,16 +149,14 @@
 </template>
 <script setup lang="ts">
   import { computed, defineAsyncComponent, ref } from 'vue';
-  import { useLocaleNumberFormatter } from '@/utils/formatters';
   import type { TarkovItem } from '@/types/tarkov';
+  import { useLocaleNumberFormatter } from '@/utils/formatters';
   import ContextMenu from './ContextMenu.vue';
   import ContextMenuItem from './ContextMenuItem.vue';
   import GameItemImage from './GameItemImage.vue';
-
   const ItemCountControls = defineAsyncComponent(
     () => import('@/features/neededitems/ItemCountControls.vue')
   );
-
   interface Props {
     /**
      * The primary item object. When provided, many other props (itemName, backgroundColor, etc.) are resolved automatically.
@@ -228,48 +226,38 @@
     decrease: [];
     toggle: [];
   }>();
-
   const formatNumber = useLocaleNumberFormatter();
   const contextMenu = ref<InstanceType<typeof ContextMenu>>();
-
   const computedImageSrc = computed(() => {
     // Priority: direct src -> direct links -> item object -> itemId
     // IMPORTANT: Never use iconLink - it has baked-in backgrounds that override our background control
     if (props.src) return props.src;
     if (props.image512pxLink) return props.image512pxLink;
-    
     if (props.item) {
       // Always prefer transparent images: 512px > 8x
       return props.item.image512pxLink || props.item.image8xLink || '';
     }
-
     // Legacy imageItem support - use transparent images only
     if (props.imageItem?.image512pxLink) return props.imageItem.image512pxLink;
-    
     // Fallback to constructing 512px URL from itemId if available
     if (props.itemId) return `https://assets.tarkov.dev/${props.itemId}-512.webp`;
     return '';
   });
-
   const computedItemName = computed(() => {
     return props.itemName || props.item?.name || props.item?.shortName || null;
   });
-
   const computedWikiLink = computed(() => {
     return props.wikiLink || props.item?.wikiLink || null;
   });
-
   const computedDevLink = computed(() => {
     return props.devLink || props.item?.link || null;
   });
-
   const containerClasses = computed(() => {
     if (props.simpleMode) {
       return 'block';
     }
     return '';
   });
-
   const resolvedBackgroundColor = computed(() => {
     return (
       props.backgroundColor ||
@@ -278,14 +266,12 @@
       'default'
     )
   });
-
   const overlayIconClasses = computed(() => {
     if (props.size === 'xs') {
       return 'h-3.5 w-3.5';
     }
     return 'h-5 w-5';
   });
-
   // Action methods
   const openTarkovDevLink = () => {
     const link = computedDevLink.value;
@@ -293,34 +279,29 @@
       window.open(link, '_blank');
     }
   };
-
   const openWikiLink = () => {
     const link = computedWikiLink.value;
     if (link) {
       window.open(link, '_blank');
     }
   };
-
   const copyItemName = () => {
     const name = computedItemName.value;
     if (name) {
       navigator.clipboard.writeText(name);
     }
   };
-
   const handleClick = (event: MouseEvent) => {
     if (props.clickable) {
       emit('click', event);
     }
   };
-
   const handleContextMenu = (event: MouseEvent) => {
     // Only show context menu if there are links available
     if (computedDevLink.value || computedWikiLink.value || computedItemName.value || props.taskWikiLink) {
       contextMenu.value?.open(event);
     }
   };
-
   const openTaskWiki = () => {
     if (props.taskWikiLink) {
       window.open(props.taskWikiLink, '_blank');

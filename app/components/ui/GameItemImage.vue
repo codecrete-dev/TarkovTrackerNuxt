@@ -58,10 +58,8 @@
     if (props.size === 'fluid') {
       return ['block', 'relative', 'w-full', 'aspect-square'];
     }
-    
     // Fixed sizes
     const classes = ['block', 'relative', 'shrink-0'];
-    
     if (props.size === 'xs') {
       classes.push('h-9', 'w-9'); // 36px
     } else if (props.size === 'small') {
@@ -72,7 +70,6 @@
       // medium (default) - 96px - tasks
       classes.push('h-24', 'w-24');
     }
-    
     return classes;
   });
   const backgroundClassMap = {

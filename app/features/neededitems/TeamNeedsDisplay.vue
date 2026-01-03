@@ -23,9 +23,9 @@
   </div>
 </template>
 <script setup lang="ts">
+  import GameBadge from '@/components/ui/GameBadge.vue';
   import { useProgressStore } from '@/stores/useProgress';
   import { useLocaleNumberFormatter } from '@/utils/formatters';
-  import GameBadge from '@/components/ui/GameBadge.vue';
   const formatNumber = useLocaleNumberFormatter();
   interface UserNeed {
     user: string;

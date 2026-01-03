@@ -12,10 +12,8 @@
     <UIcon :name="iconName" aria-hidden="true" :class="iconSizeClass" />
   </button>
 </template>
-
 <script setup lang="ts">
 import { computed } from 'vue';
-
 const props = withDefaults(
   defineProps<{
     /** Whether the toggle is in active/complete state */
@@ -47,15 +45,12 @@ const props = withDefaults(
     inactiveIcon: 'i-mdi-circle-outline',
   }
 );
-
 const emit = defineEmits<{
   toggle: [];
 }>();
-
 const iconName = computed(() => {
   return props.isActive ? props.activeIcon : props.inactiveIcon;
 });
-
 const sizeClass = computed(() => {
   switch (props.size) {
     case 'sm': return 'h-6 w-6';
@@ -63,7 +58,6 @@ const sizeClass = computed(() => {
     default: return 'h-7 w-7';
   }
 });
-
 const iconSizeClass = computed(() => {
   switch (props.size) {
     case 'sm': return 'h-3.5 w-3.5';
@@ -71,18 +65,15 @@ const iconSizeClass = computed(() => {
     default: return 'h-4 w-4';
   }
 });
-
 const stateClass = computed(() => {
   if (props.variant === 'custom') {
     return props.isActive ? props.activeClass : props.inactiveClass;
   }
-
   if (props.variant === 'complete') {
     return props.isActive
       ? 'badge-soft-task-complete'
       : 'border-gray-300 bg-white text-gray-500 hover:bg-gray-50 hover:text-gray-700 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10';
   }
-
   // variant === 'collect'
   return props.isActive
     ? 'badge-soft-task-complete'

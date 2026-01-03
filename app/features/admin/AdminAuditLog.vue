@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import { useSystemStoreWithSupabase } from '@/stores/useSystemStore';
   import GameBadge from '@/components/ui/GameBadge.vue';
+  import { useSystemStoreWithSupabase } from '@/stores/useSystemStore';
   const { $supabase } = useNuxtApp();
   const { systemStore, hasInitiallyLoaded } = useSystemStoreWithSupabase();
   interface AuditLogEntry {
