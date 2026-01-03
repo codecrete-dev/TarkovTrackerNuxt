@@ -162,25 +162,22 @@
                         />
                       </template>
                       <template v-else>
-                        <CollectedToggleButton
+                        <ToggleButton
+                          :is-active="isCollected"
+                          variant="collect"
+                          size="lg"
                           :tooltip="
                             isCollected
                               ? t('page.neededitems.collected')
                               : t('page.neededitems.mark_as_collected')
-                          "
-                          :is-collected="isCollected"
-                          class="flex h-12 w-12 items-center justify-center rounded-lg border transition-colors"
-                          :class="
-                            isCollected
-                              ? 'badge-soft-success'
-                              : 'bg-surface-elevated text-content-secondary hover:bg-surface-hover border-base hover:text-content-primary'
                           "
                           :aria-label="
                             isCollected
                               ? t('page.neededitems.collected')
                               : t('page.neededitems.mark_as_collected')
                           "
-                          icon-class="h-8 w-8"
+                          :active-icon="'i-mdi-check-circle'"
+                          :inactive-icon="'i-mdi-check-circle-outline'"
                           @toggle="$emit('toggleCount')"
                         />
                       </template>
@@ -235,25 +232,22 @@
                   />
                 </template>
                 <template v-else>
-                  <CollectedToggleButton
+                  <ToggleButton
+                    :is-active="isCollected"
+                    variant="collect"
+                    size="md"
                     :tooltip="
                       isCollected
                         ? t('page.neededitems.collected')
                         : t('page.neededitems.mark_as_collected')
-                    "
-                    :is-collected="isCollected"
-                    class="flex h-8 w-8 items-center justify-center rounded-lg border transition-colors"
-                    :class="
-                      isCollected
-                        ? 'badge-soft-success'
-                        : 'bg-surface-elevated text-content-secondary hover:bg-surface-hover border-base hover:text-content-primary'
                     "
                     :aria-label="
                       isCollected
                         ? t('page.neededitems.collected')
                         : t('page.neededitems.mark_as_collected')
                     "
-                    icon-class="h-6 w-6"
+                    :active-icon="'i-mdi-check-circle'"
+                    :inactive-icon="'i-mdi-check-circle-outline'"
                     @toggle="$emit('toggleCount')"
                   />
                 </template>

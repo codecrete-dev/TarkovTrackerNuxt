@@ -194,24 +194,17 @@
       <div
         class="flex w-max min-w-full justify-center gap-1 rounded-lg bg-surface-elevated px-4 py-2.5"
       >
-        <button
+        <FilterPill
           v-for="trader in traders"
           :key="trader.id"
-          type="button"
-          :aria-pressed="preferencesStore.getTaskTraderView === trader.id"
-          :class="[
-            'flex items-center gap-2 rounded-md px-2.5 py-1.5 transition-colors',
-            'hover:bg-white/60 dark:hover:bg-white/5',
-            'focus:ring-accent-500 focus:ring-1 focus:outline-none',
-            preferencesStore.getTaskTraderView === trader.id
-              ? 'bg-accent-100 text-accent-900 shadow-sm dark:bg-accent-500/20 dark:text-accent-100 dark:shadow-none'
-              : 'text-content-tertiary hover:text-content-primary',
-          ]"
+          :active="preferencesStore.getTaskTraderView === trader.id"
+          :label="trader.name"
+          :count="traderCounts[trader.id] ?? 0"
+          label-class="whitespace-nowrap"
           @click="onTraderSelect({ label: trader.name, value: trader.id })"
         >
-          <!-- Trader avatar with count badge -->
-          <div class="relative">
-            <div class="h-8 w-8 overflow-hidden rounded-full bg-surface-base">
+          <template #icon>
+            <div class="h-6 w-6 overflow-hidden rounded-full bg-surface-base">
               <img
                 v-if="trader.imageLink"
                 :src="trader.imageLink"
@@ -220,17 +213,8 @@
               />
               <UIcon v-else name="i-mdi-account-circle" class="h-full w-full text-content-tertiary" />
             </div>
-            <span
-              :class="[
-                'absolute -top-1 -right-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full px-0.5 text-[10px] font-bold',
-                (traderCounts[trader.id] ?? 0) > 0 ? 'badge-soft-accent' : 'badge-soft-surface',
-              ]"
-            >
-              {{ traderCounts[trader.id] ?? 0 }}
-            </span>
-          </div>
-          <span class="text-xs font-medium whitespace-nowrap">{{ trader.name }}</span>
-        </button>
+          </template>
+        </FilterPill>
       </div>
     </div>
   </div>

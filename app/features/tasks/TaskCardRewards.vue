@@ -53,7 +53,7 @@
             class="h-4 w-4"
           />
           <span
-            :class="standing.standing >= 0 ? 'text-success-600 dark:text-success-400 font-bold' : 'text-error-600 dark:text-error-400 font-bold'"
+            :class="standing.standing >= 0 ? 'text-success-600 font-bold' : 'text-error-600 dark:text-error-400 font-bold'"
           >
             {{ standing.standing >= 0 ? '+' : '' }}{{ standing.standing.toFixed(2) }}
           </span>

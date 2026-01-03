@@ -170,7 +170,7 @@
               :badge-class="[
                 'inline-flex items-center gap-1 text-xs',
                 objectiveProgress.done === objectiveProgress.total
-                  ? 'badge-soft-success'
+                  ? 'badge-soft-task-complete'
                   : 'badge-soft-reward-item'
               ]"
               icon="i-mdi-progress-check"

@@ -59,36 +59,22 @@
         </button>
       </span>
     </div>
-      <span
-        v-tooltip="
+      <ToggleButton
+        :is-active="currentCount >= neededCount"
+        :disabled="disabled"
+        variant="complete"
+        :tooltip="
           currentCount >= neededCount
             ? t('page.tasks.questcard.complete', 'Complete')
             : t('page.tasks.questcard.markComplete', 'Mark complete')
         "
-        class="inline-flex"
-        :class="{ 'cursor-not-allowed': disabled }"
-        @click.stop
-      >
-        <button
-          type="button"
-          :disabled="disabled"
-          class="focus-visible:ring-accent-500 focus-visible:ring-offset-surface-900 flex h-7 w-7 items-center justify-center rounded-md border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-60"
-          :aria-label="
-            currentCount >= neededCount
-              ? t('page.tasks.questcard.complete', 'Complete')
-              : t('page.tasks.questcard.markComplete', 'Mark complete')
-          "
-          :aria-pressed="currentCount >= neededCount"
-          :class="
-            currentCount >= neededCount
-              ? 'badge-soft-success'
-              : 'border-gray-300 bg-white text-gray-500 hover:bg-gray-50 hover:text-gray-700 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10'
-          "
-          @click="$emit('toggle')"
-        >
-          <UIcon name="i-mdi-check" aria-hidden="true" class="h-4 w-4" />
-        </button>
-      </span>
+        :aria-label="
+          currentCount >= neededCount
+            ? t('page.tasks.questcard.complete', 'Complete')
+            : t('page.tasks.questcard.markComplete', 'Mark complete')
+        "
+        @toggle="$emit('toggle')"
+      />
   </div>
 </template>
 <script setup lang="ts">

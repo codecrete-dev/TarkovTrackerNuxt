@@ -44,37 +44,21 @@
           @toggle="toggleCount"
           @set-count="setCount"
         />
-        <span
+        <ToggleButton
           v-else
-          class="inline-flex"
-          :class="{ 'cursor-not-allowed': isParentTaskLocked }"
-          @click.stop
-        >
-          <button
-            v-tooltip="
-              isComplete
-                ? t('page.tasks.questcard.uncomplete', 'Uncomplete')
-                : t('page.tasks.questcard.complete', 'Complete')
-            "
-            type="button"
-            class="focus-visible:ring-accent-500 focus-visible:ring-offset-surface-900 flex h-7 w-7 items-center justify-center rounded-md border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-            :aria-label="toggleObjectiveLabel"
-            :aria-pressed="isComplete"
-            :disabled="isParentTaskLocked"
-            :class="[
-              isComplete
-                ? 'badge-soft-success'
-                : 'border-gray-300 bg-white text-gray-500 hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10',
-            ]"
-            @click="toggleObjectiveCompletion()"
-          >
-            <UIcon
-              :name="isComplete ? 'i-mdi-check' : 'i-mdi-circle-outline'"
-              aria-hidden="true"
-              class="h-4 w-4"
-            />
-          </button>
-        </span>
+          :is-active="isComplete"
+          :disabled="isParentTaskLocked"
+          variant="complete"
+          :active-icon="'i-mdi-check'"
+          :inactive-icon="'i-mdi-circle-outline'"
+          :tooltip="
+            isComplete
+              ? t('page.tasks.questcard.uncomplete', 'Uncomplete')
+              : t('page.tasks.questcard.complete', 'Complete')
+          "
+          :aria-label="toggleObjectiveLabel"
+          @toggle="toggleObjectiveCompletion()"
+        />
       </div>
     </div>
   </div>

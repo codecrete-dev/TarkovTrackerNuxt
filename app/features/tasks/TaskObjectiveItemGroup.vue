@@ -56,36 +56,25 @@
             @set-count="(value) => setCountForRow(row, value)"
           />
         </span>
-        <span
+        <ToggleButton
           v-else
-          class="inline-flex"
-          :class="{ 'cursor-not-allowed': isParentTaskLocked }"
-          @click.stop
-        >
-          <button
-             type="button"
-             class="focus-visible:ring-accent-500 focus-visible:ring-offset-surface-900 flex h-7 w-7 items-center justify-center rounded-md border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-             :aria-label="
-              row.allComplete
-                ? t('page.tasks.questcard.uncomplete', 'Uncomplete')
-                : t('page.tasks.questcard.complete', 'Complete')
-            "
-            :aria-pressed="row.allComplete"
-            :disabled="isParentTaskLocked"
-            :class="
-              row.allComplete
-                ? 'badge-soft-success'
-                : 'border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10'
-            "
-            @click="toggleCountForRow(row)"
-          >
-            <UIcon
-              :name="row.allComplete ? 'i-mdi-check' : 'i-mdi-circle-outline'"
-              aria-hidden="true"
-              class="h-4 w-4"
-            />
-          </button>
-        </span>
+          :is-active="row.allComplete"
+          :disabled="isParentTaskLocked"
+          variant="complete"
+          :active-icon="'i-mdi-check'"
+          :inactive-icon="'i-mdi-circle-outline'"
+          :tooltip="
+            row.allComplete
+              ? t('page.tasks.questcard.uncomplete', 'Uncomplete')
+              : t('page.tasks.questcard.complete', 'Complete')
+          "
+          :aria-label="
+            row.allComplete
+              ? t('page.tasks.questcard.uncomplete', 'Uncomplete')
+              : t('page.tasks.questcard.complete', 'Complete')
+          "
+          @toggle="toggleCountForRow(row)"
+        />
       </div>
     </div>
   </div>
