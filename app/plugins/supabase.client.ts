@@ -3,6 +3,9 @@ import { reactive } from 'vue';
 import { logger } from '@/utils/logger';
 import { STORAGE_KEYS } from '@/utils/storageKeys';
 import { hydrateUserFromSession } from '@/utils/userHydration';
+
+type OAuthProvider = 'twitch' | 'discord' | 'google' | 'github';
+
 type SupabaseUser = {
   id: string | null;
   loggedIn: boolean;
@@ -14,6 +17,7 @@ type SupabaseUser = {
   lastLoginAt: string | null;
   createdAt: string | null;
   provider: string | null; // 'discord', 'twitch', etc.
+  providers: string[] | null; // All linked OAuth providers
 };
 export default defineNuxtPlugin(() => {
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -31,6 +35,7 @@ export default defineNuxtPlugin(() => {
       lastLoginAt: null,
       createdAt: null,
       provider: null,
+      providers: null,
     });
     // Extremely small surface area stub — only the bits we call in-app
     const noopPromise = async () => ({}) as unknown as Promise<unknown>;
@@ -47,7 +52,10 @@ export default defineNuxtPlugin(() => {
     return {
       client: stubClient,
       user: stubUser,
-      signInWithOAuth: async () => {
+      signInWithOAuth: async (
+        _provider: OAuthProvider,
+        _options?: { skipBrowserRedirect?: boolean; redirectTo?: string }
+      ) => {
         throw new Error('Supabase env not configured (VITE_SUPABASE_URL/ANON_KEY)');
       },
       signOut: async () => {},
@@ -74,6 +82,7 @@ export default defineNuxtPlugin(() => {
     lastLoginAt: null,
     createdAt: null,
     provider: null,
+    providers: null,
   });
   supabase.auth.getSession().then(({ data: { session } }) => {
     hydrateUserFromSession(user, session?.user || null);
@@ -92,7 +101,7 @@ export default defineNuxtPlugin(() => {
     }
   });
   const signInWithOAuth = async (
-    provider: 'twitch' | 'discord',
+    provider: OAuthProvider,
     options?: { skipBrowserRedirect?: boolean; redirectTo?: string }
   ) => {
     const { data, error } = await supabase.auth.signInWithOAuth({

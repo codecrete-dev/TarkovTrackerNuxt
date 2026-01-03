@@ -76,7 +76,8 @@ export function transformProgress(
   userId: string,
   gameEdition: number,
   tasks: TarkovTask[],
-  hideoutStations: TarkovHideoutStation[]
+  hideoutStations: TarkovHideoutStation[],
+  fallbackDisplayName?: string | null
 ): ProgressResponseData {
   const pmcFaction = progressData?.pmcFaction ?? 'USEC';
   const taskCompletions = progressData?.taskCompletions ?? {};
@@ -126,12 +127,16 @@ export function transformProgress(
     hideoutStations,
     gameEdition
   );
+  const displayName =
+    (typeof progressData?.displayName === 'string' && progressData.displayName.trim()
+      ? progressData.displayName.trim()
+      : null) || fallbackDisplayName || userId.substring(0, 6);
   return {
     tasksProgress,
     taskObjectivesProgress,
     hideoutModulesProgress,
     hideoutPartsProgress,
-    displayName: progressData?.displayName ?? userId.substring(0, 6),
+    displayName,
     userId,
     playerLevel: progressData?.level ?? 1,
     gameEdition,

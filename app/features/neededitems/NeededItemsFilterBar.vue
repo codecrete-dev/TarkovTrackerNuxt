@@ -29,6 +29,7 @@
             $t('page.neededitems.searchplaceholder', 'Search items, tasks, or hideout stations...')
           "
           icon="i-mdi-magnify"
+          size="md"
           :ui="{ trailing: 'pe-1' }"
           class="w-full"
           @update:model-value="$emit('update:search', $event)"
@@ -55,7 +56,7 @@
             size="sm"
             class="shrink-0"
           >
-            <span>{{ $t('page.neededitems.filters.label', 'Filters') }}</span>
+            <span class="hidden sm:inline">{{ $t('page.neededitems.filters.label', 'Filters') }}</span>
             <GameBadge
               v-if="activeFiltersCount > 0"
               color="primary"

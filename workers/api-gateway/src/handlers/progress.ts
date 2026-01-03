@@ -8,6 +8,93 @@ import type {
   TaskState,
   BatchTaskUpdate,
 } from '../types';
+const DISPLAY_NAME_CACHE_TTL_SECONDS = 86400;
+function getMetaString(metadata: Record<string, unknown>, key: string): string | null {
+  return typeof metadata[key] === 'string' ? (metadata[key] as string) : null;
+}
+function extractUsername(
+  userMetadata: Record<string, unknown>,
+  email: string | null,
+  provider: string | null
+): string | null {
+  if (provider === 'discord') {
+    const globalName = getMetaString(userMetadata, 'global_name');
+    const username = getMetaString(userMetadata, 'username');
+    const preferredUsername = getMetaString(userMetadata, 'preferred_username');
+    const fullName = getMetaString(userMetadata, 'full_name');
+    const legacyName = getMetaString(userMetadata, 'name');
+    return (
+      globalName ||
+      username ||
+      preferredUsername ||
+      fullName ||
+      legacyName?.split('#')[0] ||
+      email?.split('@')[0] ||
+      null
+    );
+  }
+  if (provider === 'twitch') {
+    return (
+      getMetaString(userMetadata, 'preferred_username') ||
+      getMetaString(userMetadata, 'name') ||
+      email?.split('@')[0] ||
+      null
+    );
+  }
+  return getMetaString(userMetadata, 'name') || email?.split('@')[0] || null;
+}
+function extractDisplayName(
+  userMetadata: Record<string, unknown>,
+  provider: string | null,
+  username: string | null
+): string | null {
+  const fullName = getMetaString(userMetadata, 'full_name');
+  if (provider === 'discord') {
+    return username;
+  }
+  if (provider === 'twitch') {
+    return fullName || username;
+  }
+  return fullName || username;
+}
+async function getUserDisplayName(env: Env, userId: string): Promise<string | null> {
+  const cacheKey = `user-display:${userId}`;
+  const cached = await env.API_GATEWAY_KV.get(cacheKey);
+  if (cached) return cached;
+  try {
+    const url = `${env.SUPABASE_URL}/auth/v1/admin/users/${userId}`;
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
+        apikey: env.SUPABASE_SERVICE_ROLE_KEY,
+        'Content-Type': 'application/json',
+      },
+    });
+    if (!response.ok) return null;
+    const data = (await response.json()) as {
+      email?: string | null;
+      user_metadata?: Record<string, unknown> | null;
+      app_metadata?: Record<string, unknown> | null;
+    };
+    const userMetadata =
+      data.user_metadata && typeof data.user_metadata === 'object' ? data.user_metadata : {};
+    const appMetadata =
+      data.app_metadata && typeof data.app_metadata === 'object' ? data.app_metadata : {};
+    const provider = typeof appMetadata.provider === 'string' ? appMetadata.provider : null;
+    const email = typeof data.email === 'string' ? data.email : null;
+    const username = extractUsername(userMetadata, email, provider);
+    const displayName = extractDisplayName(userMetadata, provider, username);
+    const resolved = displayName || username || (email ? email.split('@')[0] : null);
+    if (resolved) {
+      await env.API_GATEWAY_KV.put(cacheKey, resolved, {
+        expirationTtl: DISPLAY_NAME_CACHE_TTL_SECONDS,
+      });
+    }
+    return resolved;
+  } catch {
+    return null;
+  }
+}
 /**
  * Handle GET /api/progress - Return player progress
  */
@@ -32,10 +119,19 @@ export async function handleGetProgress(
   const gameEdition = row?.game_edition ?? 1;
   // Extract game mode specific data
   const progressData = extractGameModeData(row, gameMode);
+  const fallbackDisplayName =
+    progressData?.displayName?.trim() || (await getUserDisplayName(env, token.user_id));
   // Fetch task and hideout data (cached)
   const [tasks, hideoutStations] = await Promise.all([getTasks(env), getHideoutStations(env)]);
   // Transform to API response format
-  const data = transformProgress(progressData, token.user_id, gameEdition, tasks, hideoutStations);
+  const data = transformProgress(
+    progressData,
+    token.user_id,
+    gameEdition,
+    tasks,
+    hideoutStations,
+    fallbackDisplayName
+  );
   return {
     data,
     meta: {

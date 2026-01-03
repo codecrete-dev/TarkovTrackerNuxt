@@ -2,8 +2,8 @@ name = "api-gateway"
 main = "src/index.ts"
 compatibility_date = "2024-12-01"
 routes = [
-  { pattern = "tarkovtracker.org/api/*", zone_name = "tarkovtracker.org" },
-  { pattern = "www.tarkovtracker.org/api/*", zone_name = "tarkovtracker.org" },
+  { pattern = "tarkovtracker.org/api/v2/*", zone_name = "tarkovtracker.org" },
+  { pattern = "www.tarkovtracker.org/api/v2/*", zone_name = "tarkovtracker.org" },
 ]
 
 [dev]
