@@ -44,10 +44,10 @@
         </div>
       </NuxtLink>
       <div class="mx-3 my-1 h-px shrink-0 bg-divider dark:bg-accent-800/40" />
-      <DrawerLevel :is-collapsed="isCollapsed" />
-      <div v-if="!isCollapsed" class="flex flex-col items-center gap-1.5 px-4">
+      <div class="flex flex-col items-center gap-1.5 px-4 py-2">
+        <DrawerLevel :is-collapsed="isCollapsed" />
         <!-- Faction and Game Mode Cycling Buttons Row -->
-        <div class="flex w-full gap-1.5">
+        <div v-if="!isCollapsed" class="flex w-full gap-1.5">
           <!-- Game Mode Cycling Button -->
           <span v-tooltip="`Switch to ${nextGameModeLabel}`" class="flex-1">
             <button
@@ -78,12 +78,14 @@
           </span>
         </div>
         <button
+          v-if="!isCollapsed"
           class="w-full rounded border px-2 py-2.5 text-center text-xs font-medium transition-colors border-base text-content-secondary hover:text-content-primary dark:border-accent-800/50 dark:hover:border-accent-600 dark:text-white/80 dark:hover:text-white"
           @click="navigateToSettings"
         >
           {{ currentEditionName }}
         </button>
       </div>
+      <div class="mx-3 my-1 h-px shrink-0 bg-divider dark:bg-accent-800/40" />
       <DrawerLinks :is-collapsed="isCollapsed" class="mt-1" />
       <div class="mx-3 my-1 h-px shrink-0 bg-divider dark:bg-accent-800/40" />
       <div class="flex flex-col gap-1">

@@ -227,16 +227,17 @@
     closeOnClick: false,
     closeButton: true,
   };
-
   /**
-   * Generates inline styles for Leaflet popups based on current theme.
-   * Leaflet injects popups outside Vue's DOM tree, so Tailwind dark: classes won't work.
+   * Generates inline styles for Leaflet popups.
+   * Uses dark background with light text in both themes to match app-wide tooltip pattern.
+   * Leaflet injects popups outside Vue's DOM tree, so we use inline styles.
    */
   const getPopupStyles = () => {
     const isDark = document.documentElement.classList.contains('dark');
+    // Tooltips are always dark (gray-900/surface-800) with light text, matching tooltip.client.ts
     return {
-      container: `background-color: ${isDark ? 'var(--color-surface-800)' : 'var(--color-gray-100)'}; color: ${isDark ? 'var(--color-gray-200)' : 'var(--color-gray-900)'}; border-radius: 0.375rem; padding: 0.25rem 0.5rem; font-size: 0.75rem; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);`,
-      secondary: `color: ${isDark ? 'var(--color-gray-400)' : 'var(--color-gray-600)'}; font-size: 0.75rem;`,
+      container: `background-color: ${isDark ? 'var(--color-surface-800)' : '#1a1a1e'}; color: ${isDark ? 'var(--color-gray-200)' : '#fff'}; border-radius: 0.375rem; padding: 0.25rem 0.5rem; font-size: 0.75rem; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3);`,
+      secondary: `color: var(--color-gray-400); font-size: 0.75rem;`,
     };
   };
   const attachTogglePopup = (
@@ -511,26 +512,45 @@
   });
 </script>
 <style>
-  /* Leaflet Map Library Overrides (Dark Mode)
+  /* Leaflet Map Library Overrides
      !important required throughout this section: Leaflet applies its own inline
-     styles and high-specificity CSS. Without !important, our dark theme colors 
-     are overridden by Leaflet's default light scheme. */
+     styles and high-specificity CSS. Without !important, our styling is overridden. */
+  /* Container styling */
   :root.dark .leaflet-container {
     background-color: var(--color-surface-900);
     font-family: inherit;
   }
-  :root.dark .leaflet-popup-content-wrapper {
-    background-color: var(--color-surface-900) !important;
-    color: var(--color-gray-200) !important;
-    border-radius: 0.5rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  .leaflet-container {
+    background-color: var(--color-gray-100);
+    font-family: inherit;
   }
-  :root.dark .leaflet-popup-tip {
-    background-color: var(--color-surface-900) !important;
+  /* Popup wrapper - dark in both themes for consistency with app tooltips.
+     Using .leaflet-container prefix for higher specificity to override Leaflet defaults. */
+  .leaflet-container .leaflet-popup-content-wrapper {
+    background: #1a1a1e !important;
+    color: #fff !important;
+    border-radius: 0.5rem !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+    border: none !important;
+    padding: 0 !important;
+  }
+  :root.dark .leaflet-container .leaflet-popup-content-wrapper {
+    background: var(--color-surface-800) !important;
+    color: var(--color-gray-200) !important;
+  }
+  /* Popup tip (arrow) - match wrapper background */
+  .leaflet-container .leaflet-popup-tip {
+    background: #1a1a1e !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  :root.dark .leaflet-container .leaflet-popup-tip {
+    background: var(--color-surface-800) !important;
   }
   .leaflet-popup-content {
-    margin: 0;
+    margin: 0 !important;
   }
+  /* Zoom controls */
   :root.dark .leaflet-control-zoom a {
     background-color: var(--color-surface-800) !important;
     color: var(--color-gray-200) !important;
@@ -539,12 +559,10 @@
   :root.dark .leaflet-control-zoom a:hover {
     background-color: var(--color-surface-700) !important;
   }
-
   .extract-marker {
     background: transparent;
     border: none;
   }
-
   /* Leaflet Tooltip Reset
      !important required: Leaflet tooltip has high-specificity default styles.
      We reset them completely to allow our popup content to style itself. */

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center justify-center px-3 py-2">
+  <div class="flex w-full items-center justify-center">
     <template v-if="isCollapsed">
       <div class="text-center">
         <div class="mb-1 text-[0.7em] text-content-tertiary">
