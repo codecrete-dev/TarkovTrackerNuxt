@@ -380,7 +380,7 @@
     return Boolean($supabase?.user?.loggedIn);
   });
   // Safely extract provider information with proper typing
-  type AuthProvider = 'discord' | 'twitch' | null;
+  type AuthProvider = 'discord' | 'twitch' | 'google' | null;
   interface SupabaseUserWithProvider {
     app_metadata?: { provider?: string };
     provider?: string;
@@ -389,7 +389,7 @@
     if (!$supabase?.user) return null;
     const user = $supabase.user as SupabaseUserWithProvider;
     const providerValue = user.app_metadata?.provider || user.provider;
-    if (providerValue === 'discord' || providerValue === 'twitch') {
+    if (providerValue === 'discord' || providerValue === 'twitch' || providerValue === 'google') {
       return providerValue;
     }
     return null;
@@ -401,10 +401,12 @@
   const providerIcon = computed(() => {
     if (provider.value === 'discord') return 'i-mdi-discord';
     if (provider.value === 'twitch') return 'i-mdi-twitch';
+    if (provider.value === 'google') return 'i-mdi-google';
     return 'i-mdi-account';
   });
   const providerColor = computed(() => {
     if (provider.value === 'discord') return 'primary';
+    if (provider.value === 'google') return 'error';
     return 'secondary';
   });
   const hasOwnedTeams = computed(() => {
@@ -440,12 +442,23 @@
     isDeleting.value = true;
     deleteError.value = '';
     try {
-      const { data: sessionData } = await $supabase.client.auth.getSession();
+      const { data: sessionData, error: sessionError } = await $supabase.client.auth.getSession();
+      if (sessionError) {
+        logger.error('Session error:', sessionError);
+        throw new Error(`Session error: ${sessionError.message}`);
+      }
       if (!sessionData.session) {
         throw new Error('You must be logged in to delete your account.');
       }
+      // Refresh the session to ensure we have a valid token
+      const { error: refreshError } = await $supabase.client.auth.refreshSession();
+      if (refreshError) {
+        logger.warn('Session refresh warning:', refreshError);
+        // Continue anyway - the existing session might still be valid
+      }
       const { data, error } = await $supabase.client.functions.invoke('account-delete');
       if (error) {
+        logger.error('Edge function error:', error);
         throw error;
       }
       if (data?.success) {

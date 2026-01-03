@@ -92,7 +92,7 @@ export default defineNuxtPlugin(() => {
     }
   });
   const signInWithOAuth = async (
-    provider: 'twitch' | 'discord',
+    provider: 'twitch' | 'discord' | 'google',
     options?: { skipBrowserRedirect?: boolean; redirectTo?: string }
   ) => {
     const { data, error } = await supabase.auth.signInWithOAuth({

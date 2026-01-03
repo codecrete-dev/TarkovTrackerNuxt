@@ -394,6 +394,7 @@
       card_subtitle: 'Відстежуйте свій прогрес, діліться з друзями та координуйте рейди',
       continue_twitch: 'Продовжити з Twitch',
       continue_discord: 'Продовжити з Discord',
+      continue_google: 'Продовжити з Google',
       privacy_policy: 'Політика конфіденційності',
       terms_of_service: 'Умови використання',
     },
