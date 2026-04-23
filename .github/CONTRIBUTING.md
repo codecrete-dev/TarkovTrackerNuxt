@@ -22,7 +22,7 @@ Please be respectful and constructive in all interactions. We're building a tool
 2. **Install dependencies**: `npm install`
 3. **Set up environment**: Copy `.env.example` to `.env` and add your Supabase credentials
 4. **Start dev server**: `npm run dev`
-5. **Read CLAUDE.md** for detailed development guidelines
+5. **Read AGENTS.md** for detailed development guidelines
 
 ## Development Workflow
 
@@ -106,7 +106,7 @@ Issues are automatically labeled based on template selection. Maintainers will a
 3. **Update documentation**
    - Update README if adding features
    - Add JSDoc comments for new functions
-   - Update CLAUDE.md if changing architecture
+- Update AGENTS.md if changing architecture
 
 ### PR Requirements
 
